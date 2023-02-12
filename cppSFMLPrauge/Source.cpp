@@ -35,12 +35,12 @@ int main()
 	opixref['t'] = ocols;
 
 	ocols.r = 40;
-	ocols.g = 120;
+	ocols.g = 200;
 	ocols.b = 35;
 	ocols.a = 255;
 	opixref['l'] = ocols;
 	ocols.r = 36;
-	ocols.g = 100;
+	ocols.g = 150;
 	ocols.b = 26;
 	ocols.a = 255;
 	opixref['b'] = ocols;

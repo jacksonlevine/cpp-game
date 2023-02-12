@@ -128,27 +128,22 @@ namespace objs {
       }
       
       for (sf::Vector2f i : leafspots) {
-        if (((int)(i.y + 1) * width) + (int)(i.x) > 0 && ((int)(i.y + 1) * width) + (int)(i.x) < (width * height) - 1) {
           intString[clamp(((int)(i.y + 1) * width) + (int)(i.x), 0, intString.size() - 1)] = 3;
-        }
-        if (((int)(i.y + 1) * width) + (int)(i.x - 1) > 0 && ((int)(i.y + 1) * width) + (int)(i.x - 1) < (width * height) - 1) {
           intString[clamp(((int)(i.y + 1) * width) + (int)(i.x - 1), 0, intString.size() - 1)] = 3;
-        }
-        if (((int)(i.y + 1) * width) + (int)(i.x + 1) > 0 && ((int)(i.y + 1) * width) + (int)(i.x + 1) < (width * height) - 1) {
           intString[clamp(((int)(i.y + 1) * width) + (int)(i.x + 1), 0, intString.size() - 1)] = 3;
-        }
-        if (((int)(i.y) * width) + (int)(i.x - 1) > 0 && ((int)(i.y) * width) + (int)(i.x - 1) < (width * height) - 1) {
-          intString[clamp(((int)(i.y) * width) + (int)(i.x - 1), 0, intString.size() - 1)] = 2;
-        }
-        if (((int)(i.y) * width) + (int)(i.x + 1) > 0 && ((int)(i.y) * width) + (int)(i.x + 1) < (width * height) - 1) {
-          intString[clamp(((int)(i.y) * width) + (int)(i.x + 1), 0, intString.size() - 1)] = 2;
-        }
-        if (((int)(i.y) * width) + (int)(i.x - 2) > 0 && ((int)(i.y) * width) + (int)(i.x - 2) < (width * height) - 1) {
-          intString[clamp(((int)(i.y) * width) + (int)(i.x - 2), 0, intString.size() - 1)] = 2;
-        }
-        if (((int)(i.y) * width) + (int)(i.x + 2) > 0 && ((int)(i.y) * width) + (int)(i.x + 2) < (width * height) - 1) {
-          intString[clamp(((int)(i.y) * width) + (int)(i.x + 2), 0, intString.size() - 1)] = 2;
-        }
+          intString[clamp(((int)(i.y) * width) + (int)(i.x - 1), 0, intString.size() - 1)] = 3;
+          intString[clamp(((int)(i.y) * width) + (int)(i.x + 1), 0, intString.size() - 1)] = 3;
+          intString[clamp(((int)(i.y) * width) + (int)(i.x), 0, intString.size() - 1)] = 3;
+          intString[clamp(((int)(i.y) * width) + (int)(i.x - 2), 0, intString.size() - 1)] = 3;
+          intString[clamp(((int)(i.y) * width) + (int)(i.x + 2), 0, intString.size() - 1)] = 3;
+          intString[clamp(((int)(i.y-1) * width) + (int)(i.x - 1), 0, intString.size() - 1)] = 3;
+          intString[clamp(((int)(i.y-1) * width) + (int)(i.x + 1), 0, intString.size() - 1)] = 3;
+          intString[clamp(((int)(i.y-1) * width) + (int)(i.x), 0, intString.size() - 1)] = 3;
+          intString[clamp(((int)(i.y-2) * width) + (int)(i.x - 1), 0, intString.size() - 1)] = 2;
+          intString[clamp(((int)(i.y-2) * width) + (int)(i.x + 1), 0, intString.size() - 1)] = 2;
+          intString[clamp(((int)(i.y - 2) * width) + (int)(i.x), 0, intString.size() - 1)] = 2;
+          intString[clamp(((int)(i.y-1) * width) + (int)(i.x - 2), 0, intString.size() - 1)] = 2;
+          intString[clamp(((int)(i.y-1) * width) + (int)(i.x + 2), 0, intString.size() - 1)] = 2;
       }
 
       std::string string = "";

@@ -283,13 +283,13 @@ void generateWorld(std::unordered_map<std::string, objs::ColorBrick>* wmap, perl
 			int floorX = std::floor(i);
 			int floorY = std::floor(j);
 			std::string keySpot = "" + std::to_string(floorX) + ',' + std::to_string(floorY);
-			int sandLvl = 3;
+			int sandLvl = 2.8;
 			float waterLvl = 0.6;
 			
 			if (nClamped > waterLvl && nClamped < sandLvl) {
-				float red = (25 + 25 * nClamped);
-				float green = (25 + 25 * nClamped);
-				float blue = (20 * nClamped);
+				float red = (25 +320 * (nClamped / 10));
+				float green = (20 + 310 * (nClamped/10));
+				float blue = (237 * (nClamped / 10));
 				float a = (255);
 				float elev = nClamped;
 				insertIntoWorld(floorX, floorY, red, green, blue, a, elev, wmap, brick);

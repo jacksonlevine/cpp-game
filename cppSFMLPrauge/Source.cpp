@@ -44,6 +44,21 @@ int main()
 	ocols.b = 26;
 	ocols.a = 255;
 	opixref['b'] = ocols;
+	ocols.r = 100;
+	ocols.g = 100;
+	ocols.b = 100;
+	ocols.a = 255;
+	opixref['n'] = ocols;
+	ocols.r = 150;
+	ocols.g = 150;
+	ocols.b = 150;
+	ocols.a = 255;
+	opixref['s'] = ocols;
+	ocols.r = 50;
+	ocols.g = 50;
+	ocols.b = 50;
+	ocols.a = 255;
+	opixref['a'] = ocols;
 
 	perlin p;
 	sf::Event e;
@@ -303,6 +318,16 @@ void generateWorld(std::unordered_map<std::string, objs::ColorBrick>* wmap, perl
 					float a = (255);
 					float elev = nClamped;
 					insertIntoWorld(floorX, floorY, red, green, blue, a, elev, wmap, brick);
+					if (std::rand() > 32700) {
+						objs::FixedObject rock;
+						rock.x = floorX;
+						rock.y = floorY;
+						rock.width = 23;
+						rock.height = 15;
+						rock.thing = objs::Rock::makeRock();
+						std::string keySpot = "" + std::to_string(floorX) + ',' + std::to_string(floorY);
+						fomap[keySpot] = rock;
+					}
 				}
 				else {
 					float red = (25 + 17 * nClamped + (n4 * 100));

@@ -197,20 +197,14 @@ void render(perlin p) {
 			}
 			else if(justObj == false && isObjectPix == false  && std::abs(i) < ws && std::abs(j) < ws)
 			{
-				double n = p.noise(i * 0.02, j * 0.02, 11.01) * 10;
-				double n2 = p.noise(i * 0.05, j * 0.05, 11.01) * 4;
-				double n3 = p.noise(i * 0.01, j * 0.01, 11.01) * 4;
-				double n4 = p.noise(i * 0.9, j * 0.9, 11.01) / 2;
-				double n5 = p.noise(i * 0.009, j * 0.009, 7.01) * 15;
-				double ln = (p.noise(i * 0.02, j * 0.02, 93.0122) * 10) + (n4 * 2);
-				double nClamped = std::min(std::min(n5 + std::max(n + std::max(n3 - 2 - n2, 0.0), 0.0), 10.0), 4.5) + std::max(n4, 0.0);
+
 				int n22 = std::floor(p.noise(i * 2.1, j * 0.2, 11.01 + (perlz / 500)) * 10);
 				int n32 = std::floor(p.noise(i * 5.1, j * 0.4, 11.01 + (perlz / 300)) * 4);
 				int n2Clamped = (std::min(std::max(n22-n32-4, 0), 8))%4;
 				sf::Color col;
-				col.r = (15 * n2Clamped+1-(nClamped));
-				col.g = (15 * n2Clamped - (nClamped ));
-				col.b = (90+(n2Clamped*2) - (nClamped*15 ));
+				col.r = (15 * n2Clamped+1);
+				col.g = (15 * n2Clamped );
+				col.b = (90+(n2Clamped*2));
 				col.a = 255;
 				rect.setFillColor(col);
 				rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
@@ -318,7 +312,7 @@ void generateWorld(std::unordered_map<std::string, objs::ColorBrick>* wmap, perl
 					float a = (255);
 					float elev = nClamped;
 					insertIntoWorld(floorX, floorY, red, green, blue, a, elev, wmap, brick);
-					if (std::rand() > 32700) {
+					if (std::rand() > 32750) {
 						objs::FixedObject rock;
 						rock.x = floorX;
 						rock.y = floorY;

@@ -22,6 +22,9 @@ float camY = 0;
 int ws = 500;
 int ts = 11;
 sf::Vector2f click(-1, -1);
+bool mouseClicked = false;
+float clickTimer = 0;
+int clickInterval = 10;
 
 int width;
 int height;
@@ -80,10 +83,11 @@ int main()
 			if (e.type == sf::Event::MouseButtonPressed) {
 				click.x = pos.x;
 				click.y = pos.y;
+				mouseClicked = true;
+				clickTimer = 0;
 			}
-			else {
-				click.x = -1;
-				click.y = -1;
+			if (e.type == sf::Event::MouseButtonReleased) {
+				mouseClicked = false;
 			}
 
 			if (e.type == sf::Event::Closed) 
@@ -267,25 +271,36 @@ void render(perlin p) {
 			parts.erase(std::remove(parts.begin(), parts.end(), parts[i]), parts.end());
 		}
 	}
-	if (click.x != -1) {
+	if (mouseClicked == true) {
+		sf::Vector2i pos = sf::Mouse::getPosition(window);
+	
+			click.x = pos.x;
+			click.y = pos.y;
+		if (clickTimer <= 0.1) {
+			clickTimer = clickInterval;
+			std::string keySpot = "" + std::to_string(((int)std::round(click.x) / ts) + (int)camX) + ',' + std::to_string(((int)std::round(click.y) / ts) + (int)camY);
+			if (opixmap.find(keySpot) != opixmap.end()) {
+				opixmap.at(keySpot).point->clickEvent();
 
-		std::string keySpot = "" + std::to_string(((int)std::round(click.x)/ts)+(int)camX) + ',' + std::to_string(((int)std::round(click.y)/ts) + (int)camY);
-		if (opixmap.find(keySpot) != opixmap.end()) {
-			opixmap.at(keySpot).point->clickEvent();
-			for (int n = 0; n < 1; n++) {
-				objs::Particle pa;
-				pa.x = (((int)std::round(opixmap.at(keySpot).obx - ((opixmap.at(keySpot).point->width/2)*((float)std::rand()/RAND_MAX)) + opixmap.at(keySpot).point->width/4)) );
-				pa.y = ((int)std::round(opixmap.at(keySpot).oby - ((opixmap.at(keySpot).point->height/1.5) * ((float)std::rand() / RAND_MAX))));
-				sf::Color c = opixmap.at(keySpot).col;
-				c.r += 50;
-				c.g += 50;
-				c.b += 50;
-				pa.col = c;
-				parts.push_back(pa);
+				for (int n = 0; n < 1; n++) {
+					objs::Particle pa;
+					pa.x = (((int)std::round(opixmap.at(keySpot).obx - ((opixmap.at(keySpot).point->width / 2) * ((float)std::rand() / RAND_MAX)) + opixmap.at(keySpot).point->width / 4)));
+					pa.y = ((int)std::round(opixmap.at(keySpot).oby - ((opixmap.at(keySpot).point->height / 1.5) * ((float)std::rand() / RAND_MAX))));
+					sf::Color c = opixmap.at(keySpot).col;
+					c.r += 50;
+					c.g += 50;
+					c.b += 50;
+					pa.col = c;
+					parts.push_back(pa);
+
+				}
 			}
+
 		}
-		click.x = -1;
-		click.y = -1;
+		else {
+			clickTimer -= 2;
+
+		}
 	}
 	perlz++;
 }

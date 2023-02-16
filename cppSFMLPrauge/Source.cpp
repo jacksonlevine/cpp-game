@@ -10,6 +10,7 @@ std::unordered_map<std::string, objs::ObjectBrick> opixmap;
 std::unordered_map<std::string, objs::Player*> pmap;
 std::unordered_map<char, sf::Color> opixref;
 std::vector<std::string> mappedfos;
+std::vector<objs::Particle> parts;
 void render(perlin p);
 void renderMinimap(int width, int x, int y, objs::Player*pla);
 void handleEvents(objs::Player* pla);
@@ -20,6 +21,7 @@ float camX = 0;
 float camY = 0;
 int ws = 500;
 int ts = 11;
+sf::Vector2f click(-1, -1);
 
 int width;
 int height;
@@ -74,6 +76,16 @@ int main()
 	{
 		while (window.pollEvent(e))
 		{
+			sf::Vector2i pos = sf::Mouse::getPosition(window);
+			if (e.type == sf::Event::MouseButtonPressed) {
+				click.x = pos.x;
+				click.y = pos.y;
+			}
+			else {
+				click.x = -1;
+				click.y = -1;
+			}
+
 			if (e.type == sf::Event::Closed) 
 			{
 				window.close();
@@ -139,24 +151,43 @@ void render(perlin p) {
 			}
 			bool justObj = false;
 			if (fomap.find(keySpot) != fomap.end()) {
+				if (fomap.at(keySpot).strength < 0) {
+					for (int n = 0; n < 25; n++) {
+						objs::Particle pa;
+						pa.x = (((int)std::round(fomap.at(keySpot).x - ((fomap.at(keySpot).width / 2) * ((float)std::rand() / RAND_MAX)) + fomap.at(keySpot).width / 4)));
+						pa.y = ((int)std::round(fomap.at(keySpot).y - ((fomap.at(keySpot).height / 1.5) * ((float)std::rand() / RAND_MAX))));
+						sf::Color c = opixref[fomap.at(keySpot).thing[((fomap.at(keySpot).height - 1) * fomap.at(keySpot).width) + (int)(fomap.at(keySpot).width / 2)]];
+						c.r += 50;
+						c.g += 50;
+						c.b += 50;
+						pa.col = c;
+						parts.push_back(pa);
+					}
+					fomap.erase(keySpot);
+					mappedfos.clear();
+					opixmap.clear();
+				}
+				else {
 				if (std::find(mappedfos.begin(), mappedfos.end(), keySpot) == mappedfos.end()) {
 					mappedfos.push_back(keySpot);
 					justObj = true;
 					objs::FixedObject* fop = &fomap.at(keySpot);
-					int wi = fop->width;
-					int he = fop->height;
-					for (int f = 0; f < he; f++) {
-						for (int o = 0; o < wi; o++) {
-							char t = fop->thing[objs::clamp((f * wi) + o, 0, (wi*he)-2)];
-							if (t != '0') {
-								std::string thisKeySpot = "" + std::to_string(floorX + o-(int)(wi/2)) + ',' + std::to_string(floorY + f - he);
-								objs::ObjectBrick ob(opixref[t], fop->x, fop->y);
-								if (opixmap.find(thisKeySpot) == opixmap.end()) {
-									opixmap[thisKeySpot] = ob;
-								}
-								else {
-									if (opixmap.at(thisKeySpot).oby < fop->y) {
+						int wi = fop->width;
+						int he = fop->height;
+						for (int f = 0; f < he; f++) {
+							for (int o = 0; o < wi; o++) {
+								char t = fop->thing[objs::clamp((f * wi) + o, 0, (wi * he) - 2)];
+								if (t != '0') {
+									std::string thisKeySpot = "" + std::to_string(floorX + o - (int)(wi / 2)) + ',' + std::to_string(floorY + f - he);
+									objs::ObjectBrick ob(opixref[t], fop->x, fop->y);
+									ob.point = fop;
+									if (opixmap.find(thisKeySpot) == opixmap.end()) {
 										opixmap[thisKeySpot] = ob;
+									}
+									else {
+										if (opixmap.at(thisKeySpot).oby < fop->y) {
+											opixmap[thisKeySpot] = ob;
+										}
 									}
 								}
 							}
@@ -167,6 +198,7 @@ void render(perlin p) {
 			} 
 			bool isObjectPix = false;
 			if (opixmap.find(keySpot) != opixmap.end()) {
+				
 				rect.setFillColor(opixmap.at(keySpot).col);
 				rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
 				window.draw(rect);
@@ -224,6 +256,36 @@ void render(perlin p) {
 				window.draw(rect);
 			}
 		}
+	}
+	int pCount = parts.size();
+	for (int i = 0; i < pCount; i++) {
+		parts[i].update();
+		rect.setPosition(sf::Vector2f((parts[i].x-camX)*ts, (parts[i].y-camY)*ts));
+		rect.setFillColor(parts[i].col);
+		window.draw(rect);
+		if (parts[i].timer > parts[i].life) {
+			parts.erase(std::remove(parts.begin(), parts.end(), parts[i]), parts.end());
+		}
+	}
+	if (click.x != -1) {
+
+		std::string keySpot = "" + std::to_string(((int)std::round(click.x)/ts)+(int)camX) + ',' + std::to_string(((int)std::round(click.y)/ts) + (int)camY);
+		if (opixmap.find(keySpot) != opixmap.end()) {
+			opixmap.at(keySpot).point->clickEvent();
+			for (int n = 0; n < 1; n++) {
+				objs::Particle pa;
+				pa.x = (((int)std::round(opixmap.at(keySpot).obx - ((opixmap.at(keySpot).point->width/2)*((float)std::rand()/RAND_MAX)) + opixmap.at(keySpot).point->width/4)) );
+				pa.y = ((int)std::round(opixmap.at(keySpot).oby - ((opixmap.at(keySpot).point->height/1.5) * ((float)std::rand() / RAND_MAX))));
+				sf::Color c = opixmap.at(keySpot).col;
+				c.r += 50;
+				c.g += 50;
+				c.b += 50;
+				pa.col = c;
+				parts.push_back(pa);
+			}
+		}
+		click.x = -1;
+		click.y = -1;
 	}
 	perlz++;
 }

@@ -16,12 +16,65 @@ namespace objs {
       elevation = elev;
     };
 	};
+
+	class FixedObject {
+	public:
+		int width = 0;
+		int height = 0;
+		int x = 0;
+		int y = 0;
+		int strength = 10;
+		std::string thing;
+
+		void clickEvent() {
+			strength -= 1;
+		}
+	};
+
+	class Particle {
+	public:
+		int life = 35;
+		int timer = 0;
+		float x = 0;
+		float y = 0;
+		sf::Color col = sf::Color(0,0,0);
+		float speedX = ((float)std::rand() / RAND_MAX) * 5 - 2;
+		float speedY = ((float)std::rand() / RAND_MAX) * 5 - 2;
+		float yTravel = 0;
+		float maxYTravel = ((float)std::rand() / RAND_MAX) * 7;
+
+		Particle() {
+
+		};
+
+		void update() {
+			x += speedX/4;
+			speedX *= .95;
+			if (yTravel < maxYTravel) {
+				y += speedY / 4;
+				yTravel += speedY / 4;
+			}
+			speedY += .1;
+			timer += 1;
+		}
+	};
+
+	bool operator==(const Particle& x, const Particle& y)
+	{
+		if (x.x == y.x && x.y == y.y) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
   
   class ObjectBrick {
   public:
     sf::Color col;
     int obx = 0;
     int oby = 0;
+		objs::FixedObject* point;
     ObjectBrick() {
 
     };
@@ -32,14 +85,8 @@ namespace objs {
     };
   };
 
-  class FixedObject {
-  public:
-    int width = 0;
-    int height = 0;
-    int x = 0;
-    int y = 0;
-    std::string thing;
-  };
+
+
 	float getRandom() {
 		return (float)std::rand() / RAND_MAX;
 	}

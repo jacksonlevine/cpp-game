@@ -16,6 +16,7 @@ void renderMinimap(int width, int x, int y, objs::Player*pla);
 void handleEvents(objs::Player* pla);
 void generateWorld(std::unordered_map<std::string, objs::ColorBrick>* wmap, perlin p);
 void insertIntoWorld(int x, int y, float red, float green, float blue, float a, float elevation, std::unordered_map<std::string, objs::ColorBrick>* wmap, objs::ColorBrick brick);
+void setClickPos();
 
 float camX = 0;
 float camY = 0;
@@ -30,6 +31,7 @@ int width;
 int height;
 
 objs::Player play("Player1", (window.getSize().x / ts) / 2, (window.getSize().y / ts) / 2);
+sf::Vector2u size;
 int main() 
 {
 	sf::Color ocols;
@@ -68,21 +70,19 @@ int main()
 	perlin p;
 	sf::Event e;
 
-	sf::Vector2u size = window.getSize();
+	size = window.getSize();
 	width = size.x / ts;
 	height = size.y / ts;
 	
 	pmap[play.posKey()] = &play;
-
 	generateWorld(&worldmap, p);
 	while (window.isOpen())
 	{
 		while (window.pollEvent(e))
 		{
-			sf::Vector2i pos = sf::Mouse::getPosition(window);
+
 			if (e.type == sf::Event::MouseButtonPressed) {
-				click.x = pos.x;
-				click.y = pos.y;
+				setClickPos();
 				mouseClicked = true;
 				clickTimer = 0;
 			}
@@ -109,6 +109,14 @@ bool test = false;
 double perlz = 0;
 
 sf::RectangleShape rect(sf::Vector2f(ts, ts));
+
+void setClickPos() {
+	sf::Vector2i pos = sf::Mouse::getPosition(window);
+	float xRatio = (float)size.x / (float)window.getViewport(window.getView()).width;
+	float yRatio = (float)size.y / (float)window.getViewport(window.getView()).height;
+	click.x = (int)std::round(pos.x * xRatio);
+	click.y = (int)std::round(pos.y * yRatio);
+}
 
 void render(perlin p) {
 	std::unordered_map<std::string, objs::PlayerPixel> screenumap;
@@ -174,7 +182,6 @@ void render(perlin p) {
 				else {
 				if (std::find(mappedfos.begin(), mappedfos.end(), keySpot) == mappedfos.end()) {
 					mappedfos.push_back(keySpot);
-					justObj = true;
 					objs::FixedObject* fop = &fomap.at(keySpot);
 						int wi = fop->width;
 						int he = fop->height;
@@ -272,10 +279,7 @@ void render(perlin p) {
 		}
 	}
 	if (mouseClicked == true) {
-		sf::Vector2i pos = sf::Mouse::getPosition(window);
-	
-			click.x = pos.x;
-			click.y = pos.y;
+		setClickPos();
 		if (clickTimer <= 0.1) {
 			clickTimer = clickInterval;
 			std::string keySpot = "" + std::to_string(((int)std::round(click.x) / ts) + (int)camX) + ',' + std::to_string(((int)std::round(click.y) / ts) + (int)camY);
@@ -355,16 +359,19 @@ void generateWorld(std::unordered_map<std::string, objs::ColorBrick>* wmap, perl
 
 	sf::Color col;
 	objs::ColorBrick brick(col, 0);
+	std::srand(std::time(0));
+	float offset = ((float)std::rand() / RAND_MAX) * 10000000;
 	for (int j = -ws; j < ws; j++) 
 	{
 		for (int i = -ws; i < ws; i++) 
 		{
-			double n = p.noise(i * 0.02, j * 0.02, 11.01) * 10;
-			double n2 = p.noise(i * 0.05, j * 0.05, 11.01) * 4;
-			double n3 = p.noise(i * 0.01, j * 0.01, 11.01) * 4;
-			double n4 = p.noise(i * 0.9, j * 0.9, 11.01)/2;
-			double n5 = p.noise(i * 0.009, j * 0.009, 7.01) * 15;
-			double ln = (p.noise(i * 0.02, j * 0.02, 93.0122) * 10) + (n4*2);
+			
+			double n = p.noise(i * 0.02, j * 0.02, 11.01+offset) * 10;
+			double n2 = p.noise(i * 0.05, j * 0.05, 11.01 + offset) * 4;
+			double n3 = p.noise(i * 0.01, j * 0.01, 11.01 + offset) * 4;
+			double n4 = p.noise(i * 0.9, j * 0.9, 11.01 + offset)/2;
+			double n5 = p.noise(i * 0.009, j * 0.009, 7.01 + offset) * 15;
+			double ln = (p.noise(i * 0.02, j * 0.02, 93.0122 + offset) * 10) + (n4*2);
 			double nClamped = std::min(std::min(n5+ std::max(n+std::max(n3-2-n2, 0.0), 0.0), 10.0), 4.5) + std::max(n4, 0.0);
 			int floorX = std::floor(i);
 			int floorY = std::floor(j);

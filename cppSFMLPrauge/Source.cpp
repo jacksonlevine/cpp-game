@@ -192,22 +192,24 @@ void render(perlin p) {
 						float yOff = (int)(((float)std::rand() / RAND_MAX) * -5 + 2.5);
 
 						objs::DroppedItem d(fomap.at(keySpot).x + xOff, fomap.at(keySpot).y + yOff);
-						/*if (fomap.at(keySpot).type == 0) {
+						if (fomap.at(keySpot).type == 0) {
 							d.thing = "tttttt";
 							d.height = 2;
 							d.width = 3;
+							d.timeStarted = std::chrono::high_resolution_clock::now().time_since_epoch().count() + (std::rand() * 10000000);
 						}
-						else if (fomap.at(keySpot).type == 1) {*/
+						else if (fomap.at(keySpot).type == 1) {
 							d.thing = "00a0aasaasna0nna";
 							d.height = 4;
 							d.width = 4;
 							d.timeStarted = std::chrono::high_resolution_clock::now().time_since_epoch().count() + (std::rand()*10000000);
-						/* }
+						 }
 						else {
 							d.thing = "0a0ata0a0";
 							d.width = 3;
 							d.height = 3;
-						}*/
+							d.timeStarted = std::chrono::high_resolution_clock::now().time_since_epoch().count() + (std::rand() * 10000000);
+						}
 
 						drops.push_back(d);
 					}

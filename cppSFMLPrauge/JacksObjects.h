@@ -46,6 +46,10 @@ namespace objs {
 		float y1 = 0;
 		float r = 5;
 		float timeStarted = 0;
+		float speedX = ((float)std::rand() / RAND_MAX) * 5 - 2;
+		float speedY = ((float)std::rand() / RAND_MAX) * 5 - 2;
+		float yTravel = 0;
+		float maxYTravel = ((float)std::rand() / RAND_MAX) * 7;
 		std::string thing = "";
 		DroppedItem(float ax, float ay) {
 			x = ax;
@@ -54,6 +58,12 @@ namespace objs {
 
 		void update()
 		{
+			x += speedX / 4;
+			speedX *= .95;
+			if (std::abs(yTravel) < maxYTravel) {
+				y += speedY / 4;
+				yTravel += speedY / 4;
+			}
 			std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
 			angle = (int)((t1.time_since_epoch().count()+timeStarted)/1500000) % 360;
 			x1 = r * std::cos(angle * PI / 180);

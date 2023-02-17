@@ -11,6 +11,7 @@ std::unordered_map<std::string, objs::Player*> pmap;
 std::unordered_map<char, sf::Color> opixref;
 std::vector<std::string> mappedfos;
 std::vector<objs::Particle> parts;
+std::vector<objs::DroppedItem> drops;
 void render(perlin p);
 void renderMinimap(int width, int x, int y, objs::Player*pla);
 void handleEvents(objs::Player* pla);
@@ -124,6 +125,26 @@ void render(perlin p) {
 	double currOffsetY = 0.0;
 	int playSpotX = 0;
 	int playSpotY = 0;
+	int dCount = drops.size();
+	for (int i = 0; i < dCount; i++) {
+		drops[i].update();
+		int wi = drops[i].width;
+		int he = drops[i].height;
+		for (int h = 0; h < he; h++) {
+			for (int w = 0; w < wi; w++) {
+				std::string thisKeySpot = "" + std::to_string((int)(drops[i].x+w)) + ',' + std::to_string((int)((float)drops[i].y+h+((float)drops[i].elevation)));
+				sf::Color c = opixref[drops[i].thing[objs::clamp((h * wi) + w, 0, drops[i].thing.size()-1)]];
+				objs::PlayerPixel pi(c, drops[i].x + w, drops[i].y + h);
+				if (drops[i].thing[objs::clamp((h * wi) + w, 0, drops[i].thing.size() - 1)] != '0') {
+					screenumap[thisKeySpot] = pi;
+				}
+				
+			}
+		}
+		if (parts[i].timer > parts[i].life) {
+			parts.erase(std::remove(parts.begin(), parts.end(), parts[i]), parts.end());
+		}
+	}
 	for (int j = height+camY+1; j > 0+camY-1; j--) 
 	{
 		for (int i = 0+camX-1; i < width+camX+1; i++) 
@@ -163,7 +184,33 @@ void render(perlin p) {
 			}
 			bool justObj = false;
 			if (fomap.find(keySpot) != fomap.end()) {
-				if (fomap.at(keySpot).strength < 0) {
+				if (fomap.at(keySpot).strength < 0) {                            //BREAK OBJ
+					int dropCount = (int)(((float)std::rand() / RAND_MAX) * 10);
+					for (int n = 0; n < dropCount; n++) {
+
+						float xOff = (int)(((float)std::rand() / RAND_MAX) * -7 + 3.5);
+						float yOff = (int)(((float)std::rand() / RAND_MAX) * -5 + 2.5);
+
+						objs::DroppedItem d(fomap.at(keySpot).x + xOff, fomap.at(keySpot).y + yOff);
+						/*if (fomap.at(keySpot).type == 0) {
+							d.thing = "tttttt";
+							d.height = 2;
+							d.width = 3;
+						}
+						else if (fomap.at(keySpot).type == 1) {*/
+							d.thing = "00a0aasaasna0nna";
+							d.height = 4;
+							d.width = 4;
+							d.timeStarted = std::chrono::high_resolution_clock::now().time_since_epoch().count() + (std::rand()*10000000);
+						/* }
+						else {
+							d.thing = "0a0ata0a0";
+							d.width = 3;
+							d.height = 3;
+						}*/
+
+						drops.push_back(d);
+					}
 					for (int n = 0; n < 25; n++) {
 						objs::Particle pa;
 						pa.x = (((int)std::round(fomap.at(keySpot).x - ((fomap.at(keySpot).width / 2) * ((float)std::rand() / RAND_MAX)) + fomap.at(keySpot).width / 4)));
@@ -278,6 +325,7 @@ void render(perlin p) {
 			parts.erase(std::remove(parts.begin(), parts.end(), parts[i]), parts.end());
 		}
 	}
+	
 	if (mouseClicked == true) {
 		setClickPos();
 		if (clickTimer <= 0.1) {
@@ -403,6 +451,7 @@ void generateWorld(std::unordered_map<std::string, objs::ColorBrick>* wmap, perl
 						rock.width = 23;
 						rock.height = 15;
 						rock.thing = objs::Rock::makeRock();
+						rock.type = 1;
 						std::string keySpot = "" + std::to_string(floorX) + ',' + std::to_string(floorY);
 						fomap[keySpot] = rock;
 					}
@@ -420,6 +469,7 @@ void generateWorld(std::unordered_map<std::string, objs::ColorBrick>* wmap, perl
 						tree.width = 26;
 						tree.height = 25;
 						tree.thing = objs::Tree::makeTree();
+						tree.type = 0;
 						std::string keySpot = "" + std::to_string(floorX) + ',' + std::to_string(floorY);
 						fomap[keySpot] = tree;
 					}

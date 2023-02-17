@@ -2,6 +2,7 @@
 #include <string>
 #include <unordered_map>
 #include "SFML/Graphics.hpp"
+#include <chrono>
 
 namespace objs {
 
@@ -21,6 +22,7 @@ namespace objs {
 	public:
 		int width = 0;
 		int height = 0;
+		int type = 0;
 		int x = 0;
 		int y = 0;
 		int strength = 10;
@@ -29,6 +31,35 @@ namespace objs {
 		void clickEvent() {
 			strength -= 1;
 		}
+	};
+
+	class DroppedItem {
+	public:
+		float x = 0;
+		float y = 0;
+		int width = 0;
+		int height = 0;
+		float elevation = 0;
+		float PI = 3.1415926535f;
+		float angle = 0;
+		float x1 = 0;
+		float y1 = 0;
+		float r = 5;
+		float timeStarted = 0;
+		std::string thing = "";
+		DroppedItem(float ax, float ay) {
+			x = ax;
+			y = ay;
+		};
+
+		void update()
+		{
+			std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+			angle = (int)((t1.time_since_epoch().count()+timeStarted)/1500000) % 360;
+			x1 = r * std::cos(angle * PI / 180);
+			y1 = r * std::sin(angle * PI / 180);
+			elevation = y1/3;
+		} 
 	};
 
 	class Particle {

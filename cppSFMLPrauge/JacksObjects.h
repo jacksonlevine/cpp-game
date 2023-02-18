@@ -37,6 +37,7 @@ namespace objs {
 	public:
 		float x = 0;
 		float y = 0;
+		std::string name = "";
 		int width = 0;
 		int height = 0;
 		float elevation = 0;
@@ -409,9 +410,21 @@ namespace objs {
     return std::min(std::max(val, min), max);
   }
 
+	class InventorySlot {
+	public:
+		int id = 0;
+		int count = 0;
+	};
+
+	class Inventory {
+	public:
+		InventorySlot inv[35];
+	};
+
 	class Player{
 		std::string name = "";
-		public: 
+		public:
+			Inventory inv;
 			float x = 0;
 			float y = 0;
 			int width = 3;

@@ -1,4 +1,4 @@
-#include "SFML/Graphics/RenderStates.hpp";
+#include <SFML/Graphics/RenderStates.hpp>
 #include "perlin.h"
 #include "perlin.cpp"
 #include "JacksObjects.h"
@@ -18,6 +18,8 @@ void handleEvents(objs::Player* pla);
 void generateWorld(std::unordered_map<std::string, objs::ColorBrick>* wmap, perlin p);
 void insertIntoWorld(int x, int y, float red, float green, float blue, float a, float elevation, std::unordered_map<std::string, objs::ColorBrick>* wmap, objs::ColorBrick brick);
 void setClickPos();
+void renderUI();
+bool isMouseOver(sf::RectangleShape* recto);
 
 float camX = 0;
 float camY = 0;
@@ -28,13 +30,27 @@ bool mouseClicked = false;
 float clickTimer = 0;
 int clickInterval = 10;
 
+int selectedInv = 0;
+
 int width;
 int height;
 
+int minimapX = 90;
+int minimapY = 40;
+int minimapWidth = 17;
+
 objs::Player play("Player1", (window.getSize().x / ts) / 2, (window.getSize().y / ts) / 2);
 sf::Vector2u size;
+
+int invTiles = 5;
+int invTileSpacing = (int)((float)(minimapWidth * ts) / invTiles)+(int)((float)ts/invTiles);
+int invY = (minimapY * ts) + (minimapWidth * ts) + 10;
+sf::RectangleShape invRect(sf::Vector2f((int)invTileSpacing - 7, (int)invTileSpacing -7));
+
 int main() 
 {
+	invRect.setFillColor(sf::Color(0, 0, 0));
+
 	sf::Color ocols;
 	ocols.r = 52;
 	ocols.g = 26;
@@ -95,10 +111,19 @@ int main()
 			{
 				window.close();
 			}
+			if (e.type == sf::Event::MouseWheelScrolled)
+			{
+				int s = (int)e.mouseWheelScroll.delta;
+				if (selectedInv+s >= 0 && selectedInv+s <= invTiles - 1) {
+					selectedInv += s;
+				}
+			}
 		}
+
 		window.clear(sf::Color::Black);
 		render(p);
-		renderMinimap(17, 90, 40, &play);
+		renderMinimap(minimapWidth, minimapX, minimapY, &play);
+		renderUI();
 		handleEvents(&play);
 		window.display();
 	}
@@ -111,12 +136,42 @@ double perlz = 0;
 
 sf::RectangleShape rect(sf::Vector2f(ts, ts));
 
+
+
 void setClickPos() {
 	sf::Vector2i pos = sf::Mouse::getPosition(window);
 	float xRatio = (float)size.x / (float)window.getViewport(window.getView()).width;
 	float yRatio = (float)size.y / (float)window.getViewport(window.getView()).height;
 	click.x = (int)std::round(pos.x * xRatio);
 	click.y = (int)std::round(pos.y * yRatio);
+}
+
+bool isMouseOver(sf::RectangleShape* recto) {
+	setClickPos();
+	sf::Vector2f rectPos = recto->getPosition();
+	sf::Vector2f rectSize = recto->getSize();
+	if (click.x >= rectPos.x && click.x <= rectPos.x + rectSize.x && click.y >= rectPos.y && click.y <= rectPos.y + rectSize.y) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+void renderUI() {
+	for (int i = 0; i < invTiles; i++) {
+		int invX = (minimapX * ts) + (i * invTileSpacing);
+		invRect.setPosition(sf::Vector2f(invX, invY));
+		invRect.setFillColor((isMouseOver(&invRect) || selectedInv == i) ? sf::Color(50, 50, 50) : sf::Color(0, 0, 0));
+		if (selectedInv == i) {
+			invRect.setOutlineColor(sf::Color(255, 255, 255));
+			invRect.setOutlineThickness(2);
+		}
+		else {
+			invRect.setOutlineThickness(0);
+		}
+		window.draw(invRect);
+	}
 }
 
 void render(perlin p) {
@@ -128,6 +183,11 @@ void render(perlin p) {
 	int dCount = drops.size();
 	for (int i = 0; i < dCount; i++) {
 		drops[i].update();
+		int range = 20;
+		if((drops[i].x - play.x) < range && (drops[i].y-play.y) < range) {
+			drops[i].x += (play.x-drops[i].x)/10;
+			drops[i].y += (play.y - drops[i].y) / 10;
+		}
 		int wi = drops[i].width;
 		int he = drops[i].height;
 		for (int h = 0; h < he; h++) {
@@ -138,11 +198,7 @@ void render(perlin p) {
 				if (drops[i].thing[objs::clamp((h * wi) + w, 0, drops[i].thing.size() - 1)] != '0') {
 					screenumap[thisKeySpot] = pi;
 				}
-				
 			}
-		}
-		if (parts[i].timer > parts[i].life) {
-			parts.erase(std::remove(parts.begin(), parts.end(), parts[i]), parts.end());
 		}
 	}
 	for (int j = height+camY+1; j > 0+camY-1; j--) 
@@ -196,18 +252,21 @@ void render(perlin p) {
 							d.thing = "tttttt";
 							d.height = 2;
 							d.width = 3;
+							d.name = "wood";
 							d.timeStarted = std::chrono::high_resolution_clock::now().time_since_epoch().count() + (std::rand() * 10000000);
 						}
 						else if (fomap.at(keySpot).type == 1) {
 							d.thing = "00a0aasaasna0nna";
 							d.height = 4;
 							d.width = 4;
+							d.name = "stone";
 							d.timeStarted = std::chrono::high_resolution_clock::now().time_since_epoch().count() + (std::rand()*10000000);
 						 }
 						else {
 							d.thing = "0a0ata0a0";
 							d.width = 3;
 							d.height = 3;
+							d.name = "no texture";
 							d.timeStarted = std::chrono::high_resolution_clock::now().time_since_epoch().count() + (std::rand() * 10000000);
 						}
 

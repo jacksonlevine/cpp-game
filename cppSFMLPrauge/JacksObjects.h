@@ -35,6 +35,7 @@ namespace objs {
 
 	class DroppedItem {
 	public:
+		bool markedForDeletion = false;
 		float x = 0;
 		float y = 0;
 		std::string name = "";
@@ -46,15 +47,17 @@ namespace objs {
 		float x1 = 0;
 		float y1 = 0;
 		float r = 5;
+		int id = 0;
 		float timeStarted = 0;
 		float speedX = ((float)std::rand() / RAND_MAX) * 5 - 2;
 		float speedY = ((float)std::rand() / RAND_MAX) * 5 - 2;
 		float yTravel = 0;
 		float maxYTravel = ((float)std::rand() / RAND_MAX) * 7;
 		std::string thing = "";
-		DroppedItem(float ax, float ay) {
+		DroppedItem(float ax, float ay, int i) {
 			x = ax;
 			y = ay;
+			id = i;
 		};
 
 		void update()
@@ -72,6 +75,16 @@ namespace objs {
 			elevation = y1/3;
 		} 
 	};
+
+	bool operator==(const DroppedItem& a, const DroppedItem& b)
+	{
+		if (a.id == b.id) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 
 	class Particle {
 	public:

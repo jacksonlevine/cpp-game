@@ -184,9 +184,12 @@ void render(perlin p) {
 	for (int i = 0; i < dCount; i++) {
 		drops[i].update();
 		int range = 20;
-		if((drops[i].x - play.x) < range && (drops[i].y-play.y) < range) {
+		if((drops[i].x - play.x) < range && (drops[i].y-play.y) < range && (drops[i].x - play.x) > -range && (drops[i].y - play.y) > -range) {
 			drops[i].x += (play.x-drops[i].x)/10;
 			drops[i].y += (play.y - drops[i].y) / 10;
+			if ((drops[i].x - play.x) < 1 && (drops[i].y - play.y) < 1 && (drops[i].x - play.x) > -1 && (drops[i].y - play.y) > -1) {
+				drops[i].markedForDeletion = true;
+			}
 		}
 		int wi = drops[i].width;
 		int he = drops[i].height;
@@ -199,6 +202,9 @@ void render(perlin p) {
 					screenumap[thisKeySpot] = pi;
 				}
 			}
+		}
+		if (drops[i].markedForDeletion == true) {
+			std::erase(drops, drops[i]);
 		}
 	}
 	for (int j = height+camY+1; j > 0+camY-1; j--) 
@@ -247,7 +253,7 @@ void render(perlin p) {
 						float xOff = (int)(((float)std::rand() / RAND_MAX) * -7 + 3.5);
 						float yOff = (int)(((float)std::rand() / RAND_MAX) * -5 + 2.5);
 
-						objs::DroppedItem d(fomap.at(keySpot).x + xOff, fomap.at(keySpot).y + yOff);
+						objs::DroppedItem d(fomap.at(keySpot).x + xOff, fomap.at(keySpot).y + yOff, (int)drops.size());
 						if (fomap.at(keySpot).type == 0) {
 							d.thing = "tttttt";
 							d.height = 2;

@@ -169,14 +169,14 @@ namespace objs {
 	public:
 		int id = -1;
 		int count = -1;
+		std::string thing = "";
+		int thingWidth = 3;
+		int thingHeight = 3;
 		InventorySlot() {
 			id = -1;
 			count = -1;
+			thing = "0a0ata0a0";
 		};
-		InventorySlot& operator=(const InventorySlot& other) {
-			id = other.id;
-			count = other.count;
-		}
 	};
 
 	class Inventory {
@@ -219,6 +219,10 @@ namespace objs {
 			float elevation = 0;
 			float gravityForce = 0;
 			int jumpForce = 10;
+
+			Player() {
+
+			};
 
 		Player(std::string pname, int px, int py) {
 			name = pname;

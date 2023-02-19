@@ -51,7 +51,7 @@ sf::RectangleShape invItemRect(sf::Vector2f(20, 20));
 int main() 
 {
 	invRect.setFillColor(sf::Color(0, 0, 0));
-
+	invItemRect.setFillColor(sf::Color(255, 255, 255));
 	sf::Color ocols;
 	ocols.r = 52;
 	ocols.g = 26;
@@ -163,6 +163,7 @@ void renderUI() {
 	for (int i = 0; i < invTiles; i++) {
 		int invX = (minimapX * ts) + (i * invTileSpacing);
 		invRect.setPosition(sf::Vector2f(invX, invY));
+		invItemRect.setPosition(sf::Vector2f(invX, invY));
 		invRect.setFillColor((isMouseOver(&invRect) || selectedInv == i) ? sf::Color(50, 50, 50) : sf::Color(0, 0, 0));
 		if (selectedInv == i) {
 			invRect.setOutlineColor(sf::Color(255, 255, 255));
@@ -171,13 +172,15 @@ void renderUI() {
 		else {
 			invRect.setOutlineThickness(0);
 		}
-		/*if (play.inv.inv[i].id != -1) {
-			invItemRect.setFillColor(sf::Color(255,255,255));
-			window.draw(invItemRect);
-		}*/
+		
 		window.draw(invRect);
+		if (play.inv.inv[i].id != -1) {
+			window.draw(invItemRect);
+		}
 	}
 }
+
+std::unordered_map<std::string, int> typeID = { {"stone", 0},{"wood", 1},{"no texture", 2}};
 
 void render(perlin p) {
 	std::unordered_map<std::string, objs::PlayerPixel> screenumap;
@@ -193,20 +196,20 @@ void render(perlin p) {
 			drops[i].x += (play.x-drops[i].x)/10;
 			drops[i].y += (play.y - drops[i].y) / 10;
 			if ((drops[i].x - play.x) < 1 && (drops[i].y - play.y) < 1 && (drops[i].x - play.x) > -1 && (drops[i].y - play.y) > -1) {
-
-				/*int found = play.inv.findItem(drops[i].id);
-				int fos = play.inv.firstOpenSlot();
-				if (found != -1) {
-					play.inv.inv[found].count += 1;
-				}
-				else if (fos != -1) {
-						play.inv.inv[fos].id = drops[i].id;
+				if (typeID.find(drops[i].name) != typeID.end()) {
+					int found = play.inv.findItem(typeID.at(drops[i].name));
+					int fos = play.inv.firstOpenSlot();
+					if (found != -1) {
+						play.inv.inv[found].count += 1;
+					}
+					else if (fos != -1) {
+						play.inv.inv[fos].id = typeID.at(drops[i].name);
 						play.inv.inv[fos].count = 1;
 					}
-				if (found != -1 || fos != -1) {
-					drops[i].markedForDeletion = true;
-				}*/
-				
+					if (found != -1 || fos != -1) {
+						drops[i].markedForDeletion = true;
+					}
+				}
 			}
 		}
 		int wi = drops[i].width;
@@ -442,12 +445,12 @@ void render(perlin p) {
 	perlz++;
 }
 
-void renderMinimap(int width, int x, int y, objs::Player* pla) {
+void renderMinimap(int widt, int x, int y, objs::Player* pla) {
 	int revScale = 10;
-	for (int j = y; j < y + width; j++) {
-		for (int i = x; i < x + width; i++) {
-			int localX = (int)(pla->x + ((i-x) * revScale) - ((width*revScale)/2));
-			int localY = (int)(pla->y + ((j-y) * revScale) - ((width*revScale)/2));
+	for (int j = y; j < y + widt; j++) {
+		for (int i = x; i < x + widt; i++) {
+			int localX = (int)(pla->x + ((i-x) * revScale) - ((widt*revScale)/2));
+			int localY = (int)(pla->y + ((j-y) * revScale) - ((widt*revScale)/2));
 			std::string keySpot = "" + std::to_string(localX) + ',' + std::to_string(localY);
 			if (worldmap.find(keySpot) != worldmap.end()) {
 				rect.setFillColor(worldmap.at(keySpot).col);
@@ -537,8 +540,8 @@ void generateWorld(std::unordered_map<std::string, objs::ColorBrick>* wmap, perl
 						rock.height = 15;
 						rock.thing = objs::Rock::makeRock();
 						rock.type = 1;
-						std::string keySpot = "" + std::to_string(floorX) + ',' + std::to_string(floorY);
-						fomap[keySpot] = rock;
+						std::string keySpot2 = "" + std::to_string(floorX) + ',' + std::to_string(floorY);
+						fomap[keySpot2] = rock;
 					}
 				}
 				else {
@@ -555,8 +558,8 @@ void generateWorld(std::unordered_map<std::string, objs::ColorBrick>* wmap, perl
 						tree.height = 25;
 						tree.thing = objs::Tree::makeTree();
 						tree.type = 0;
-						std::string keySpot = "" + std::to_string(floorX) + ',' + std::to_string(floorY);
-						fomap[keySpot] = tree;
+						std::string keySpot3 = "" + std::to_string(floorX) + ',' + std::to_string(floorY);
+						fomap[keySpot3] = tree;
 					}
 					insertIntoWorld(floorX, floorY, red, green, blue, a, elev, wmap, brick);
 

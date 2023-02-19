@@ -164,6 +164,9 @@ namespace jl {
 		}
 
 		void renderUI() {
+			text.setString("MimosDono Alpha v12.0.0");
+			text.setPosition(sf::Vector2f(0,0));
+			window.draw(text);
 			for (int i = 0; i < invTiles; i++) {
 				int invX = (minimapX * ts) + (i * invTileSpacing);
 				invRect.setPosition(sf::Vector2f(invX, invY));

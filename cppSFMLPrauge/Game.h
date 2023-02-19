@@ -113,10 +113,18 @@ namespace jl {
 		};
 		void pollEvents(sf::Event e) {
 			if (e.type == sf::Event::MouseButtonPressed) {
-				setClickPos();
-				mouseClicked = true;
-				clickTimer = 0;
+				if (e.mouseButton.button == sf::Mouse::Left) {
+					setClickPos();
+					mouseClicked = true;
+					clickTimer = 0;
+				}
+				if (e.mouseButton.button == sf::Mouse::Right) {
+					setClickPos();
+					objs::ColorBrick b(sf::Color(50,50,50), 10);
+					insertIntoWorld((int)(click.x / ts + camX), (int)(click.y / ts + camY), 50, 50, 50, 255, 10, &worldmap, b);
+				}
 			}
+
 			if (e.type == sf::Event::MouseButtonReleased) {
 				mouseClicked = false;
 			}

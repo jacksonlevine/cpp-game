@@ -46,6 +46,7 @@ int invTiles = 5;
 int invTileSpacing = (int)((float)(minimapWidth * ts) / invTiles)+(int)((float)ts/invTiles);
 int invY = (minimapY * ts) + (minimapWidth * ts) + 10;
 sf::RectangleShape invRect(sf::Vector2f((int)invTileSpacing - 7, (int)invTileSpacing -7));
+sf::RectangleShape invItemRect(sf::Vector2f(20, 20));
 
 int main() 
 {
@@ -170,6 +171,10 @@ void renderUI() {
 		else {
 			invRect.setOutlineThickness(0);
 		}
+		/*if (play.inv.inv[i].id != -1) {
+			invItemRect.setFillColor(sf::Color(255,255,255));
+			window.draw(invItemRect);
+		}*/
 		window.draw(invRect);
 	}
 }
@@ -188,7 +193,20 @@ void render(perlin p) {
 			drops[i].x += (play.x-drops[i].x)/10;
 			drops[i].y += (play.y - drops[i].y) / 10;
 			if ((drops[i].x - play.x) < 1 && (drops[i].y - play.y) < 1 && (drops[i].x - play.x) > -1 && (drops[i].y - play.y) > -1) {
-				drops[i].markedForDeletion = true;
+
+				/*int found = play.inv.findItem(drops[i].id);
+				int fos = play.inv.firstOpenSlot();
+				if (found != -1) {
+					play.inv.inv[found].count += 1;
+				}
+				else if (fos != -1) {
+						play.inv.inv[fos].id = drops[i].id;
+						play.inv.inv[fos].count = 1;
+					}
+				if (found != -1 || fos != -1) {
+					drops[i].markedForDeletion = true;
+				}*/
+				
 			}
 		}
 		int wi = drops[i].width;

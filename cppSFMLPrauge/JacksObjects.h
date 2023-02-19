@@ -317,21 +317,49 @@ namespace objs {
 	public:
 		int id = -1;
 		int count = -1;
+		InventorySlot() {
+			id = -1;
+			count = -1;
+		};
+		InventorySlot& operator=(const InventorySlot& other) {
+			id = other.id;
+			count = other.count;
+		}
 	};
 
 	class Inventory {
 	public:
 		static const int size = 35;
 		InventorySlot inv[size];
+		Inventory() {
+			for (int i = 0; i < size; i++) {
+				inv[i].id = -1;
+				inv[i].count = -1;
+			}
+		}
 		int findItem(int id) {
 			for (int i = 0; i < size; i++) {
 				if (inv[i].id == id) {
 					return i;
+					break;
+				}
+			}
+			return -1;
+		}
+		int firstOpenSlot() {
+			for (int i = 0; i < size; i++) {
+				if (inv[i].id == -1) {
+					return i;
+					break;
 				}
 			}
 			return -1;
 		}
 	};
+
+	
+
+
 
 	class Player{
 		std::string name = "";

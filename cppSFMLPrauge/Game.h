@@ -1,5 +1,5 @@
 #pragma once
-#include <SFML/Graphics/RenderStates.hpp>
+//#include <SFML/Graphics/RenderStates.hpp>
 #include "perlin.h"
 #include "perlin.cpp"
 #include "JacksObjects.h"
@@ -100,7 +100,7 @@ namespace jl {
 			generateWorld(&worldmap, p);
 
 			// Load it from a file
-			if (!font.loadFromFile("font.ttf"))
+			if (!font.loadFromFile("Akilvan.otf"))
 			{
 				std::cout << "Failed to load font";
 			}
@@ -373,6 +373,33 @@ namespace jl {
 										}
 									}
 								}
+								for (int f = he-1; f > 0; f--) {
+									for (int o = 0; o < wi; o++) {
+										char t = fop->thing[objs::clamp((f * wi) + o, 0, (wi * he) - 2)];
+										if (t != '0') {
+											std::string thisKeySpot = "" + std::to_string(floorX + o - (int)(wi / 2)) + ',' + std::to_string(floorY - f + he);
+											if (worldmap.find(thisKeySpot) != worldmap.end()) {
+												if (worldmap.at(thisKeySpot).col.a < 1) {
+													sf::Color c = opixref[t];
+													c.b += 25;
+													c.r -= 25;
+													c.g -= 55;
+													c.a = 255;
+													objs::ObjectBrick ob(c, fop->x, fop->y);
+													ob.point = fop;
+													if (opixmap.find(thisKeySpot) == opixmap.end()) {
+														opixmap[thisKeySpot] = ob;
+													}
+													else {
+														if (opixmap.at(thisKeySpot).oby < fop->y) {
+															opixmap[thisKeySpot] = ob;
+														}
+													}
+												}
+											}
+										}
+									}
+								}
 							}
 						}
 
@@ -404,24 +431,26 @@ namespace jl {
 					else
 						if (worldmap.find(keySpot) != worldmap.end() && justObj == false && isObjectPix == false)
 						{
-							rect.setFillColor(worldmap.at(keySpot).col);
-							rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
-							window.draw(rect);
-						}
-						else if (justObj == false && isObjectPix == false && std::abs(i) < ws && std::abs(j) < ws)
-						{
-
-							int n22 = std::floor(p.noise(i * 2.1, j * 0.2, 11.01 + (perlz / 500)) * 10);
-							int n32 = std::floor(p.noise(i * 5.1, j * 0.4, 11.01 + (perlz / 300)) * 4);
-							int n2Clamped = (std::min(std::max(n22 - n32 - 4, 0), 8)) % 4;
-							sf::Color col;
-							col.r = (15 * n2Clamped + 1);
-							col.g = (15 * n2Clamped);
-							col.b = (90 + (n2Clamped * 2));
-							col.a = 255;
-							rect.setFillColor(col);
-							rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
-							window.draw(rect);
+							if (worldmap.at(keySpot).col.a > 0) {
+								rect.setFillColor(worldmap.at(keySpot).col);
+								rect.setPosition(sf::Vector2f((i - camX)* ts, (j - camY)* ts));
+								window.draw(rect);
+							}
+							else {
+								int n22 = std::floor(p.noise(i * 2.1, j * 0.2, 11.01 + (perlz / 500)) * 10);
+								int n32 = std::floor(p.noise(i * 5.1, j * 0.4, 11.01 + (perlz / 300)) * 4);
+								int n2Clamped = (std::min(std::max(n22 - n32 - 4, 0), 8)) % 4;
+								float waterLight = std::max(worldmap.at(keySpot).elevation,0.0f)*10;
+								sf::Color col;
+								col.r = (7 * n2Clamped + 1 + (waterLight * 5));
+								col.g = (7 * n2Clamped + (waterLight * 5));
+								col.b = (45 + (n2Clamped * 2 )+(waterLight*5));
+								col.a = 255;
+								rect.setFillColor(col);
+								rect.setPosition(sf::Vector2f((i - camX)* ts, (j - camY)* ts));
+								window.draw(rect);
+							}
+							
 						}
 						else if (justObj == false && isObjectPix == false) {
 							int n22 = std::floor(p.noise(i * 2.1, j * 0.2, 11.01 + (perlz / 500)) * 10);
@@ -560,7 +589,7 @@ namespace jl {
 					}
 					else if (nClamped > sandLvl)
 					{
-						if (ln < 4.5) {
+						if (ln < 2) {
 							float red = std::min(25 + 5 * (nClamped * 3), 204.5);
 							float green = std::min(25 + 10 * (nClamped * 3), 204.5);
 							float blue = (2 * (nClamped * 3));
@@ -600,6 +629,14 @@ namespace jl {
 
 						}
 
+					}
+					else {
+						float red = (0);
+						float green = (0);
+						float blue = (0);
+						float a = (0);
+						float elev = nClamped;
+						insertIntoWorld(floorX, floorY, red, green, blue, a, elev, wmap, brick);
 					}
 
 				}

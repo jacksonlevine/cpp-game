@@ -382,8 +382,8 @@ namespace jl {
 												if (worldmap.at(thisKeySpot).col.a < 1) {
 													sf::Color c = opixref[t];
 													c.b += 25;
-													c.r -= 25;
-													c.g -= 55;
+													c.r = std::max(c.r - 25, 0);
+													c.g = std::max(c.g - 55, 0);
 													c.a = 255;
 													objs::ObjectBrick ob(c, fop->x, fop->y);
 													ob.point = fop;

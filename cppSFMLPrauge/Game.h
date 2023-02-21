@@ -12,10 +12,9 @@ namespace jl {
 
 		std::unordered_map<std::string, objs::ColorBrick> worldmap;
 		std::unordered_map<std::string, objs::FixedObject> fomap;
-		std::unordered_map<std::string, objs::ObjectBrick> opixmap;
 		std::unordered_map<std::string, objs::Player*> pmap;
 		std::unordered_map<char, sf::Color> opixref;
-		std::vector<std::string> mappedfos;
+
 		std::vector<objs::Particle> parts;
 		std::vector<objs::DroppedItem> drops;
 
@@ -215,6 +214,9 @@ namespace jl {
 		std::unordered_map<std::string, int> typeID = { {"stone", 0},{"wood", 1},{"no texture", 2} };
 
 		void render(perlin p) {
+
+			std::unordered_map<std::string, objs::ObjectBrick> opixmap;
+			std::vector<std::string> mappedfos;
 			std::unordered_map<std::string, objs::PlayerPixel> screenumap;
 			double currOffsetX = 0.0;
 			double currOffsetY = 0.0;
@@ -274,19 +276,14 @@ namespace jl {
 					{
 						int yoff = 0;
 						int yshrink = 0;
-						if (worldmap.find(keySpot) != worldmap.end()) {
-							yoff = std::floor(worldmap.at(keySpot).elevation);
-						}
-						else {
-							yshrink = 2;
-						}
-						int elevOs = std::floor(pmap.at(keySpot)->elevation / 5);
+
+						int elevOs = std::floor(pmap.at(keySpot)->elevation / 10);
 						if (pmap.at(keySpot)->jump == true) {
 							pmap.at(keySpot)->stepJump();
 						}
-						for (int a = 0 + yoff + std::max(yshrink - elevOs, 0) + elevOs; a < pmap.at(keySpot)->height + yoff + elevOs; a++)
+						for (int a =yoff ; a < pmap.at(keySpot)->height + yoff + elevOs; a++)
 						{
-							for (int l = 0; l < pmap.at(keySpot)->width; l++)
+							for (int l = 0; l < pmap.at(keySpot)->width+int(elevOs/2); l++)
 							{
 								sf::Color col;
 								col.r = 255;
@@ -351,7 +348,7 @@ namespace jl {
 						}
 						else {
 							if (std::find(mappedfos.begin(), mappedfos.end(), keySpot) == mappedfos.end()) {
-								mappedfos.push_back(keySpot);
+								//mappedfos.push_back(keySpot);
 								objs::FixedObject* fop = &fomap.at(keySpot);
 								int wi = fop->width;
 								int he = fop->height;
@@ -359,21 +356,82 @@ namespace jl {
 									for (int o = 0; o < wi; o++) {
 										char t = fop->thing[objs::clamp((f * wi) + o, 0, (wi * he) - 2)];
 										if (t != '0') {
-											std::string thisKeySpot = "" + std::to_string(floorX + o - (int)(wi / 2)) + ',' + std::to_string(floorY + f - he);
 											objs::ObjectBrick ob(opixref[t], fop->x, fop->y);
+											ob.elevation = he - f;
+											if (worldmap.find(keySpot) != worldmap.end()) {
+												ob.elevation += worldmap.at(keySpot).elevation;
+											}
+											int difference = (((floorY) - (int)play.y)*ob.elevation);
+											int differenceX = (((floorX)-(int)play.x) * ob.elevation);
+											int ksx = floorX + (int)((o * ob.elevation + (differenceX)) / 50) + (int)(wi / 2);
+											int ksy = floorY + (int)((f * ob.elevation + (difference)) / 50) - (he / 2);
+											std::string thisKeySpot = "" + std::to_string(ksx) + ',' + std::to_string(ksy);
+											std::string thisKeySpot1 = "" + std::to_string(ksx+1) + ',' + std::to_string(ksy);
+											std::string thisKeySpot2 = "" + std::to_string(ksx-1) + ',' + std::to_string(ksy);
+											std::string thisKeySpot3 = "" + std::to_string(ksx) + ',' + std::to_string(ksy+1);
+											std::string thisKeySpot4 = "" + std::to_string(ksx) + ',' + std::to_string(ksy-1);
+											std::string thisKeySpot5 = "" + std::to_string(ksx + 1) + ',' + std::to_string(ksy-1);
+											std::string thisKeySpot6 = "" + std::to_string(ksx - 1) + ',' + std::to_string(ksy-1);
+											std::string thisKeySpot7 = "" + std::to_string(ksx + 1) + ',' + std::to_string(ksy + 1);
+											std::string thisKeySpot8 = "" + std::to_string(ksx - 1) + ',' + std::to_string(ksy + 1);
+											
 											ob.point = fop;
 											if (opixmap.find(thisKeySpot) == opixmap.end()) {
-												opixmap[thisKeySpot] = ob;
+												if (t == 'l' || t == 'b') {
+													ob.col = opixref['l'];
+													opixmap[thisKeySpot] = ob;
+													opixmap[thisKeySpot1] = ob;
+													ob.col = opixref['b'];
+													opixmap[thisKeySpot2] = ob;
+													ob.col = opixref['l'];
+													opixmap[thisKeySpot3] = ob;
+													ob.col = opixref['b'];
+													opixmap[thisKeySpot4] = ob;
+													opixmap[thisKeySpot6] = ob;
+													ob.col = opixref['l'];
+													opixmap[thisKeySpot7] = ob;
+
+												}
+												else if (t == 't') {
+													ob.col = opixref['t'];
+													opixmap[thisKeySpot] = ob;
+													opixmap[thisKeySpot1] = ob;
+													
+													opixmap[thisKeySpot2] = ob;
+												}
+												else if (t == 'a' || t == 's' || t == 'n') {
+													ob.col = opixref['n'];
+													opixmap[thisKeySpot] = ob;
+													opixmap[thisKeySpot1] = ob;
+													ob.col = opixref['s'];
+													opixmap[thisKeySpot2] = ob;
+													ob.col = opixref['n'];
+													opixmap[thisKeySpot3] = ob;
+													ob.col = opixref['s'];
+													opixmap[thisKeySpot4] = ob;
+													opixmap[thisKeySpot6] = ob;
+													ob.col = opixref['n'];
+													opixmap[thisKeySpot7] = ob;
+												}
+
 											}
 											else {
 												if (opixmap.at(thisKeySpot).oby < fop->y) {
 													opixmap[thisKeySpot] = ob;
+													opixmap[thisKeySpot1] = ob;
+													opixmap[thisKeySpot2] = ob;
+													opixmap[thisKeySpot3] = ob;
+													opixmap[thisKeySpot4] = ob;
+													opixmap[thisKeySpot5] = ob;
+													opixmap[thisKeySpot6] = ob;
+													opixmap[thisKeySpot7] = ob;
+													opixmap[thisKeySpot8] = ob;
 												}
 											}
 										}
 									}
 								}
-								for (int f = he-1; f > 0; f--) {
+								for (int f = he - 1; f > 0; f--) {
 									for (int o = 0; o < wi; o++) {
 										char t = fop->thing[objs::clamp((f * wi) + o, 0, (wi * he) - 2)];
 										if (t != '0') {

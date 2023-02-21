@@ -129,6 +129,7 @@ namespace objs {
     sf::Color col;
     int obx = 0;
     int oby = 0;
+		float elevation = 0;
 		objs::FixedObject* point = 0;
     ObjectBrick() {
 
@@ -214,7 +215,7 @@ namespace objs {
 			float x = 0;
 			float y = 0;
 			int width = 3;
-			int height = 5;
+			int height = 3;
 			bool jump = false;
 			float elevation = 0;
 			float gravityForce = 0;

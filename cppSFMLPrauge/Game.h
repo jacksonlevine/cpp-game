@@ -276,14 +276,19 @@ namespace jl {
 					{
 						int yoff = 0;
 						int yshrink = 0;
-
-						int elevOs = std::floor(pmap.at(keySpot)->elevation / 10);
+						if (worldmap.find(keySpot) != worldmap.end()) {
+							yoff = std::floor(worldmap.at(keySpot).elevation);
+						}
+						else {
+							yshrink = 2;
+						}
+						int elevOs = std::floor(pmap.at(keySpot)->elevation / 5);
 						if (pmap.at(keySpot)->jump == true) {
 							pmap.at(keySpot)->stepJump();
 						}
-						for (int a =yoff ; a < pmap.at(keySpot)->height + yoff + elevOs; a++)
+						for (int a = 0 + yoff + std::max(yshrink - elevOs, 0) + elevOs; a < pmap.at(keySpot)->height + yoff + elevOs; a++)
 						{
-							for (int l = 0; l < pmap.at(keySpot)->width+int(elevOs/2); l++)
+							for (int l = 0; l < pmap.at(keySpot)->width; l++)
 							{
 								sf::Color col;
 								col.r = 255;
@@ -361,10 +366,10 @@ namespace jl {
 											if (worldmap.find(keySpot) != worldmap.end()) {
 												ob.elevation += worldmap.at(keySpot).elevation;
 											}
-											int difference = (((floorY) - (int)play.y)*ob.elevation);
+											int difference = (((floorY) - (int)(play.y+60))*ob.elevation);
 											int differenceX = (((floorX)-(int)play.x) * ob.elevation);
-											int ksx = floorX + (int)((o * ob.elevation + (differenceX)) / 50) + (int)(wi / 2);
-											int ksy = floorY + (int)((f * ob.elevation + (difference)) / 50) - (he / 2);
+											int ksx = floorX + (int)((o * ob.elevation + (differenceX)) / 50);
+											int ksy = floorY + (int)((f * 1 + (difference/2)) / 10)/4 ;
 											std::string thisKeySpot = "" + std::to_string(ksx) + ',' + std::to_string(ksy);
 											std::string thisKeySpot1 = "" + std::to_string(ksx+1) + ',' + std::to_string(ksy);
 											std::string thisKeySpot2 = "" + std::to_string(ksx-1) + ',' + std::to_string(ksy);

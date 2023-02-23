@@ -4,7 +4,7 @@
 #include "perlin.cpp"
 #include "JacksObjects.h"
 #include <iostream>
-sf::RenderWindow window(sf::VideoMode(1280, 720), "Window");
+sf::RenderWindow window(sf::VideoMode(1920, 1024), "Window");
 sf::Font font;
 namespace jl {
 	class Game {
@@ -21,7 +21,7 @@ namespace jl {
 		float camX = 0;
 		float camY = 0;
 		int ws = 500;
-		int ts = 11;
+		int ts = 15;
 		sf::Vector2f click;
 		bool mouseClicked = false;
 		float clickTimer = 0;
@@ -32,8 +32,8 @@ namespace jl {
 		int width;
 		int height;
 
-		int minimapX = 90;
-		int minimapY = 40;
+		int minimapX = 105;
+		int minimapY = 43;
 		int minimapWidth = 17;
 
 		objs::Player play;
@@ -99,7 +99,7 @@ namespace jl {
 			generateWorld(&worldmap, p);
 
 			// Load it from a file
-			if (!font.loadFromFile("Akilvan.otf"))
+			if (!font.loadFromFile("Akilvan.ttf"))
 			{
 				std::cout << "Failed to load font";
 			}
@@ -171,7 +171,7 @@ namespace jl {
 		}
 
 		void renderUI() {
-			text.setString("MimosDono Alpha v12.0.0");
+			text.setString("MimosDono Alpha v12.1.0");
 			text.setPosition(sf::Vector2f(0,0));
 			window.draw(text);
 			for (int i = 0; i < invTiles; i++) {
@@ -268,7 +268,7 @@ namespace jl {
 			}
 			for (int j = oboverscan + height + camY + 1; j > -oboverscan + 0 + camY - 1; j--)
 			{
-				for (int i = -oboverscan + 0 + camX - 1; i < width + camX + 1; i++)
+				for (int i = -oboverscan + 0 + camX - 1; i < width + camX + 1 + oboverscan; i++)
 				{
 					int floorX = std::floor(i);
 					int floorY = std::floor(j);
@@ -367,10 +367,10 @@ namespace jl {
 											if (worldmap.find(keySpot) != worldmap.end()) {
 												ob.elevation += worldmap.at(keySpot).elevation;
 											}
-											int difference = (((floorY)-(int)(play.y + 120)) * ob.elevation);
-											int differenceX = (((floorX-35)-(int)play.x) * ob.elevation);
-											int ksx = floorX + (int)((((o * 3) - 40) * ob.elevation + (differenceX/4)) / 50);
-											int ksy = floorY + (int)(((f * 3) + (difference / 8)) / 10) / 2;
+											int difference = (((floorY)-(int)(play.y + 150)) * ob.elevation);
+											int differenceX = (((floorX)-(int)play.x) * ob.elevation);
+											int ksx = floorX + (int)((((o * 3) - 35) * ob.elevation + (differenceX/4)) / 50);
+											int ksy = floorY -7 + (int)(((f * 8) + (difference / 14)) / 10) / 2;
 											std::string thisKeySpot = "" + std::to_string(ksx) + ',' + std::to_string(ksy);
 
 
@@ -476,9 +476,9 @@ namespace jl {
 								int n2Clamped = (std::min(std::max(n22 - n32 - 4, 0), 8)) % 4;
 								float waterLight = std::max(worldmap.at(keySpot).elevation, 0.0f) * 10;
 								sf::Color col;
-								col.r = (7 * n2Clamped + 1 + (waterLight * 5));
-								col.g = (7 * n2Clamped + (waterLight * 5));
-								col.b = (45 + (n2Clamped * 2) + (waterLight * 5));
+								col.r = (15 * n2Clamped + 1 + (waterLight * 5));
+								col.g = (15 * n2Clamped + (waterLight * 5));
+								col.b = (90 + (n2Clamped * 2) + (waterLight * 5));
 								col.a = 255;
 								rect.setFillColor(col);
 								rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
@@ -562,30 +562,32 @@ namespace jl {
 
 		void handleEvents(objs::Player* pla) {
 			float movement = 1;
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-			{
-				camX -= movement;
-				pla->move(-movement, 0, &pmap);
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-			{
-				camX += movement;
-				pla->move(movement, 0, &pmap);
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-			{
-				camY += movement;
-				pla->move(0, movement, &pmap);
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-			{
-				camY -= movement;
-				pla->move(0, -movement, &pmap);
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-			{
-				if (pla->jump == false) {
-					pla->jump = true;
+			if (window.hasFocus()) {
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+				{
+					camX -= movement;
+					pla->move(-movement, 0, &pmap);
+				}
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+				{
+					camX += movement;
+					pla->move(movement, 0, &pmap);
+				}
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+				{
+					camY += movement;
+					pla->move(0, movement, &pmap);
+				}
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+				{
+					camY -= movement;
+					pla->move(0, -movement, &pmap);
+				}
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+				{
+					if (pla->jump == false) {
+						pla->jump = true;
+					}
 				}
 			}
 		}

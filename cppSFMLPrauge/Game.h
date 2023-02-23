@@ -21,7 +21,7 @@ namespace jl {
 		float camX = 0;
 		float camY = 0;
 		int ws = 500;
-		int ts = 15;
+		int ts = 14;
 		sf::Vector2f click;
 		bool mouseClicked = false;
 		float clickTimer = 0;
@@ -32,8 +32,8 @@ namespace jl {
 		int width;
 		int height;
 
-		int minimapX = 105;
-		int minimapY = 43;
+		float minimapX = 113;
+		float minimapY = 47;
 		int minimapWidth = 17;
 
 		objs::Player play;
@@ -41,12 +41,13 @@ namespace jl {
 
 		int invTiles = 5;
 		int invTileSpacing = (int)((float)(minimapWidth * ts) / invTiles) + (int)((float)ts / invTiles);
-		int invY = (minimapY * ts) + (minimapWidth * ts) + 10;
+
 		sf::RectangleShape invRect;
 		sf::RectangleShape invItemRect;
 		perlin p;
 		bool test = false;
-
+		bool clickOnMinimap = false;
+		bool clickPositionSet = false;
 		double perlz = 0;
 		sf::Text text;
 
@@ -114,17 +115,30 @@ namespace jl {
 			if (e.type == sf::Event::MouseButtonPressed) {
 				if (e.mouseButton.button == sf::Mouse::Left) {
 					setClickPos();
-					mouseClicked = true;
-					clickTimer = 0;
+					if (click.x / ts > minimapX && click.y / ts > minimapY)
+					{
+						clickOnMinimap = true;
+					}
+					else {
+						mouseClicked = true;
+						clickTimer = 0;
+					}
+					
 				}
 				if (e.mouseButton.button == sf::Mouse::Right) {
+
 					setClickPos();
+
+
 					objs::ColorBrick b(sf::Color(50,50,50), 10);
 					insertIntoWorld((int)(click.x / ts + camX), (int)(click.y / ts + camY), 50, 50, 50, 255, 10, &worldmap, b);
 				}
 			}
 
 			if (e.type == sf::Event::MouseButtonReleased) {
+
+					clickOnMinimap = false;
+					clickPositionSet = false;
 				mouseClicked = false;
 			}
 
@@ -145,9 +159,25 @@ namespace jl {
 			window.clear(sf::Color::Black);
 			render(p);
 			renderMinimap(minimapWidth, minimapX, minimapY, &play);
+			moveGUIElements();
 			renderUI();
 			handleEvents(&play);
 			window.display();
+		}
+
+		void moveGUIElements() {
+			if (clickOnMinimap == true) 
+			{
+				float xPrev = click.x;
+				float yPrev = click.y;
+				setClickPos();
+				float xNow = click.x;
+				float yNow = click.y;
+				float xdiff = xNow - xPrev;
+				float ydiff = yNow - yPrev;
+				minimapX += xdiff/ts;
+				minimapY += ydiff/ts;
+			}
 		}
 
 		void setClickPos() {
@@ -174,7 +204,9 @@ namespace jl {
 			text.setString("MimosDono Alpha v12.1.0");
 			text.setPosition(sf::Vector2f(0,0));
 			window.draw(text);
+			int invY = (minimapY * ts) + (minimapWidth * ts) + 10;
 			for (int i = 0; i < invTiles; i++) {
+
 				int invX = (minimapX * ts) + (i * invTileSpacing);
 				invRect.setPosition(sf::Vector2f(invX, invY));
 				invRect.setFillColor((isMouseOver(&invRect) || selectedInv == i) ? sf::Color(50, 50, 50) : sf::Color(0, 0, 0));
@@ -477,8 +509,8 @@ namespace jl {
 								float waterLight = std::max(worldmap.at(keySpot).elevation, 0.0f) * 10;
 								sf::Color col;
 								col.r = (15 * n2Clamped + 1 + (waterLight * 5));
-								col.g = (15 * n2Clamped + (waterLight * 5));
-								col.b = (90 + (n2Clamped * 2) + (waterLight * 5));
+								col.g = (50 + n2Clamped + (waterLight * 5)+ (15 * n2Clamped));
+								col.b = (75 + (n2Clamped * 2) + (15 * n2Clamped) + (waterLight * 5));
 								col.a = 255;
 								rect.setFillColor(col);
 								rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
@@ -561,7 +593,7 @@ namespace jl {
 		}
 
 		void handleEvents(objs::Player* pla) {
-			float movement = 1;
+			float movement = 1.2;
 			if (window.hasFocus()) {
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 				{
@@ -617,9 +649,9 @@ namespace jl {
 					float waterLvl = 0.6;
 
 					if (nClamped > waterLvl && nClamped < sandLvl) {
-						float red = (25 + 320 * (nClamped / 10));
-						float green = (20 + 310 * (nClamped / 10));
-						float blue = (237 * (nClamped / 10));
+						float red = (70 + 320 * (nClamped / 10));
+						float green = (70 + 310 * (nClamped / 10));
+						float blue = (237 * (nClamped / 6));
 						float a = (255);
 						float elev = nClamped;
 						insertIntoWorld(floorX, floorY, red, green, blue, a, elev, wmap, brick);
@@ -672,7 +704,7 @@ namespace jl {
 						float green = (0);
 						float blue = (0);
 						float a = (0);
-						float elev = nClamped;
+						float elev = (nClamped/3)+1;
 						insertIntoWorld(floorX, floorY, red, green, blue, a, elev, wmap, brick);
 					}
 

@@ -35,7 +35,7 @@ namespace jl {
 		float minimapX = 113;
 		float minimapY = 47;
 		int minimapWidth = 17;
-
+		int invY = (minimapY * ts) + (minimapWidth * ts) + 10;
 		objs::Player play;
 		sf::Vector2u size;
 
@@ -50,6 +50,7 @@ namespace jl {
 		bool clickPositionSet = false;
 		double perlz = 0;
 		sf::Text text;
+		int testNum = -20;
 
 		sf::RectangleShape rect;
 		Game() {
@@ -66,13 +67,13 @@ namespace jl {
 			ocols.b = 12;
 			ocols.a = 255;
 			opixref['t'] = ocols;
-			ocols.r = 30;
-			ocols.g = 140;
+			ocols.r = 40;
+			ocols.g = 200;
 			ocols.b = 35;
 			ocols.a = 255;
 			opixref['l'] = ocols;
-			ocols.r = 10;
-			ocols.g = 75;
+			ocols.r = 36;
+			ocols.g = 150;
 			ocols.b = 26;
 			ocols.a = 255;
 			opixref['b'] = ocols;
@@ -115,7 +116,7 @@ namespace jl {
 			if (e.type == sf::Event::MouseButtonPressed) {
 				if (e.mouseButton.button == sf::Mouse::Left) {
 					setClickPos();
-					if (click.x / ts > minimapX && click.y / ts > minimapY)
+					if (click.x / ts > minimapX && click.y / ts > minimapY && click.x / ts < minimapX + minimapWidth && click.y / ts < minimapY + minimapWidth)
 					{
 						clickOnMinimap = true;
 					}
@@ -204,7 +205,7 @@ namespace jl {
 			text.setString("MimosDono Alpha v12.1.0");
 			text.setPosition(sf::Vector2f(0,0));
 			window.draw(text);
-			int invY = (minimapY * ts) + (minimapWidth * ts) + 10;
+
 			for (int i = 0; i < invTiles; i++) {
 
 				int invX = (minimapX * ts) + (i * invTileSpacing);
@@ -342,7 +343,7 @@ namespace jl {
 							for (int n = 0; n < dropCount; n++) {
 
 								float xOff = (int)(((float)std::rand() / RAND_MAX) * -7 + 3.5);
-								float yOff = (int)(((float)std::rand() / RAND_MAX) * -5 + 2.5);
+								float yOff = -12 + (int)(((float)std::rand() / RAND_MAX) * -5 + 2.5);
 
 								objs::DroppedItem d(fomap.at(keySpot).x + xOff, fomap.at(keySpot).y + yOff, (int)drops.size());
 								if (fomap.at(keySpot).type == 0) {
@@ -372,7 +373,7 @@ namespace jl {
 							for (int n = 0; n < 25; n++) {
 								objs::Particle pa;
 								pa.x = (((int)std::round(fomap.at(keySpot).x - ((fomap.at(keySpot).width / 2) * ((float)std::rand() / RAND_MAX)) + fomap.at(keySpot).width / 4)));
-								pa.y = ((int)std::round(fomap.at(keySpot).y - ((fomap.at(keySpot).height / 1.5) * ((float)std::rand() / RAND_MAX))));
+								pa.y = -15 + ((int)std::round(fomap.at(keySpot).y - ((fomap.at(keySpot).height / 1.5) * ((float)std::rand() / RAND_MAX))));
 								sf::Color c = opixref[fomap.at(keySpot).thing[((fomap.at(keySpot).height - 1) * fomap.at(keySpot).width) + (int)(fomap.at(keySpot).width / 2)]];
 								c.r += 50;
 								c.g += 50;
@@ -385,7 +386,7 @@ namespace jl {
 							opixmap.clear();
 						}
 						else {
-							if (std::find(mappedfos.begin(), mappedfos.end(), keySpot) == mappedfos.end()) {
+							if (true) {
 								//mappedfos.push_back(keySpot);
 								objs::FixedObject* fop = &fomap.at(keySpot);
 								int wi = fop->width;
@@ -402,7 +403,7 @@ namespace jl {
 											int difference = (((floorY)-(int)(play.y + 150)) * ob.elevation);
 											int differenceX = (((floorX)-(int)play.x) * ob.elevation);
 											int ksx = floorX + (int)((((o * 3) - 35) * ob.elevation + (differenceX/4)) / 50);
-											int ksy = floorY -7 + (int)(((f * 8) + (difference / 14)) / 10) / 2;
+											int ksy = floorY -20 + (int)(((f * 8) + (difference / 14)) / 10) / 2;
 											std::string thisKeySpot = "" + std::to_string(ksx) + ',' + std::to_string(ksy);
 
 
@@ -415,7 +416,7 @@ namespace jl {
 													{
 														objs::Particle pa;
 														pa.x = (((int)std::round(fomap.at(keySpot).x - ((fomap.at(keySpot).width / 2) * ((float)std::rand() / RAND_MAX)) + fomap.at(keySpot).width / 4)));
-														pa.y = ((int)std::round(fomap.at(keySpot).y - ((fomap.at(keySpot).height / 1.5) * ((float)std::rand() / RAND_MAX))));
+														pa.y = -15 + ((int)std::round(fomap.at(keySpot).y - ((fomap.at(keySpot).height / 1.5) * ((float)std::rand() / RAND_MAX))));
 														sf::Color c = opixref['l'];
 														pa.speedY = std::max(pa.speedY, 0.1f);
 														pa.speedX = ((float)std::rand() / RAND_MAX)-0.5f;
@@ -437,33 +438,40 @@ namespace jl {
 										}
 									}
 								}
-								for (int f = he - 1; f > 0; f--) {
+								for (int f = 0; f < he; f++) {
 									for (int o = 0; o < wi; o++) {
+										
 										char t = fop->thing[objs::clamp((f * wi) + o, 0, (wi * he) - 2)];
 										if (t != '0') {
-											std::string thisKeySpot = "" + std::to_string(floorX + o - (int)(wi / 2)) + ',' + std::to_string(floorY - f + he);
+											objs::ObjectBrick ob(opixref[t], fop->x, fop->y);
+											ob.elevation = he - f;
+											if (worldmap.find(keySpot) != worldmap.end()) {
+												ob.elevation += worldmap.at(keySpot).elevation;
+											}
+											int difference = (((floorY)-(int)(play.y + 150)) * ob.elevation);
+											int differenceX = (((floorX)-(int)play.x) * ob.elevation);
+											int ksx = floorX + (int)((((o * 3) - 35) * ob.elevation + (differenceX / 4)) / 50);
+											int ksy = floorY -5 - (int)((((f * 8) + (difference / 14)) / 10) / 2);
+											std::string thisKeySpot = "" + std::to_string(ksx) + ',' + std::to_string(ksy);
+
+											ob.col.b = std::max(ob.col.b + 10, 0);
+											ob.col.r = std::max(ob.col.r - 100, 0);
+											ob.col.g = std::max(ob.col.g - 100, 0);
+
+											ob.point = fop;
 											if (worldmap.find(thisKeySpot) != worldmap.end()) {
-												if (worldmap.at(thisKeySpot).col.a < 1) {
-													sf::Color c = opixref[t];
-													c.b += 25;
-													c.r = std::max(c.r - 25, 0);
-													c.g = std::max(c.g - 55, 0);
-													c.a = 255;
-													objs::ObjectBrick ob(c, fop->x, fop->y);
-													ob.point = fop;
-													if (opixmap.find(thisKeySpot) == opixmap.end()) {
-														opixmap[thisKeySpot] = ob;
-													}
-													else {
-														if (opixmap.at(thisKeySpot).oby < fop->y) {
-															opixmap[thisKeySpot] = ob;
-														}
-													}
+												if (worldmap.at(thisKeySpot).isWater == true) {
+													opixmap[thisKeySpot] = ob;
 												}
 											}
+												
+
+
 										}
 									}
 								}
+
+
 							}
 						}
 
@@ -490,6 +498,11 @@ namespace jl {
 								if (opixmap.at(keySpot).oby < screenumap.at(keySpot).py) {
 									rect.setFillColor(screenumap.at(keySpot).col);
 									rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
+									window.draw(rect);
+								}
+								else {
+									rect.setFillColor(opixmap.at(keySpot).col);
+									rect.setPosition(sf::Vector2f((i - camX)* ts, (j - camY)* ts));
 									window.draw(rect);
 								}
 							}
@@ -556,7 +569,7 @@ namespace jl {
 						for (int n = 0; n < 1; n++) {
 							objs::Particle pa;
 							pa.x = (((int)std::round(opixmap.at(keySpot).obx - ((opixmap.at(keySpot).point->width / 2) * ((float)std::rand() / RAND_MAX)) + opixmap.at(keySpot).point->width / 4)));
-							pa.y = ((int)std::round(opixmap.at(keySpot).oby - ((opixmap.at(keySpot).point->height / 1.5) * ((float)std::rand() / RAND_MAX))));
+							pa.y = -15 + ((int)std::round(opixmap.at(keySpot).oby - ((opixmap.at(keySpot).point->height / 1.5) * ((float)std::rand() / RAND_MAX))));
 							sf::Color c = opixmap.at(keySpot).col;
 							c.r += 50;
 							c.g += 50;
@@ -595,6 +608,9 @@ namespace jl {
 		void handleEvents(objs::Player* pla) {
 			float movement = 1.2;
 			if (window.hasFocus()) {
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::K)) {
+					testNum += 1;
+				}
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 				{
 					camX -= movement;
@@ -649,6 +665,7 @@ namespace jl {
 					float waterLvl = 0.6;
 
 					if (nClamped > waterLvl && nClamped < sandLvl) {
+						brick.isWater = false;
 						float red = (70 + 320 * (nClamped / 10));
 						float green = (70 + 310 * (nClamped / 10));
 						float blue = (237 * (nClamped / 6));
@@ -659,6 +676,7 @@ namespace jl {
 					else if (nClamped > sandLvl)
 					{
 						if (ln < 2) {
+							brick.isWater = false;
 							float red = std::min(25 + 5 * (nClamped * 3), 204.5);
 							float green = std::min(25 + 10 * (nClamped * 3), 204.5);
 							float blue = (2 * (nClamped * 3));
@@ -676,8 +694,10 @@ namespace jl {
 								std::string keySpot2 = "" + std::to_string(floorX) + ',' + std::to_string(floorY);
 								fomap[keySpot2] = rock;
 							}
+							
 						}
 						else {
+							brick.isWater = false;
 							float red = (25 + 17 * nClamped + (n4 * 100));
 							float green = (25 + 10 * nClamped + (n4 * 100));
 							float blue = (std::min(9 * nClamped + (n4 * 30), 50.0));
@@ -700,11 +720,23 @@ namespace jl {
 
 					}
 					else {
+						if (std::rand() > 32700) {
+							objs::FixedObject tree;
+							tree.x = floorX;
+							tree.y = floorY;
+							tree.width = 26;
+							tree.height = 25;
+							tree.thing = objs::Tree::makeTree();
+							tree.type = 0;
+							std::string keySpot3 = "" + std::to_string(floorX) + ',' + std::to_string(floorY);
+							fomap[keySpot3] = tree;
+						}
 						float red = (0);
 						float green = (0);
 						float blue = (0);
 						float a = (0);
 						float elev = (nClamped/3)+1;
+						brick.isWater = true;
 						insertIntoWorld(floorX, floorY, red, green, blue, a, elev, wmap, brick);
 					}
 

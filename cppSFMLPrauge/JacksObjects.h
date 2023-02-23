@@ -12,6 +12,7 @@ namespace objs {
 	public:
 		sf::Color col;
 		float elevation;
+		bool isWater = false;
     ColorBrick(sf::Color c, float elev) {
       col = c;
       elevation = elev;

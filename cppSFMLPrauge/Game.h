@@ -212,6 +212,7 @@ namespace jl {
 		}
 
 		std::unordered_map<std::string, int> typeID = { {"stone", 0},{"wood", 1},{"no texture", 2} };
+		int oboverscan = 20;
 
 		void render(perlin p) {
 
@@ -265,9 +266,9 @@ namespace jl {
 					std::erase(drops, drops[i]);
 				}
 			}
-			for (int j = height + camY + 1; j > 0 + camY - 1; j--)
+			for (int j = oboverscan + height + camY + 1; j > -oboverscan + 0 + camY - 1; j--)
 			{
-				for (int i = 0 + camX - 1; i < width + camX + 1; i++)
+				for (int i = -oboverscan + 0 + camX - 1; i < width + camX + 1; i++)
 				{
 					int floorX = std::floor(i);
 					int floorY = std::floor(j);
@@ -282,7 +283,7 @@ namespace jl {
 						else {
 							yshrink = 2;
 						}
-						int elevOs = std::floor(pmap.at(keySpot)->elevation / 5);
+						int elevOs = std::floor(pmap.at(keySpot)->elevation / 10);
 						if (pmap.at(keySpot)->jump == true) {
 							pmap.at(keySpot)->stepJump();
 						}
@@ -366,71 +367,39 @@ namespace jl {
 											if (worldmap.find(keySpot) != worldmap.end()) {
 												ob.elevation += worldmap.at(keySpot).elevation;
 											}
-											int difference = (((floorY) - (int)(play.y+60))*ob.elevation);
-											int differenceX = (((floorX)-(int)play.x) * ob.elevation);
-											int ksx = floorX + (int)((o * ob.elevation + (differenceX)) / 50);
-											int ksy = floorY + (int)((f * 1 + (difference/2)) / 10)/4 ;
+											int difference = (((floorY)-(int)(play.y + 120)) * ob.elevation);
+											int differenceX = (((floorX-35)-(int)play.x) * ob.elevation);
+											int ksx = floorX + (int)((((o * 3) - 40) * ob.elevation + (differenceX/4)) / 50);
+											int ksy = floorY + (int)(((f * 3) + (difference / 8)) / 10) / 2;
 											std::string thisKeySpot = "" + std::to_string(ksx) + ',' + std::to_string(ksy);
-											std::string thisKeySpot1 = "" + std::to_string(ksx+1) + ',' + std::to_string(ksy);
-											std::string thisKeySpot2 = "" + std::to_string(ksx-1) + ',' + std::to_string(ksy);
-											std::string thisKeySpot3 = "" + std::to_string(ksx) + ',' + std::to_string(ksy+1);
-											std::string thisKeySpot4 = "" + std::to_string(ksx) + ',' + std::to_string(ksy-1);
-											std::string thisKeySpot5 = "" + std::to_string(ksx + 1) + ',' + std::to_string(ksy-1);
-											std::string thisKeySpot6 = "" + std::to_string(ksx - 1) + ',' + std::to_string(ksy-1);
-											std::string thisKeySpot7 = "" + std::to_string(ksx + 1) + ',' + std::to_string(ksy + 1);
-											std::string thisKeySpot8 = "" + std::to_string(ksx - 1) + ',' + std::to_string(ksy + 1);
-											
+
+
+
 											ob.point = fop;
 											if (opixmap.find(thisKeySpot) == opixmap.end()) {
-												if (t == 'l' || t == 'b') {
-													ob.col = opixref['l'];
-													opixmap[thisKeySpot] = ob;
-													opixmap[thisKeySpot1] = ob;
-													ob.col = opixref['b'];
-													opixmap[thisKeySpot2] = ob;
-													ob.col = opixref['l'];
-													opixmap[thisKeySpot3] = ob;
-													ob.col = opixref['b'];
-													opixmap[thisKeySpot4] = ob;
-													opixmap[thisKeySpot6] = ob;
-													ob.col = opixref['l'];
-													opixmap[thisKeySpot7] = ob;
+												if (ob.col == opixref['l'])
+												{
+													if ((float)std::rand() / RAND_MAX > 0.9999) 
+													{
+														objs::Particle pa;
+														pa.x = (((int)std::round(fomap.at(keySpot).x - ((fomap.at(keySpot).width / 2) * ((float)std::rand() / RAND_MAX)) + fomap.at(keySpot).width / 4)));
+														pa.y = ((int)std::round(fomap.at(keySpot).y - ((fomap.at(keySpot).height / 1.5) * ((float)std::rand() / RAND_MAX))));
+														sf::Color c = opixref['l'];
+														pa.speedY = std::max(pa.speedY, 0.1f);
+														pa.speedX = ((float)std::rand() / RAND_MAX)-0.5f;
+														pa.col = c;
+														parts.push_back(pa);
+													}
+												}
+												opixmap[thisKeySpot] = ob;
 
-												}
-												else if (t == 't') {
-													ob.col = opixref['t'];
-													opixmap[thisKeySpot] = ob;
-													opixmap[thisKeySpot1] = ob;
-													
-													opixmap[thisKeySpot2] = ob;
-												}
-												else if (t == 'a' || t == 's' || t == 'n') {
-													ob.col = opixref['n'];
-													opixmap[thisKeySpot] = ob;
-													opixmap[thisKeySpot1] = ob;
-													ob.col = opixref['s'];
-													opixmap[thisKeySpot2] = ob;
-													ob.col = opixref['n'];
-													opixmap[thisKeySpot3] = ob;
-													ob.col = opixref['s'];
-													opixmap[thisKeySpot4] = ob;
-													opixmap[thisKeySpot6] = ob;
-													ob.col = opixref['n'];
-													opixmap[thisKeySpot7] = ob;
-												}
 
 											}
 											else {
 												if (opixmap.at(thisKeySpot).oby < fop->y) {
 													opixmap[thisKeySpot] = ob;
-													opixmap[thisKeySpot1] = ob;
-													opixmap[thisKeySpot2] = ob;
-													opixmap[thisKeySpot3] = ob;
-													opixmap[thisKeySpot4] = ob;
-													opixmap[thisKeySpot5] = ob;
-													opixmap[thisKeySpot6] = ob;
-													opixmap[thisKeySpot7] = ob;
-													opixmap[thisKeySpot8] = ob;
+
+
 												}
 											}
 										}
@@ -467,53 +436,55 @@ namespace jl {
 						}
 
 					}
-					bool isObjectPix = false;
-					if (opixmap.find(keySpot) != opixmap.end()) {
-
-						rect.setFillColor(opixmap.at(keySpot).col);
-						rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
-						window.draw(rect);
-						isObjectPix = true;
-					}
-
-					if (screenumap.find(keySpot) != screenumap.end() && justObj == false)
+					if (i > camX - 1 && i < width + camX + 1 && j > 0 + camY - 1 && j < height + camY + 1)
 					{
-						if (opixmap.find(keySpot) == opixmap.end()) {
-							rect.setFillColor(screenumap.at(keySpot).col);
+							bool isObjectPix = false;
+						if (opixmap.find(keySpot) != opixmap.end()) {
+
+							rect.setFillColor(opixmap.at(keySpot).col);
 							rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
 							window.draw(rect);
+							isObjectPix = true;
 						}
-						else {
-							if (opixmap.at(keySpot).oby < screenumap.at(keySpot).py) {
+
+						if (screenumap.find(keySpot) != screenumap.end() && justObj == false)
+						{
+							if (opixmap.find(keySpot) == opixmap.end()) {
 								rect.setFillColor(screenumap.at(keySpot).col);
 								rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
 								window.draw(rect);
 							}
+							else {
+								if (opixmap.at(keySpot).oby < screenumap.at(keySpot).py) {
+									rect.setFillColor(screenumap.at(keySpot).col);
+									rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
+									window.draw(rect);
+								}
+							}
 						}
-					}
-					else
+						else
 						if (worldmap.find(keySpot) != worldmap.end() && justObj == false && isObjectPix == false)
 						{
 							if (worldmap.at(keySpot).col.a > 0) {
 								rect.setFillColor(worldmap.at(keySpot).col);
-								rect.setPosition(sf::Vector2f((i - camX)* ts, (j - camY)* ts));
+								rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
 								window.draw(rect);
 							}
 							else {
 								int n22 = std::floor(p.noise(i * 2.1, j * 0.2, 11.01 + (perlz / 500)) * 10);
 								int n32 = std::floor(p.noise(i * 5.1, j * 0.4, 11.01 + (perlz / 300)) * 4);
 								int n2Clamped = (std::min(std::max(n22 - n32 - 4, 0), 8)) % 4;
-								float waterLight = std::max(worldmap.at(keySpot).elevation,0.0f)*10;
+								float waterLight = std::max(worldmap.at(keySpot).elevation, 0.0f) * 10;
 								sf::Color col;
 								col.r = (7 * n2Clamped + 1 + (waterLight * 5));
 								col.g = (7 * n2Clamped + (waterLight * 5));
-								col.b = (45 + (n2Clamped * 2 )+(waterLight*5));
+								col.b = (45 + (n2Clamped * 2) + (waterLight * 5));
 								col.a = 255;
 								rect.setFillColor(col);
-								rect.setPosition(sf::Vector2f((i - camX)* ts, (j - camY)* ts));
+								rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
 								window.draw(rect);
 							}
-							
+
 						}
 						else if (justObj == false && isObjectPix == false) {
 							int n22 = std::floor(p.noise(i * 2.1, j * 0.2, 11.01 + (perlz / 500)) * 10);
@@ -528,6 +499,7 @@ namespace jl {
 							rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
 							window.draw(rect);
 						}
+					}
 				}
 			}
 			int pCount = parts.size();

@@ -66,13 +66,13 @@ namespace jl {
 			ocols.b = 12;
 			ocols.a = 255;
 			opixref['t'] = ocols;
-			ocols.r = 40;
-			ocols.g = 200;
+			ocols.r = 30;
+			ocols.g = 140;
 			ocols.b = 35;
 			ocols.a = 255;
 			opixref['l'] = ocols;
-			ocols.r = 36;
-			ocols.g = 150;
+			ocols.r = 10;
+			ocols.g = 75;
 			ocols.b = 26;
 			ocols.a = 255;
 			opixref['b'] = ocols;

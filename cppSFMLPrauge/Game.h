@@ -49,6 +49,7 @@ namespace jl {
 		bool clickOnMinimap = false;
 		bool clickPositionSet = false;
 		double perlz = 0;
+		double perlz2 = 0;
 		sf::Text text;
 		int testNum = -20;
 
@@ -450,18 +451,30 @@ namespace jl {
 											}
 											int difference = (((floorY)-(int)(play.y + 150)) * ob.elevation);
 											int differenceX = (((floorX)-(int)play.x) * ob.elevation);
+											int n22 = std::floor(p.noise((o+i) * 0.1, (o + i) * 0.2, 11.01 + (perlz2 / 500)) * 10);
+											int n32 = std::floor(p.noise((f+j) * 0.1, (f+j) * 0.4, 11.01 + (perlz2 / 300)) * 4);
+											int n2Clamped = (std::min(std::max(n22 - n32 - 4, -8), 8)) ;
 											int ksx = floorX + (int)((((o * 3) - 35) * ob.elevation + (differenceX / 4)) / 50);
-											int ksy = floorY -5 - (int)((((f * 8) + (difference / 14)) / 10) / 2);
+											int ksy = (n2Clamped/2) + floorY -5 - (int)((((f * 8) + (difference / 14)) / 10) / 2);
 											std::string thisKeySpot = "" + std::to_string(ksx) + ',' + std::to_string(ksy);
 
-											ob.col.b = std::max(ob.col.b + 10, 0);
-											ob.col.r = std::max(ob.col.r - 100, 0);
-											ob.col.g = std::max(ob.col.g - 100, 0);
+											ob.col.b = std::max(ob.col.b + 30, 0);
+											ob.col.r = std::max(ob.col.r - 50, 0);
+											ob.col.g = std::max(ob.col.g - 50, 0);
 
 											ob.point = fop;
-											if (worldmap.find(thisKeySpot) != worldmap.end()) {
-												if (worldmap.at(thisKeySpot).isWater == true) {
-													opixmap[thisKeySpot] = ob;
+											if (opixmap.find(thisKeySpot) == opixmap.end()) {
+												if (worldmap.find(thisKeySpot) != worldmap.end()) {
+													if (worldmap.at(thisKeySpot).isWater == true) {
+														opixmap[thisKeySpot] = ob;
+													}
+												}
+											}
+											else {
+												if (opixmap.at(thisKeySpot).oby < fop->y) {
+													if (worldmap.at(thisKeySpot).isWater == true) {
+														opixmap[thisKeySpot] = ob;
+													}
 												}
 											}
 												
@@ -470,6 +483,7 @@ namespace jl {
 										}
 									}
 								}
+								perlz2+= .5;
 
 
 							}

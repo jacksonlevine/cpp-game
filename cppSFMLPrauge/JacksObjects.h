@@ -220,7 +220,7 @@ namespace objs {
 			bool jump = false;
 			float elevation = 0;
 			float gravityForce = 0;
-			int jumpForce = 10;
+			int jumpForce = 20;
 
 			Player() {
 
@@ -254,8 +254,8 @@ namespace objs {
 		void stepJump() {
 			if (jump == true) {
 				if (elevation >= 0) {
-					elevation += (jumpForce - gravityForce)/2;
-					gravityForce+=.4;
+					elevation += (jumpForce - gravityForce);
+					gravityForce+=1.6;
 				}
 				else {
 					jump = false;

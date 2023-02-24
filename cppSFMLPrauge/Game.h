@@ -20,7 +20,7 @@ namespace jl {
 
 		float camX = 0;
 		float camY = 0;
-		int ws = 500;
+		int ws = 250;
 		int ts = 14;
 		sf::Vector2f click;
 		bool mouseClicked = false;
@@ -34,7 +34,7 @@ namespace jl {
 
 		float minimapX = 113;
 		float minimapY = 47;
-		int minimapWidth = 17;
+		int minimapWidth = 20;
 		int invY = (minimapY * ts) + (minimapWidth * ts) + 10;
 		objs::Player play;
 		sf::Vector2u size;
@@ -413,6 +413,11 @@ namespace jl {
 											if (opixmap.find(thisKeySpot) == opixmap.end()) {
 												if (ob.col == opixref['l'])
 												{
+													int n22 = std::floor(p.noise((o + i) * 0.1, (o + i) * 0.2, 11.01 + (perlz2 / 500)) * 10);
+													int n32 = std::floor(p.noise((f + j) * 0.1, (f + j) * 0.4, 11.01 + (perlz2 / 300)) * 4);
+
+													int n2Clamped = (std::min(std::max(n22 - n32 - 4, -8), 8));
+													thisKeySpot = "" + std::to_string((n2Clamped/4)+ksx) + ',' + std::to_string(ksy);
 													if ((float)std::rand() / RAND_MAX > 0.9999) 
 													{
 														objs::Particle pa;
@@ -454,8 +459,9 @@ namespace jl {
 											int n22 = std::floor(p.noise((o+i) * 0.1, (o + i) * 0.2, 11.01 + (perlz2 / 500)) * 10);
 											int n32 = std::floor(p.noise((f+j) * 0.1, (f+j) * 0.4, 11.01 + (perlz2 / 300)) * 4);
 											int n2Clamped = (std::min(std::max(n22 - n32 - 4, -8), 8)) ;
+											int off = (fop->type == 0) ? 18 : 0;
 											int ksx = floorX + (int)((((o * 3) - 35) * ob.elevation + (differenceX / 4)) / 50);
-											int ksy = (n2Clamped/2) + floorY -5 - (int)((((f * 8) + (difference / 14)) / 10) / 2);
+											int ksy = (n2Clamped/8) + floorY -(he+3-off) - (int)((((f /8) + (difference / 14)) / 10) / 2);
 											std::string thisKeySpot = "" + std::to_string(ksx) + ',' + std::to_string(ksy);
 
 											ob.col.b = std::max(ob.col.b + 30, 0);
@@ -483,7 +489,7 @@ namespace jl {
 										}
 									}
 								}
-								perlz2+= .5;
+								perlz2+= .1;
 
 
 							}
@@ -535,7 +541,7 @@ namespace jl {
 								int n2Clamped = (std::min(std::max(n22 - n32 - 4, 0), 8)) % 4;
 								float waterLight = std::max(worldmap.at(keySpot).elevation, 0.0f) * 10;
 								sf::Color col;
-								col.r = (15 * n2Clamped + 1 + (waterLight * 5));
+								col.r = (1 * n2Clamped + 1 + (waterLight * 5));
 								col.g = (50 + n2Clamped + (waterLight * 5)+ (15 * n2Clamped));
 								col.b = (75 + (n2Clamped * 2) + (15 * n2Clamped) + (waterLight * 5));
 								col.a = 255;
@@ -604,16 +610,23 @@ namespace jl {
 		}
 
 		void renderMinimap(int widt, int x, int y, objs::Player* pla) {
-			int revScale = 10;
+			int revScale = 20;
 			for (int j = y; j < y + widt; j++) {
 				for (int i = x; i < x + widt; i++) {
 					int localX = (int)(pla->x + ((i - x) * revScale) - ((widt * revScale) / 2));
 					int localY = (int)(pla->y + ((j - y) * revScale) - ((widt * revScale) / 2));
 					std::string keySpot = "" + std::to_string(localX) + ',' + std::to_string(localY);
 					if (worldmap.find(keySpot) != worldmap.end()) {
-						rect.setFillColor(worldmap.at(keySpot).col);
-						rect.setPosition(sf::Vector2f(i * ts, j * ts));
-						window.draw(rect);
+						if (worldmap.at(keySpot).isWater != true) {
+							rect.setFillColor(worldmap.at(keySpot).col);
+							rect.setPosition(sf::Vector2f(i * ts, j * ts));
+							window.draw(rect);
+						}
+						else {
+							rect.setFillColor(sf::Color::Blue);
+							rect.setPosition(sf::Vector2f(i * ts, j * ts));
+							window.draw(rect);
+						}
 					}
 				}
 			}

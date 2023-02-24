@@ -461,12 +461,13 @@ namespace jl {
 											int n2Clamped = (std::min(std::max(n22 - n32 - 4, -8), 8)) ;
 											int off = (fop->type == 0) ? 18 : 0;
 											int ksx = floorX + (int)((((o * 3) - 35) * ob.elevation + (differenceX / 4)) / 50);
-											int ksy = (n2Clamped/8) + floorY -(he+3-off) - (int)((((f /8) + (difference / 14)) / 10) / 2);
+											int ksy = (n2Clamped/2) + floorY -(he+3-off) - (int)((((f /8) + (difference / 14)) / 10) / 2);
 											std::string thisKeySpot = "" + std::to_string(ksx) + ',' + std::to_string(ksy);
 
-											ob.col.b = std::max(ob.col.b + 30, 0);
-											ob.col.r = std::max(ob.col.r - 50, 0);
-											ob.col.g = std::max(ob.col.g - 50, 0);
+											ob.col.b = std::min(std::max((int)ob.col.b, 25), 150);
+											ob.col.r = std::min(std::max((int)ob.col.r , 25), 150);
+											ob.col.g = std::min(std::max((int)ob.col.g, 25), 150);
+											ob.col.a = 120;
 
 											ob.point = fop;
 											if (opixmap.find(thisKeySpot) == opixmap.end()) {
@@ -544,7 +545,7 @@ namespace jl {
 								col.r = (1 * n2Clamped + 1 + (waterLight * 5));
 								col.g = (50 + n2Clamped + (waterLight * 5)+ (15 * n2Clamped));
 								col.b = (75 + (n2Clamped * 2) + (15 * n2Clamped) + (waterLight * 5));
-								col.a = 255;
+								col.a = 120;
 								rect.setFillColor(col);
 								rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
 								window.draw(rect);
@@ -559,7 +560,7 @@ namespace jl {
 							col.r = (15 * n2Clamped + 1);
 							col.g = (15 * n2Clamped);
 							col.b = (90 + (n2Clamped * 2));
-							col.a = 255;
+							col.a = 120;
 							rect.setFillColor(col);
 							rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
 							window.draw(rect);

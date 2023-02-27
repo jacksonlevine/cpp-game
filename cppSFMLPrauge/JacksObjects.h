@@ -3,23 +3,23 @@
 #include <unordered_map>
 #include "SFML/Graphics.hpp"
 #include <chrono>
-
-namespace objs {
-
+namespace objs
+{
   int clamp(int val, int min, int max);
-
-	class ColorBrick {
+	class ColorBrick
+	{
 	public:
 		sf::Color col;
 		float elevation;
 		bool isWater = false;
-    ColorBrick(sf::Color c, float elev) {
+    ColorBrick(sf::Color c, float elev)
+		{
       col = c;
       elevation = elev;
     };
 	};
-
-	class FixedObject {
+	class FixedObject
+	{
 	public:
 		int width = 0;
 		int height = 0;
@@ -28,13 +28,13 @@ namespace objs {
 		int y = 0;
 		int strength = 10;
 		std::string thing;
-
-		void clickEvent() {
+		void clickEvent()
+		{
 			strength -= 1;
 		}
 	};
-
-	class DroppedItem {
+	class DroppedItem
+	{
 	public:
 		bool markedForDeletion = false;
 		float x = 0;
@@ -55,17 +55,18 @@ namespace objs {
 		float yTravel = 0;
 		float maxYTravel = ((float)std::rand() / RAND_MAX) * 7;
 		std::string thing = "";
-		DroppedItem(float ax, float ay, int i) {
+		DroppedItem(float ax, float ay, int i)
+		{
 			x = ax;
 			y = ay;
 			id = i;
 		};
-
 		void update()
 		{
 			x += speedX / 4;
 			speedX *= .95;
-			if (std::abs(yTravel) < maxYTravel) {
+			if (std::abs(yTravel) < maxYTravel)
+			{
 				y += speedY / 4;
 				yTravel += speedY / 4;
 			}
@@ -76,18 +77,19 @@ namespace objs {
 			elevation = y1/3;
 		} 
 	};
-
 	bool operator==(const DroppedItem& a, const DroppedItem& b)
 	{
-		if (a.id == b.id) {
+		if (a.id == b.id)
+		{
 			return true;
 		}
-		else {
+		else
+		{
 			return false;
 		}
 	}
-
-	class Particle {
+	class Particle
+	{
 	public:
 		int life = 35;
 		int timer = 0;
@@ -97,119 +99,129 @@ namespace objs {
 		float speedX = ((float)std::rand() / RAND_MAX) * 5 - 2;
 		float speedY = ((float)std::rand() / RAND_MAX) * 5 - 2;
 		float yTravel = 0;
-		float maxYTravel = ((float)std::rand() / RAND_MAX) * 7;
-
-		Particle() {
-
+		float maxYTravel = ((float)std::rand() / RAND_MAX) * 8;
+		Particle()
+		{
 		};
-
-		void update() {
-			x += speedX/4;
-			speedX *= .95;
-			if (yTravel < maxYTravel) {
-				y += speedY / 4;
+		void update()
+		{
+			x += speedX/2;
+			speedX *= .90;
+			if (yTravel < maxYTravel)
+			{
+				y += speedY / 2;
 				yTravel += speedY / 4;
 			}
 			speedY += .1;
 			timer += 1;
 		}
 	};
-
 	bool operator==(const Particle& x, const Particle& y)
 	{
-		if (x.x == y.x && x.y == y.y) {
+		if (x.x == y.x && x.y == y.y)
+		{
 			return true;
 		}
-		else {
+		else
+		{
 			return false;
 		}
 	}
-  
-  class ObjectBrick {
+  class ObjectBrick
+	{
   public:
     sf::Color col;
     int obx = 0;
     int oby = 0;
 		float elevation = 0;
 		objs::FixedObject* point = 0;
-    ObjectBrick() {
-
+    ObjectBrick()
+		{
     };
-    ObjectBrick(sf::Color c, int ox, int oy) {
+    ObjectBrick(sf::Color c, int ox, int oy)
+		{
       obx = ox;
       oby = oy;
       col = c;
     };
   };
-
-
-
-	float getRandom() {
+	float getRandom()
+	{
 		return (float)std::rand() / RAND_MAX;
 	}
-
-  class PlayerPixel {
+  class PlayerPixel
+	{
   public:
     sf::Color col;
     int px = 0;
     int py = 0;
-    PlayerPixel() {
-
+    PlayerPixel()
+		{
     };
-    PlayerPixel(sf::Color c, int x, int y) {
+    PlayerPixel(sf::Color c, int x, int y)
+		{
       col = c;
       px = x;
       py = y;
     };
   };
-
-  int clamp(int val, int min, int max) {
+  int clamp(int val, int min, int max)
+	{
     return std::min(std::max(val, min), max);
   }
-
-	class InventorySlot {
+	class InventorySlot
+	{
 	public:
 		int id = -1;
 		int count = -1;
 		std::string thing = "";
 		int thingWidth = 3;
 		int thingHeight = 3;
-		InventorySlot() {
+		InventorySlot()
+		{
 			id = -1;
 			count = -1;
 			thing = "0a0ata0a0";
 		};
 	};
-
-	class Inventory {
+	class Inventory
+	{
 	public:
 		static const int size = 35;
 		InventorySlot inv[size];
-		Inventory() {
-			for (int i = 0; i < size; i++) {
+		Inventory()
+		{
+			for (int i = 0; i < size; i++)
+			{
 				inv[i].id = -1;
 				inv[i].count = -1;
 			}
 		}
-		int findItem(int id) {
-			for (int i = 0; i < size; i++) {
-				if (inv[i].id == id) {
+		int findItem(int id)
+		{
+			for (int i = 0; i < size; i++)
+			{
+				if (inv[i].id == id)
+				{
 					return i;
 				}
 			}
 			return -1;
 		}
-		int firstOpenSlot() {
-			for (int i = 0; i < size; i++) {
-				if (inv[i].id == -1) {
+		int firstOpenSlot()
+		{
+			for (int i = 0; i < size; i++)
+			{
+				if (inv[i].id == -1)
+				{
 					return i;
 				}
 			}
 			return -1;
 		}
 	};
-
-	class Player{
+	class Player
+	{
 		std::string name = "";
 		public:
 			Inventory inv;
@@ -221,85 +233,90 @@ namespace objs {
 			float elevation = 0;
 			float gravityForce = 0;
 			int jumpForce = 20;
-
-			Player() {
-
+			Player()
+			{
 			};
-
-		Player(std::string pname, int px, int py) {
-			name = pname;
-			x = px;
-			y = py;
-		};
-
-		Player(std::string pname, int px, int py, int wid, int hei) {
-			name = pname;
-			x = px;
-			y = py;
-			width = wid;
-			height = hei;
-		};
-
-		std::string posKey() {
-			return "" + std::to_string((int)(x)) + ',' + std::to_string((int)(y));
-		}
-
-		void move(float mx, float my, std::unordered_map<std::string, Player*>* pmap) {
-			pmap->erase(posKey());
-			x += mx;
-			y += my;
-			pmap->insert_or_assign(posKey(), this);
-		}
-
-		void stepJump() {
-			if (jump == true) {
-				if (elevation >= 0) {
-					elevation += (jumpForce - gravityForce);
-					gravityForce+=1.6;
-				}
-				else {
-					jump = false;
-					gravityForce = 0;
-					elevation = 0;
+			Player(std::string pname, int px, int py)
+			{
+				name = pname;
+				x = px;
+				y = py;
+			};
+			Player(std::string pname, int px, int py, int wid, int hei)
+			{
+				name = pname;
+				x = px;
+				y = py;
+				width = wid;
+				height = hei;
+			};
+			std::string posKey()
+			{
+				return "" + std::to_string((int)(x)) + ',' + std::to_string((int)(y));
+			}
+			void move(float mx, float my, std::unordered_map<std::string, Player*>* pmap)
+			{
+				pmap->erase(posKey());
+				x += mx;
+				y += my;
+				pmap->insert_or_assign(posKey(), this);
+			}
+			void stepJump()
+			{
+				if (jump == true)
+				{
+					if (elevation >= 0)
+					{
+						elevation += (jumpForce - gravityForce);
+						gravityForce+=1.6;
+					}
+					else
+					{
+						jump = false;
+						gravityForce = 0;
+						elevation = 0;
+					}
 				}
 			}
-		}
 	};
-
-	class Tree {
+	class Tree
+	{
 	public:
-		static std::string makeTree() {
+		static std::string makeTree()
+		{
 			std::vector<int> intString;
 			int width = 26;
 			int height = 25;
 			int amplitudeX = 3;
-			for (int j = 0; j < width; j++) {
-				for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++)
+			{
+				for (int i = 0; i < height; i++)
+				{
 					intString.push_back(0);
 				}
 			}
 			sf::Vector2f initialSpot((int)(width / 2), height - 1);
-
 			sf::Vector2f initialDirection(((float)std::rand() / RAND_MAX) - 0.5, 1);
-
 			int trunkheight = std::min(((float)std::rand() / RAND_MAX) * 10, (float)5);
-
 			sf::Vector2f nextSpot(0.0, 0.0);
-			for (int i = 0; i < trunkheight; i++) {
+			for (int i = 0; i < trunkheight; i++)
+			{
 				intString[clamp(((int)(initialSpot.y) * width) + (int)(initialSpot.x), 0, intString.size() - 1)] = 1;
 				initialSpot.x += initialDirection.x;
 				initialSpot.y -= initialDirection.y;
 				nextSpot.x = initialSpot.x;
 				nextSpot.y = initialSpot.y;
 			}
-
 			std::vector<sf::Vector2f> nextSpots;
-			for (int i = 0; i < 3; i++) {
+			for (int i = 0; i < 3; i++)
+			{
 				int branchlength = std::max(((float)std::rand() / RAND_MAX) * 5, (float)3);
 				sf::Vector2f nextSpot2(0.0, 0.0);
 				sf::Vector2f newDirection((((float)std::rand() / RAND_MAX) - 0.5) * amplitudeX, 1);
-				for (int b = 0; b < branchlength; b++) {
-					if (((int)(nextSpot.y) * width) + (int)(nextSpot.x) > 0 && ((int)(nextSpot.y) * width) + (int)(nextSpot.x) < (width * height) - 1) {
+				for (int b = 0; b < branchlength; b++)
+				{
+					if (((int)(nextSpot.y) * width) + (int)(nextSpot.x) > 0 && ((int)(nextSpot.y) * width) + (int)(nextSpot.x) < (width * height) - 1)
+					{
 						intString[clamp(((int)(nextSpot.y) * width) + (int)(nextSpot.x), 0, intString.size() - 1)] = 1;
 					}
 					nextSpot.x += newDirection.x;
@@ -309,35 +326,38 @@ namespace objs {
 				}
 				nextSpots.push_back(nextSpot2);
 			}
-
 			std::vector<sf::Vector2f> nextSpotsClone = nextSpots;
 			std::vector<sf::Vector2f> leafspots;
-
-			for (int i = 0; i < 3; i++) {
-				for (int t = 0; t < 3; t++) {
+			for (int i = 0; i < 3; i++)
+			{
+				for (int t = 0; t < 3; t++)
+				{
 					int finlength = std::max(((float)std::rand() / RAND_MAX) * 5, (float)3);
 					sf::Vector2f newDirection((((float)std::rand() / RAND_MAX) - 0.5) * (float)amplitudeX, 1);
 					sf::Vector2f endOfThisBranch(0, 0);
-					for (int b = 0; b < finlength; b++) {
-						if (((int)std::floor(nextSpots[i].y) * width) + (int)std::floor(nextSpots[i].x) > 0 && ((int)std::floor(nextSpots[i].y) * width) + (int)std::floor(nextSpots[i].x) < (width * height) - 1) {
+					for (int b = 0; b < finlength; b++)
+					{
+						if (((int)std::floor(nextSpots[i].y) * width) + (int)std::floor(nextSpots[i].x) > 0 && ((int)std::floor(nextSpots[i].y) * width) + (int)std::floor(nextSpots[i].x) < (width * height) - 1)
+						{
 							intString[clamp(((int)std::floor(nextSpots[i].y) * width) + (int)std::floor(nextSpots[i].x), 0, intString.size() - 1)] = 1;
-
 							nextSpots[i].x += newDirection.x;
 							nextSpots[i].y -= newDirection.y;
 							endOfThisBranch.x = nextSpots[i].x;
 							endOfThisBranch.y = nextSpots[i].y;
 						}
 					}
-					if ((endOfThisBranch.y * width) + endOfThisBranch.x > 0 && (endOfThisBranch.y * width) + endOfThisBranch.x < (width * height) - 1) {
+					if ((endOfThisBranch.y * width) + endOfThisBranch.x > 0 && (endOfThisBranch.y * width) + endOfThisBranch.x < (width * height) - 1)
+					{
 						leafspots.push_back(endOfThisBranch);
 					}
 				}
-				for (int n = 0; n < nextSpots.size(); n++) {
+				for (int n = 0; n < nextSpots.size(); n++)
+				{
 					nextSpots[n] = nextSpotsClone[n];
 				}
 			}
-
-			for (sf::Vector2f i : leafspots) {
+			for (sf::Vector2f i : leafspots)
+			{
 				intString[clamp(((int)(i.y + 1) * width) + (int)(i.x), 0, intString.size() - 1)] = 3;
 				intString[clamp(((int)(i.y + 1) * width) + (int)(i.x - 1), 0, intString.size() - 1)] = 3;
 				intString[clamp(((int)(i.y + 1) * width) + (int)(i.x + 1), 0, intString.size() - 1)] = 3;
@@ -355,21 +375,25 @@ namespace objs {
 				intString[clamp(((int)(i.y - 1) * width) + (int)(i.x - 2), 0, intString.size() - 1)] = 2;
 				intString[clamp(((int)(i.y - 1) * width) + (int)(i.x + 2), 0, intString.size() - 1)] = 2;
 			}
-
 			std::string string = "";
-
-			for (int j = 0; j < height; j++) {
-				for (int i = 0; i < width; i++) {
-					if (intString[clamp((j * width) + i, 0, intString.size() - 1)] == 0) {
+			for (int j = 0; j < height; j++)
+			{
+				for (int i = 0; i < width; i++)
+				{
+					if (intString[clamp((j * width) + i, 0, intString.size() - 1)] == 0)
+					{
 						string = string + '0';
 					}
-					if (intString[clamp((j * width) + i, 0, intString.size() - 1)] == 1) {
+					if (intString[clamp((j * width) + i, 0, intString.size() - 1)] == 1)
+					{
 						string = string + 't';
 					}
-					if (intString[clamp((j * width) + i, 0, intString.size() - 1)] == 2) {
+					if (intString[clamp((j * width) + i, 0, intString.size() - 1)] == 2)
+					{
 						string = string + 'l';
 					}
-					if (intString[clamp((j * width) + i, 0, intString.size() - 1)] == 3) {
+					if (intString[clamp((j * width) + i, 0, intString.size() - 1)] == 3)
+					{
 						string = string + 'b';
 					}
 				}
@@ -377,13 +401,13 @@ namespace objs {
 			return string;
 		}
 	};
-	class Rock {
+	class Rock
+	{
 	public:
-
-		static std::string makeRock() {
+		static std::string makeRock()
+		{
 			int width = 23;
 			int height = 15;
-
 			std::vector<int> xVariations;
 			xVariations.push_back(0);
 			xVariations.push_back(-1);
@@ -411,112 +435,132 @@ namespace objs {
 			lightVariations.push_back(3);
 			lightVariations.push_back(2);
 			lightVariations.push_back(3);
-
 			std::vector<int> intString;
-
-			for (int i = 0; i < width; i++) {
-				for (int j = 0; j < height; j++) {
+			for (int i = 0; i < width; i++)
+			{
+				for (int j = 0; j < height; j++)
+				{
 					intString.push_back(0);
 				}
 			}
-
 			int size = (int)(3 + getRandom() * 6);
-
 			float orx = (int)(width / 2 + (getRandom()));
 			float ory = (int)(height - 1);
-
-			for (int i = 0; i < size; i++) {
+			for (int i = 0; i < size; i++)
+			{
 				float dist = getRandom() * i;
 				float brushX = orx + (dist - (getRandom() * i));
 				float brushY = ory - dist;
-				for (int j = 0; j < xVariations.size(); j++) {
+				for (int j = 0; j < xVariations.size(); j++)
+				{
 					int index = (int)std::floor(brushX + xVariations[j]) + ((int)std::floor(brushY + yVariations[j]) * width);
-					if (index > 0 && index < width * height) {
+					if (index > 0 && index < width * height)
+					{
 						intString[index] = lightVariations[j];
 					}
 				}
 			}
 			orx = (int)(width / 3) * 2 - getRandom();
 			ory = (int)(height - 1);
-
-			for (int i = 0; i < size; i++) {
+			for (int i = 0; i < size; i++) 
+			{
 				float dist = getRandom() * i;
 				float brushX = orx + (dist - (getRandom() * i));
 				float brushY = ory - dist;
-				for (int j = 0; j < xVariations.size(); j++) {
+				for (int j = 0; j < xVariations.size(); j++) 
+				{
 					int index = (int)std::floor(brushX + xVariations[j]) + ((int)std::floor(brushY + yVariations[j]) * width);
-					if (index > 0 && index < width * height) {
+					if (index > 0 && index < width * height)
+					{
 						intString[index] = lightVariations[j];
 					}
 				}
 			}
-
 			orx = (int)(width / 2.5) + getRandom();
 			ory = (int)(height - 1);
-
-			for (int i = 0; i < size; i++) {
+			for (int i = 0; i < size; i++)
+			{
 				float dist = getRandom() * i;
 				float brushX = orx + (dist - (getRandom() * i));
 				float brushY = ory - dist;
-				for (int j = 0; j < xVariations.size(); j++) {
+				for (int j = 0; j < xVariations.size(); j++)
+				{
 					int index = (int)std::floor(brushX + xVariations[j]) + ((int)std::floor(brushY + yVariations[j]) * width);
-					if (index > 0 && index < width * height) {
+					if (index > 0 && index < width * height)
+					{
 						intString[index] = lightVariations[j];
 					}
 				}
 			}
-
-			for (int j = 0; j < height; j++) {
-				for (int i = 0; i < width; i++) {
-					if (intString[(j * width) + i] == 0) {
-						if ((j * width) + i - 1 < width * height && (j * width) + i - 1 > 0) {
-							if (intString[(j * width) + i - 1] == 2 || intString[(j * width) + i - 1] == 3) {
+			for (int j = 0; j < height; j++)
+			{
+				for (int i = 0; i < width; i++)
+				{
+					if (intString[(j * width) + i] == 0)
+					{
+						if ((j * width) + i - 1 < width * height && (j * width) + i - 1 > 0)
+						{
+							if (intString[(j * width) + i - 1] == 2 || intString[(j * width) + i - 1] == 3)
+							{
 								intString[(j * width) + i] = 1;
 							}
 						}
-						if ((j * width) + i + 1 < width * height && (j * width) + i + 1 > 0) {
-							if (intString[(j * width) + i + 1] == 2 || intString[(j * width) + i + 1] == 3) {
+						if ((j * width) + i + 1 < width * height && (j * width) + i + 1 > 0)
+						{
+							if (intString[(j * width) + i + 1] == 2 || intString[(j * width) + i + 1] == 3)
+							{
 								intString[(j * width) + i] = 1;
 							}
 						}
-						if ((j * width) + i - width < width * height && (j * width) + i - width > 0) {
-							if (intString[(j * width) + i - width] == 2 || intString[(j * width) + i - width] == 3) {
+						if ((j * width) + i - width < width * height && (j * width) + i - width > 0)
+						{
+							if (intString[(j * width) + i - width] == 2 || intString[(j * width) + i - width] == 3)
+							{
 								intString[(j * width) + i] = 1;
 							}
 						}
-						if ((j * width) + i + width < width * height && (j * width) + i + width > 0) {
-							if (intString[(j * width) + i + width] == 2 || intString[(j * width) + i + width] == 3) {
+						if ((j * width) + i + width < width * height && (j * width) + i + width > 0)
+						{
+							if (intString[(j * width) + i + width] == 2 || intString[(j * width) + i + width] == 3)
+							{
 								intString[(j * width) + i] = 1;
 							}
 						}
-						if (j == height - 1) {
-							if (intString[(j * width) + i] == 2 || intString[(j * width) + i] == 3) {
+						if (j == height - 1)
+						{
+							if (intString[(j * width) + i] == 2 || intString[(j * width) + i] == 3)
+							{
 								intString[(j * width) + i] = 1;
 							}
 						}
 					}
 				}
 			}
-
 			std::string str = "";
-			for (int j = 0; j < height; j++) {
-				for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++)
+			{
+				for (int i = 0; i < width; i++)
+				{
 					int index = (j * width) + i;
-					if (intString[index] == 0) {
+					if (intString[index] == 0)
+					{
 						str = str + '0';
 					}
 					else
-						if (intString[index] == 2) {
-							str = str + 'n';
-						}
-						else
-							if (intString[index] == 3) {
-								str = str + 's';
-							}
-							else
-								if (intString[index] == 1) {
-									str = str + 'a';
-								}
+					if (intString[index] == 2)
+					{
+						str = str + 'n';
+					}
+					else
+					if (intString[index] == 3)
+					{
+						str = str + 's';
+					}
+					else
+					if (intString[index] == 1)
+					{
+						str = str + 'a';
+					}
 				}
 			}
 			return str;

@@ -96,8 +96,7 @@ namespace jl {
 				if (e.mouseButton.button == sf::Mouse::Right) 
 				{
 					setClickPos();
-					objs::ColorBrick b(sf::Color(50,50,50), 10);
-					world::World::insertIntoWorld((int)(click.x / ts + camX), (int)(click.y / ts + camY), 50, 50, 50, 255, 10, &worldmap, b);
+					placeCurrentItem();
 				}
 			}
 			if (e.type == sf::Event::MouseButtonReleased) 
@@ -116,6 +115,31 @@ namespace jl {
 				if (selectedInv + s >= 0 && selectedInv + s <= invTiles - 1) 
 				{
 					selectedInv += s;
+				}
+			}
+		}
+
+		void placeCurrentItem()
+		{
+			if (play.inv.inv[selectedInv].id == 0)
+			{
+				objs::FixedObject rock;
+				rock.x = (int)(click.x / ts + camX);
+				rock.y = (int)(click.y / ts + camY) + 18;
+				rock.width = 23;
+				rock.height = 15;
+				rock.thing = objs::Rock::makeRock();
+				rock.type = 1;
+				std::string keySpot2 = "" + std::to_string(rock.x) + ',' + std::to_string(rock.y);
+				fomap[keySpot2] = rock;
+				if (play.inv.inv[selectedInv].count > 1)
+				{
+					play.inv.inv[selectedInv].count -= 1;
+				}
+				else
+				{
+					play.inv.inv[selectedInv].id = -1;
+					play.inv.inv[selectedInv].count = -1;
 				}
 			}
 		}
@@ -173,7 +197,7 @@ namespace jl {
 
 		void renderUI() 
 		{
-			text.setString("MimosDono Alpha v12.1.0");
+			text.setString("MimosDono Alpha v12.2.0");
 			text.setPosition(sf::Vector2f(0,0));
 			window.draw(text);
 			for (int i = 0; i < invTiles; i++) 
@@ -401,6 +425,54 @@ namespace jl {
 				}
 			}
 		}
+		void breakFixedObjectAndDropItems(std::string& keySpot)
+		{
+			int dropCount = (int)(((float)std::rand() / RAND_MAX) * 10);
+			for (int n = 0; n < dropCount; n++)
+			{
+				float xOff = (int)(((float)std::rand() / RAND_MAX) * -7 + 3.5);
+				float yOff = -12 + (int)(((float)std::rand() / RAND_MAX) * -5 + 2.5);
+				objs::DroppedItem d(fomap.at(keySpot).x + xOff, fomap.at(keySpot).y + yOff, (int)drops.size());
+				if (fomap.at(keySpot).type == 0)
+				{
+					d.thing = "tttttt";
+					d.height = 2;
+					d.width = 3;
+					d.name = "wood";
+					d.timeStarted = std::chrono::high_resolution_clock::now().time_since_epoch().count() + (std::rand() * 10000000);
+				}
+				else if (fomap.at(keySpot).type == 1)
+				{
+					d.thing = "00a0aasaasna0nna";
+					d.height = 4;
+					d.width = 4;
+					d.name = "stone";
+					d.timeStarted = std::chrono::high_resolution_clock::now().time_since_epoch().count() + (std::rand() * 10000000);
+				}
+				else
+				{
+					d.thing = "0a0ata0a0";
+					d.width = 3;
+					d.height = 3;
+					d.name = "no texture";
+					d.timeStarted = std::chrono::high_resolution_clock::now().time_since_epoch().count() + (std::rand() * 10000000);
+				}
+				drops.push_back(d);
+			}
+			for (int n = 0; n < 25; n++)
+			{
+				objs::Particle pa;
+				pa.x = (((int)std::round(fomap.at(keySpot).x - ((fomap.at(keySpot).width / 2) * ((float)std::rand() / RAND_MAX)) + fomap.at(keySpot).width / 4)));
+				pa.y = -15 + ((int)std::round(fomap.at(keySpot).y - ((fomap.at(keySpot).height / 1.5) * ((float)std::rand() / RAND_MAX))));
+				sf::Color c = opixref[fomap.at(keySpot).thing[((fomap.at(keySpot).height - 1) * fomap.at(keySpot).width) + (int)(fomap.at(keySpot).width / 2)]];
+				c.r += 50;
+				c.g += 50;
+				c.b += 50;
+				pa.col = c;
+				parts.push_back(pa);
+			}
+			fomap.erase(keySpot);
+		}
 		void addFixedObjectPixelsToBuffer(std::unordered_map<std::string, objs::ObjectBrick>& opixmap, int floorY, int floorX, perlin& p)
 		{
 			std::string keySpot = "" + std::to_string(floorX) + ',' + std::to_string(floorY);
@@ -408,51 +480,7 @@ namespace jl {
 			{
 				if (fomap.at(keySpot).strength < 0)
 				{
-					int dropCount = (int)(((float)std::rand() / RAND_MAX) * 10);
-					for (int n = 0; n < dropCount; n++)
-					{
-						float xOff = (int)(((float)std::rand() / RAND_MAX) * -7 + 3.5);
-						float yOff = -12 + (int)(((float)std::rand() / RAND_MAX) * -5 + 2.5);
-						objs::DroppedItem d(fomap.at(keySpot).x + xOff, fomap.at(keySpot).y + yOff, (int)drops.size());
-						if (fomap.at(keySpot).type == 0)
-						{
-							d.thing = "tttttt";
-							d.height = 2;
-							d.width = 3;
-							d.name = "wood";
-							d.timeStarted = std::chrono::high_resolution_clock::now().time_since_epoch().count() + (std::rand() * 10000000);
-						}
-						else if (fomap.at(keySpot).type == 1)
-						{
-							d.thing = "00a0aasaasna0nna";
-							d.height = 4;
-							d.width = 4;
-							d.name = "stone";
-							d.timeStarted = std::chrono::high_resolution_clock::now().time_since_epoch().count() + (std::rand() * 10000000);
-						}
-						else
-						{
-							d.thing = "0a0ata0a0";
-							d.width = 3;
-							d.height = 3;
-							d.name = "no texture";
-							d.timeStarted = std::chrono::high_resolution_clock::now().time_since_epoch().count() + (std::rand() * 10000000);
-						}
-						drops.push_back(d);
-					}
-					for (int n = 0; n < 25; n++)
-					{
-						objs::Particle pa;
-						pa.x = (((int)std::round(fomap.at(keySpot).x - ((fomap.at(keySpot).width / 2) * ((float)std::rand() / RAND_MAX)) + fomap.at(keySpot).width / 4)));
-						pa.y = -15 + ((int)std::round(fomap.at(keySpot).y - ((fomap.at(keySpot).height / 1.5) * ((float)std::rand() / RAND_MAX))));
-						sf::Color c = opixref[fomap.at(keySpot).thing[((fomap.at(keySpot).height - 1) * fomap.at(keySpot).width) + (int)(fomap.at(keySpot).width / 2)]];
-						c.r += 50;
-						c.g += 50;
-						c.b += 50;
-						pa.col = c;
-						parts.push_back(pa);
-					}
-					fomap.erase(keySpot);
+					breakFixedObjectAndDropItems(keySpot);
 				}
 				else
 				{
@@ -571,11 +599,11 @@ namespace jl {
 			{
 				drops[i].update();
 				int range = 20;
-				if ((drops[i].x - play.x) < range && (drops[i].y - play.y) < range && (drops[i].x - play.x) > -range && (drops[i].y - play.y) > -range)
+				if (std::abs(drops[i].x - play.x) < range && std::abs(drops[i].y - play.y) < range)
 				{
 					drops[i].x += (play.x - drops[i].x) / 10;
 					drops[i].y += (play.y - drops[i].y) / 10;
-					if ((drops[i].x - play.x) < 1 && (drops[i].y - play.y) < 1 && (drops[i].x - play.x) > -1 && (drops[i].y - play.y) > -1)
+					if (std::abs(drops[i].x - play.x) < 1 && std::abs(drops[i].y - play.y) < 1)
 					{
 						if (typeID.find(drops[i].name) != typeID.end())
 						{

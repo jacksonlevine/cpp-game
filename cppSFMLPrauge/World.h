@@ -18,7 +18,6 @@ namespace world
 			{
 				for (int i = -ws; i < ws; i++)
 				{
-
 					double n = p.noise(i * 0.02, j * 0.02, 11.01 + offset) * 10;
 					double n2 = p.noise(i * 0.05, j * 0.05, 11.01 + offset) * 4;
 					double n3 = p.noise(i * 0.01, j * 0.01, 11.01 + offset) * 4;
@@ -31,8 +30,8 @@ namespace world
 					std::string keySpot = "" + std::to_string(floorX) + ',' + std::to_string(floorY);
 					int sandLvl = 2.8;
 					float waterLvl = 0.6;
-
-					if (nClamped > waterLvl && nClamped < sandLvl) {
+					if (nClamped > waterLvl && nClamped < sandLvl)
+					{
 						brick.isWater = false;
 						float red = (70 + 320 * (nClamped / 10));
 						float green = (70 + 310 * (nClamped / 10));
@@ -43,7 +42,8 @@ namespace world
 					}
 					else if (nClamped > sandLvl)
 					{
-						if (ln < 2) {
+						if (ln < 2)
+						{
 							brick.isWater = false;
 							float red = std::min(25 + 5 * (nClamped * 3), 204.5);
 							float green = std::min(25 + 10 * (nClamped * 3), 204.5);
@@ -51,7 +51,8 @@ namespace world
 							float a = (255);
 							float elev = nClamped;
 							insertIntoWorld(floorX, floorY, red, green, blue, a, elev, &wmap, brick);
-							if (std::rand() > 32750) {
+							if (std::rand() > 32750)
+							{
 								objs::FixedObject rock;
 								rock.x = floorX;
 								rock.y = floorY;
@@ -62,16 +63,17 @@ namespace world
 								std::string keySpot2 = "" + std::to_string(floorX) + ',' + std::to_string(floorY);
 								fomap[keySpot2] = rock;
 							}
-
 						}
-						else {
+						else 
+						{
 							brick.isWater = false;
 							float red = (25 + 17 * nClamped + (n4 * 100));
 							float green = (25 + 10 * nClamped + (n4 * 100));
 							float blue = (std::min(9 * nClamped + (n4 * 30), 50.0));
 							float a = (255);
 							float elev = nClamped;
-							if (std::rand() > 32500) {
+							if (std::rand() > 32500)
+							{
 								objs::FixedObject tree;
 								tree.x = floorX;
 								tree.y = floorY;
@@ -83,12 +85,12 @@ namespace world
 								fomap[keySpot3] = tree;
 							}
 							insertIntoWorld(floorX, floorY, red, green, blue, a, elev, &wmap, brick);
-
 						}
-
 					}
-					else {
-						if (std::rand() > 32700) {
+					else
+					{
+						if (std::rand() > 32700)
+						{
 							objs::FixedObject tree;
 							tree.x = floorX;
 							tree.y = floorY;
@@ -107,12 +109,12 @@ namespace world
 						brick.isWater = true;
 						insertIntoWorld(floorX, floorY, red, green, blue, a, elev, &wmap, brick);
 					}
-
 				}
 			}
 			return wmap;
 		}
-		static void insertIntoWorld(int x, int y, float red, float green, float blue, float a, float elevation, std::unordered_map<std::string, objs::ColorBrick>* wmap, objs::ColorBrick brick) {
+		static void insertIntoWorld(int x, int y, float red, float green, float blue, float a, float elevation, std::unordered_map<std::string, objs::ColorBrick>* wmap, objs::ColorBrick brick)
+		{
 			brick.col.r = red;
 			brick.col.g = green;
 			brick.col.b = blue;
@@ -121,7 +123,6 @@ namespace world
 			std::string keySpot = "" + std::to_string(x) + ',' + std::to_string(y);
 			wmap->insert_or_assign(keySpot, brick);
 		}
-
 		static std::unordered_map<char, sf::Color> getObjectPixReferences()
 		{
 			std::unordered_map<char, sf::Color> opixref;

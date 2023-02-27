@@ -44,7 +44,8 @@ namespace jl {
 		std::unordered_map<std::string, int> typeID = { {"stone", 0},{"wood", 1},{"no texture", 2} };
 		int oboverscan = 20;
 		sf::RectangleShape rect;
-		Game() {
+		Game()
+		{
 			worldmap = world::World::generateWorld(p, ws, fomap);
 			opixref = world::World::getObjectPixReferences();
 			click = sf::Vector2f(-1, -1);

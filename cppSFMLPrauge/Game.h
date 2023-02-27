@@ -1,6 +1,4 @@
 #pragma once
-//#include <SFML/Graphics/RenderStates.hpp>
-
 #include "World.h"
 #include <iostream>
 sf::RenderWindow window(sf::VideoMode(1920, 1024), "Window");

@@ -41,7 +41,18 @@ namespace jl {
 		double perlinZEffect2 = 0;
 		sf::Text text;
 		int testNum = -20;
-		std::unordered_map<std::string, int> typeID = { {"stone", 0},{"wood", 1},{"no texture", 2} };
+		std::unordered_map<std::string, int> typeID =
+		{
+			{
+				"stone", 0
+			},
+			{
+				"wood", 1
+			},
+			{
+				"no texture", 2
+			}
+		};
 		int oboverscan = 20;
 		sf::RectangleShape rect;
 		Game()

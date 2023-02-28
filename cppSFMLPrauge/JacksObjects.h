@@ -28,9 +28,31 @@ namespace objs
 		int y = 0;
 		int strength = 10;
 		std::string thing;
+		FixedObject()
+		{
+
+		};
+		FixedObject(std::string thi, int wi, int he, int ty)
+		{
+			thing = thi;
+			width = wi;
+			height = he;
+			type = ty;
+		}
 		void clickEvent()
 		{
 			strength -= 1;
+		}
+	};
+	class Chest : public FixedObject
+	{
+	public:
+		Chest()
+		{
+			width = 9;
+			height = 5;
+			thing = "shhhhhhhsshhcscccsnhccncccnncccccccnnaaaaaaan";
+			type = 2;
 		}
 	};
 	class DroppedItem

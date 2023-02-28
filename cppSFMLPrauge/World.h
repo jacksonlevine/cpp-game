@@ -157,6 +157,16 @@ namespace world
 			ocols.b = 50;
 			ocols.a = 255;
 			opixref['a'] = ocols;
+			ocols.r = 132;
+			ocols.g = 79;
+			ocols.b = 10;
+			ocols.a = 255;
+			opixref['c'] = ocols;
+			ocols.r = 223;
+			ocols.g = 184;
+			ocols.b = 104;
+			ocols.a = 255;
+			opixref['h'] = ocols;
 			return opixref;
 		}
 	};

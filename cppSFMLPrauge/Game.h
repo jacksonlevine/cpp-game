@@ -510,8 +510,9 @@ namespace jl {
 								}
 								int difference = (((floorY)-(int)(play.y + 150)) * ob.elevation);
 								int differenceX = (((floorX)-(int)play.x) * ob.elevation);
-								int ksx = floorX + (int)((((o * 3) - 35) * ob.elevation + (differenceX / 4)) / 50);
+								int ksx = floorX + (int)((((o * 3)) * ob.elevation + (differenceX / 4)) / 50);
 								int ksy = floorY - 20 + (int)(((f * 8) + (difference / 14)) / 10) / 2;
+								
 								std::string thisKeySpot = "" + std::to_string(ksx) + ',' + std::to_string(ksy);
 								ob.point = fop;
 								if (opixmap.find(thisKeySpot) == opixmap.end())
@@ -693,6 +694,16 @@ namespace jl {
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::K))
 				{
 					testNum += 1;
+				}
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::C))
+				{
+					setClickPos();
+					objs::Chest ch;
+					ch.x = (int)(click.x / ts + camX);
+					ch.y = (int)(click.y / ts + camY) + 18;
+					std::string keySpot2 = "" + std::to_string(ch.x) + ',' + std::to_string(ch.y);
+					fomap[keySpot2] = ch;
+					
 				}
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 				{

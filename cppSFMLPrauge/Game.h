@@ -82,8 +82,10 @@ namespace jl {
 		void pollEvents(sf::Event e) {
 			if (e.type == sf::Event::MouseButtonPressed) {
 				if (e.mouseButton.button == sf::Mouse::Left) {
+
 					setClickPos();
-					if (click.x / ts > minimapX && click.y / ts > minimapY && click.x / ts < minimapX + minimapWidth && click.y / ts < minimapY + minimapWidth)
+					bool clickPosOnMinimap = (click.x / ts > minimapX && click.y / ts > minimapY && click.x / ts < minimapX + minimapWidth && click.y / ts < minimapY + minimapWidth);
+					if (clickPosOnMinimap)
 					{
 						clickOnMinimap = true;
 					}
@@ -197,15 +199,17 @@ namespace jl {
 
 		void renderUI() 
 		{
-			text.setString("MimosDono Alpha v12.2.0");
+			text.setString("MimosDono v12.2.0dev");
 			text.setPosition(sf::Vector2f(0,0));
 			window.draw(text);
 			for (int i = 0; i < invTiles; i++) 
 			{
 				int invX = (minimapX * ts) + (i * invTileSpacing);
+				bool thisSlotSelected = (selectedInv == i);
+				bool slotIsEmpty = (play.inv.inv[i].id == -1);
 				invRect.setPosition(sf::Vector2f(invX, invY));
-				invRect.setFillColor((isMouseOver(&invRect) || selectedInv == i) ? sf::Color(50, 50, 50) : sf::Color(0, 0, 0));
-				if (selectedInv == i) 
+				invRect.setFillColor((isMouseOver(&invRect) || thisSlotSelected) ? sf::Color(50, 50, 50) : sf::Color(0, 0, 0));
+				if (thisSlotSelected) 
 				{
 					invRect.setOutlineColor(sf::Color(255, 255, 255));
 					invRect.setOutlineThickness(2);
@@ -215,28 +219,32 @@ namespace jl {
 					invRect.setOutlineThickness(0);
 				}
 				window.draw(invRect);
-				if (play.inv.inv[i].id != -1) 
+				if (!slotIsEmpty) 
 				{
-					int wi = play.inv.inv[i].thingWidth;
-					int he = play.inv.inv[i].thingHeight;
-					std::string thing = play.inv.inv[i].thing;
-					text.setString((sf::String)std::to_string(play.inv.inv[i].count));
-					text.setPosition(sf::Vector2f(invX + ts, invY+ts+ts));
-					text.setOutlineColor(sf::Color::Black);
-					text.setOutlineThickness(2);
-					for (int h = 0; h < he; h++) 
+					drawInventoryTileContent(i, invX);
+				}
+			}
+		}
+		void drawInventoryTileContent(int i, int invX)
+		{
+			int wi = play.inv.inv[i].thingWidth;
+			int he = play.inv.inv[i].thingHeight;
+			std::string thing = play.inv.inv[i].thing;
+			text.setString((sf::String)std::to_string(play.inv.inv[i].count));
+			text.setPosition(sf::Vector2f(invX + ts, invY + ts + ts));
+			text.setOutlineColor(sf::Color::Black);
+			text.setOutlineThickness(2);
+			for (int h = 0; h < he; h++)
+			{
+				for (int t = 0; t < wi; t++)
+				{
+					char s = thing[(h * wi) + t];
+					if (thing[s] != '0')
 					{
-						for (int t = 0; t < wi; t++) 
-						{
-							char s = thing[(h * wi) + t];
-							if (thing[s] != '0') 
-							{
-								invItemRect.setFillColor(opixref[s]);
-								invItemRect.setPosition(sf::Vector2f((invX+((1.5/wi)*ts)) + (t * invItemRect.getSize().x), (invY + ((1.5 / he)*ts)) + (h * invItemRect.getSize().y)));
-								window.draw(invItemRect);
-								window.draw(text);
-							}
-						}
+						invItemRect.setFillColor(opixref[s]);
+						invItemRect.setPosition(sf::Vector2f((invX + ((1.5 / wi) * ts)) + (t * invItemRect.getSize().x), (invY + ((1.5 / he) * ts)) + (h * invItemRect.getSize().y)));
+						window.draw(invItemRect);
+						window.draw(text);
 					}
 				}
 			}
@@ -373,7 +381,7 @@ namespace jl {
 						window.draw(rect);
 					}
 				}
-				else if (isObjectPix == false) 
+				else if (isObjectPix == false)
 				{
 					int n22 = std::floor(p.noise(i * 2.1, j * 0.2, 11.01 + (perlinZEffect / 500)) * 10);
 					int n32 = std::floor(p.noise(i * 5.1, j * 0.4, 11.01 + (perlinZEffect / 300)) * 4);

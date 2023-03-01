@@ -89,7 +89,7 @@ namespace world
 					}
 					else
 					{
-						if (std::rand() > 32700)
+						if (std::rand() > 32750)
 						{
 							objs::FixedObject tree;
 							tree.x = floorX;

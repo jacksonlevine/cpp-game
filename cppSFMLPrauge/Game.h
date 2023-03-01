@@ -15,7 +15,7 @@ namespace jl {
 		std::vector<objs::DroppedItem> drops;
 		float camX = 0;
 		float camY = 0;
-		int ws = 250;
+		int ws = 1000;
 		int ts = 14;
 		sf::Vector2f click;
 		bool mouseClicked = false;
@@ -126,7 +126,7 @@ namespace jl {
 			if (play.inv.inv[selectedInv].id == 0)
 			{
 				objs::FixedObject rock;
-				rock.x = (int)(click.x / ts + camX);
+				rock.x = (int)(click.x / ts + camX)+18;
 				rock.y = (int)(click.y / ts + camY) + 18;
 				rock.width = 23;
 				rock.height = 15;
@@ -199,7 +199,7 @@ namespace jl {
 
 		void renderUI() 
 		{
-			text.setString("MimosDono v12.2.0dev");
+			text.setString("MimosDono v12.2.1dev");
 			text.setPosition(sf::Vector2f(0,0));
 			window.draw(text);
 			for (int i = 0; i < invTiles; i++) 
@@ -311,7 +311,7 @@ namespace jl {
 		void spawnParticleFromObjectPixel(std::unordered_map<std::string, objs::ObjectBrick>& opixmap, std::string& keySpot)
 		{
 			objs::Particle pa;
-			pa.x = (((int)std::round(opixmap.at(keySpot).obx - ((opixmap.at(keySpot).point->width / 2) * ((float)std::rand() / RAND_MAX)) + opixmap.at(keySpot).point->width / 4)));
+			pa.x = (((int)std::round(opixmap.at(keySpot).obx - ((opixmap.at(keySpot).point->width / 2) * ((float)std::rand() / RAND_MAX)) + opixmap.at(keySpot).point->width / 4))) - 9;
 			pa.y = -15 + ((int)std::round(opixmap.at(keySpot).oby - ((opixmap.at(keySpot).point->height / 1.5) * ((float)std::rand() / RAND_MAX))));
 			sf::Color c = opixmap.at(keySpot).col;
 			c.r += 50;
@@ -438,7 +438,7 @@ namespace jl {
 			int dropCount = (int)(((float)std::rand() / RAND_MAX) * 10);
 			for (int n = 0; n < dropCount; n++)
 			{
-				float xOff = (int)(((float)std::rand() / RAND_MAX) * -7 + 3.5);
+				float xOff = (int)(((float)std::rand() / RAND_MAX) * -7 + 3.5) - 9;
 				float yOff = -12 + (int)(((float)std::rand() / RAND_MAX) * -5 + 2.5);
 				objs::DroppedItem d(fomap.at(keySpot).x + xOff, fomap.at(keySpot).y + yOff, (int)drops.size());
 				if (fomap.at(keySpot).type == 0)
@@ -470,7 +470,7 @@ namespace jl {
 			for (int n = 0; n < 25; n++)
 			{
 				objs::Particle pa;
-				pa.x = (((int)std::round(fomap.at(keySpot).x - ((fomap.at(keySpot).width / 2) * ((float)std::rand() / RAND_MAX)) + fomap.at(keySpot).width / 4)));
+				pa.x = (((int)std::round(fomap.at(keySpot).x - ((fomap.at(keySpot).width / 2) * ((float)std::rand() / RAND_MAX)) + fomap.at(keySpot).width / 4)))-9;
 				pa.y = -15 + ((int)std::round(fomap.at(keySpot).y - ((fomap.at(keySpot).height / 1.5) * ((float)std::rand() / RAND_MAX))));
 				sf::Color c = opixref[fomap.at(keySpot).thing[((fomap.at(keySpot).height - 1) * fomap.at(keySpot).width) + (int)(fomap.at(keySpot).width / 2)]];
 				c.r += 50;
@@ -499,7 +499,7 @@ namespace jl {
 					{
 						for (int o = 0; o < wi; o++)
 						{
-							char t = fop->thing[objs::clamp((f * wi) + o, 0, (wi * he) - 2)];
+							char t = fop->thing[(f * wi) + o];
 							if (t != '0')
 							{
 								objs::ObjectBrick ob(opixref[t], fop->x, fop->y);
@@ -510,10 +510,11 @@ namespace jl {
 								}
 								int difference = (((floorY)-(int)(play.y + 150)) * ob.elevation);
 								int differenceX = (((floorX)-(int)play.x) * ob.elevation);
-								int ksx = floorX + (int)((((o * 3)) * ob.elevation + (differenceX / 4)) / 50);
+								int ksx = floorX + (int)((((o * 1)-15) + (differenceX / 150)) / 1);
 								int ksy = floorY - 20 + (int)(((f * 8) + (difference / 14)) / 10) / 2;
 								
 								std::string thisKeySpot = "" + std::to_string(ksx) + ',' + std::to_string(ksy);
+								
 								ob.point = fop;
 								if (opixmap.find(thisKeySpot) == opixmap.end())
 								{
@@ -566,8 +567,8 @@ namespace jl {
 								int n32 = std::floor(p.noise((f + floorY) * 0.1, (f + floorY) * 0.4, 11.01 + (perlinZEffect2 / 300)) * 4);
 								int n2Clamped = (std::min(std::max(n22 - n32 - 4, -8), 8));
 								int off = (fop->type == 0) ? 18 : 0;
-								int ksx = floorX + (int)((((o * 3) - 35) * ob.elevation + (differenceX / 4)) / 50);
-								int ksy = (n2Clamped / 2) + floorY - (he + 3 - off) - (int)((((f / 8) + (difference / 14)) / 10) / 2);
+								int ksx = floorX + (int)((((o * 1)-15) + (differenceX / 150)) / 1);
+								int ksy = (n2Clamped / 2) + floorY - (he + 3 - off) - (int)((((f / 8) + (difference / 14)) / 10) / 2)+3;
 								std::string thisKeySpot = "" + std::to_string(ksx) + ',' + std::to_string(ksy);
 								ob.col.b = std::min(std::max((int)ob.col.b, 25), 150);
 								ob.col.r = std::min(std::max((int)ob.col.r, 25), 150);
@@ -597,7 +598,7 @@ namespace jl {
 							}
 						}
 					}
-					perlinZEffect2 += .1;
+					perlinZEffect2 += .05;
 				}
 			}
 		}
@@ -699,7 +700,7 @@ namespace jl {
 				{
 					setClickPos();
 					objs::Chest ch;
-					ch.x = (int)(click.x / ts + camX);
+					ch.x = (int)(click.x / ts + camX) + 18;
 					ch.y = (int)(click.y / ts + camY) + 18;
 					std::string keySpot2 = "" + std::to_string(ch.x) + ',' + std::to_string(ch.y);
 					fomap[keySpot2] = ch;

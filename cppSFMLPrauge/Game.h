@@ -199,7 +199,7 @@ namespace jl {
 
 		void renderUI() 
 		{
-			text.setString("MimosDono v12.2.1dev");
+			text.setString("MimosDono v12.2.2dev");
 			text.setPosition(sf::Vector2f(0,0));
 			window.draw(text);
 			for (int i = 0; i < invTiles; i++) 
@@ -311,7 +311,7 @@ namespace jl {
 		void spawnParticleFromObjectPixel(std::unordered_map<std::string, objs::ObjectBrick>& opixmap, std::string& keySpot)
 		{
 			objs::Particle pa;
-			pa.x = (((int)std::round(opixmap.at(keySpot).obx - ((opixmap.at(keySpot).point->width / 2) * ((float)std::rand() / RAND_MAX)) + opixmap.at(keySpot).point->width / 4))) - 9;
+			pa.x = (((int)std::round(opixmap.at(keySpot).obx - ((opixmap.at(keySpot).point->width / 2) * ((float)std::rand() / RAND_MAX)) + opixmap.at(keySpot).point->width / 4))) - 3;
 			pa.y = -15 + ((int)std::round(opixmap.at(keySpot).oby - ((opixmap.at(keySpot).point->height / 1.5) * ((float)std::rand() / RAND_MAX))));
 			sf::Color c = opixmap.at(keySpot).col;
 			c.r += 50;
@@ -438,7 +438,7 @@ namespace jl {
 			int dropCount = (int)(((float)std::rand() / RAND_MAX) * 10);
 			for (int n = 0; n < dropCount; n++)
 			{
-				float xOff = (int)(((float)std::rand() / RAND_MAX) * -7 + 3.5) - 9;
+				float xOff = (int)(((float)std::rand() / RAND_MAX) * -7 + 3.5) - 2;
 				float yOff = -12 + (int)(((float)std::rand() / RAND_MAX) * -5 + 2.5);
 				objs::DroppedItem d(fomap.at(keySpot).x + xOff, fomap.at(keySpot).y + yOff, (int)drops.size());
 				if (fomap.at(keySpot).type == 0)
@@ -470,7 +470,7 @@ namespace jl {
 			for (int n = 0; n < 25; n++)
 			{
 				objs::Particle pa;
-				pa.x = (((int)std::round(fomap.at(keySpot).x - ((fomap.at(keySpot).width / 2) * ((float)std::rand() / RAND_MAX)) + fomap.at(keySpot).width / 4)))-9;
+				pa.x = (((int)std::round(fomap.at(keySpot).x - ((fomap.at(keySpot).width / 2) * ((float)std::rand() / RAND_MAX)) + fomap.at(keySpot).width / 4)))-2;
 				pa.y = -15 + ((int)std::round(fomap.at(keySpot).y - ((fomap.at(keySpot).height / 1.5) * ((float)std::rand() / RAND_MAX))));
 				sf::Color c = opixref[fomap.at(keySpot).thing[((fomap.at(keySpot).height - 1) * fomap.at(keySpot).width) + (int)(fomap.at(keySpot).width / 2)]];
 				c.r += 50;

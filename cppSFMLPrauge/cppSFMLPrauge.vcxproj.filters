@@ -18,15 +18,21 @@
     <ClCompile Include="Source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="mimosdono\perlin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="JacksObjects.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Header.h">
+    <ClInclude Include="mimosdono\Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header1.h">
+    <ClInclude Include="mimosdono\JacksObjects.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mimosdono\perlin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mimosdono\World.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

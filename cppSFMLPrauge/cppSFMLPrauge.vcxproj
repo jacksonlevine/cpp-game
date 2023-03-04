@@ -140,12 +140,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="mimosdono\perlin.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Header.h" />
-    <ClInclude Include="Header1.h" />
-    <ClInclude Include="JacksObjects.h" />
+    <ClInclude Include="mimosdono\Game.h" />
+    <ClInclude Include="mimosdono\JacksObjects.h" />
+    <ClInclude Include="mimosdono\perlin.h" />
+    <ClInclude Include="mimosdono\World.h" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Akilvan.ttf" />

@@ -1,7 +1,6 @@
 #pragma once
-#include "JacksObjects.h"
-#include "perlin.h"
-#include "perlin.cpp"
+#include "mimosdono/JacksObjects.h"
+#include "mimosdono/perlin.h"
 namespace world
 {
 	class World

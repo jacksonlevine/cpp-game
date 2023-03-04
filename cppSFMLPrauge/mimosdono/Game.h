@@ -367,8 +367,8 @@ namespace jl {
 					}
 					else 
 					{
-						int n22 = std::floor(p.noise(i * 2.1, j * 0.2, 11.01 + (perlinZEffect / 500)) * 10);
-						int n32 = std::floor(p.noise(i * 5.1, j * 0.4, 11.01 + (perlinZEffect / 300)) * 4);
+						int n22 = std::floor(p.noise(i * 2.1, j * 0.2, 11.01 + ((int)perlinZEffect >> 8)) * 10);
+						int n32 = std::floor(p.noise(i * 5.1, j * 0.4, 11.01 + ((int)perlinZEffect >> 4)) * 4);
 						int n2Clamped = (std::min(std::max(n22 - n32 - 4, 0), 8)) % 4;
 						float waterLight = std::max(worldmap.at(keySpot).elevation, 0.0f) * 10;
 						sf::Color col;
@@ -383,8 +383,8 @@ namespace jl {
 				}
 				else if (isObjectPix == false)
 				{
-					int n22 = std::floor(p.noise(i * 2.1, j * 0.2, 11.01 + (perlinZEffect / 500)) * 10);
-					int n32 = std::floor(p.noise(i * 5.1, j * 0.4, 11.01 + (perlinZEffect / 300)) * 4);
+					int n22 = std::floor(p.noise(i * 2.1, j * 0.2, 11.01 + ((int)perlinZEffect >> 8)) * 10);
+					int n32 = std::floor(p.noise(i * 5.1, j * 0.4, 11.01 + ((int)perlinZEffect >> 4)) * 4);
 					int n2Clamped = (std::min(std::max(n22 - n32 - 4, 0), 8)) % 4;
 					sf::Color col;
 					col.r = (15 * n2Clamped + 1);
@@ -412,7 +412,7 @@ namespace jl {
 				{
 					yshrink = 2;
 				}
-				int elevOs = std::floor(pmap.at(keySpot)->elevation / 10);
+				int elevOs = std::floor((int)pmap.at(keySpot)->elevation >> 4);
 				if (pmap.at(keySpot)->jump == true) 
 				{
 					pmap.at(keySpot)->stepJump();
@@ -510,8 +510,8 @@ namespace jl {
 								}
 								int difference = (((floorY)-(int)(play.y + 150)) * ob.elevation);
 								int differenceX = (((floorX)-(int)play.x) * ob.elevation);
-								int ksx = floorX + (int)((((o * 1)-15) + (differenceX / 200)) / 1);
-								int ksy = floorY - 20 + (int)(((f * 8) + (difference / 14)) / 10) / 2;
+								int ksx = floorX + (int)((((o * 1)-15) + (differenceX >> 8)));
+								int ksy = floorY - 20 + (int)(((f * 8) + (difference >> 4)) / 10) / 2;
 								
 								std::string thisKeySpot = "" + std::to_string(ksx) + ',' + std::to_string(ksy);
 								
@@ -520,8 +520,8 @@ namespace jl {
 								{
 									if (ob.col == opixref['l'])
 									{
-										int n22 = std::floor(p.noise((o + floorX) * 0.1, (o + floorX) * 0.2, 11.01 + (perlinZEffect2 / 500)) * 10);
-										int n32 = std::floor(p.noise((f + floorY) * 0.1, (f + floorY) * 0.4, 11.01 + (perlinZEffect2 / 300)) * 4);
+										int n22 = std::floor(p.noise((o + floorX) * 0.1, (o + floorX) * 0.2, 11.01 + ((int)perlinZEffect2 >> 8)) * 10);
+										int n32 = std::floor(p.noise((f + floorY) * 0.1, (f + floorY) * 0.4, 11.01 + ((int)perlinZEffect2 >> 8)) * 4);
 										int n2Clamped = (std::min(std::max(n22 - n32 - 4, -8), 8));
 										thisKeySpot = "" + std::to_string((n2Clamped / 4) + ksx) + ',' + std::to_string(ksy);
 										if ((float)std::rand() / RAND_MAX > 0.9999)
@@ -567,8 +567,8 @@ namespace jl {
 								int n32 = std::floor(p.noise((f + floorY) * 0.1, (f + floorY) * 0.4, 11.01 + (perlinZEffect2 / 300)) * 4);
 								int n2Clamped = (std::min(std::max(n22 - n32 - 4, -8), 8));
 								int off = (fop->type == 0) ? 18 : 0;
-								int ksx = floorX + (int)((((o * 1)-15) + (differenceX / 200)) / 1);
-								int ksy = (n2Clamped / 2) + floorY - (he + 3 - off) - (int)((((f / 8) + (difference / 14)) / 10) / 2)+3;
+								int ksx = floorX + (int)((((o * 1)-15) + (differenceX >> 8)) / 1);
+								int ksy = (n2Clamped / 2) + floorY - (he + 3 - off) - (int)((((f / 8) + (difference >> 4)) / 10) >>2)+3;
 								std::string thisKeySpot = "" + std::to_string(ksx) + ',' + std::to_string(ksy);
 								ob.col.b = std::min(std::max((int)ob.col.b, 25), 150);
 								ob.col.r = std::min(std::max((int)ob.col.r, 25), 150);
@@ -598,7 +598,7 @@ namespace jl {
 							}
 						}
 					}
-					perlinZEffect2 += .05;
+					perlinZEffect2 += .2;
 				}
 			}
 		}

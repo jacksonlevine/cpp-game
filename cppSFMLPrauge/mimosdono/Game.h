@@ -567,7 +567,7 @@ namespace jl {
 								int n32 = std::floor(p.noise((f + floorY) * 0.1, (f + floorY) * 0.4, 11.01 + (perlinZEffect2 / 300)) * 4);
 								int n2Clamped = (std::min(std::max(n22 - n32 - 4, -8), 8));
 								int off = (fop->type == 0) ? 18 : 0;
-								int ksx = floorX + (int)((((o * 1)-15) + (differenceX >> 8)) / 1);
+								int ksx = floorX + (int)((((o * 1)-15) + (differenceX >> 8)));
 								int ksy = (n2Clamped / 2) + floorY - (he + 3 - off) - (int)((((f / 8) + (difference >> 4)) / 10) >>2)+3;
 								std::string thisKeySpot = "" + std::to_string(ksx) + ',' + std::to_string(ksy);
 								ob.col.b = std::min(std::max((int)ob.col.b, 25), 150);

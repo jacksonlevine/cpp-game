@@ -18,7 +18,7 @@ namespace world
 			{
 				for (int i = -ws; i < ws; i++)
 				{
-					double n = p.noise(i * 0.02, j * 0.02, 11.01 + offset) * 10;
+					double n = p.noise(i * 0.01, j * 0.01, 11.01 + offset) * 10;
 					double n2 = p.noise(i * 0.05, j * 0.05, 11.01 + offset) * 4;
 					double n3 = p.noise(i * 0.01, j * 0.01, 11.01 + offset) * 4;
 					double n4 = p.noise(i * 0.9, j * 0.9, 11.01 + offset) / 2;

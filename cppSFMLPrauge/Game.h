@@ -126,7 +126,7 @@ namespace jl {
 			if (play.inv.inv[selectedInv].id == 0)
 			{
 				objs::FixedObject rock;
-				rock.x = (int)(click.x / ts + camX)+18;
+				rock.x = (int)(click.x / ts + camX)+5;
 				rock.y = (int)(click.y / ts + camY) + 18;
 				rock.width = 23;
 				rock.height = 15;
@@ -510,7 +510,7 @@ namespace jl {
 								}
 								int difference = (((floorY)-(int)(play.y + 150)) * ob.elevation);
 								int differenceX = (((floorX)-(int)play.x) * ob.elevation);
-								int ksx = floorX + (int)((((o * 1)-15) + (differenceX / 150)) / 1);
+								int ksx = floorX + (int)((((o * 1)-15) + (differenceX / 200)) / 1);
 								int ksy = floorY - 20 + (int)(((f * 8) + (difference / 14)) / 10) / 2;
 								
 								std::string thisKeySpot = "" + std::to_string(ksx) + ',' + std::to_string(ksy);
@@ -567,7 +567,7 @@ namespace jl {
 								int n32 = std::floor(p.noise((f + floorY) * 0.1, (f + floorY) * 0.4, 11.01 + (perlinZEffect2 / 300)) * 4);
 								int n2Clamped = (std::min(std::max(n22 - n32 - 4, -8), 8));
 								int off = (fop->type == 0) ? 18 : 0;
-								int ksx = floorX + (int)((((o * 1)-15) + (differenceX / 150)) / 1);
+								int ksx = floorX + (int)((((o * 1)-15) + (differenceX / 200)) / 1);
 								int ksy = (n2Clamped / 2) + floorY - (he + 3 - off) - (int)((((f / 8) + (difference / 14)) / 10) / 2)+3;
 								std::string thisKeySpot = "" + std::to_string(ksx) + ',' + std::to_string(ksy);
 								ob.col.b = std::min(std::max((int)ob.col.b, 25), 150);
@@ -700,7 +700,7 @@ namespace jl {
 				{
 					setClickPos();
 					objs::Chest ch;
-					ch.x = (int)(click.x / ts + camX) + 18;
+					ch.x = (int)(click.x / ts + camX) + 10;
 					ch.y = (int)(click.y / ts + camY) + 18;
 					std::string keySpot2 = "" + std::to_string(ch.x) + ',' + std::to_string(ch.y);
 					fomap[keySpot2] = ch;

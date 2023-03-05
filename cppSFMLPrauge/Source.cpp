@@ -3,9 +3,9 @@ int main()
 { 
 	sf::Event e;
 	jl::Game g;
-	while (window.isOpen())
+	while (g.window.isOpen())
 	{
-		while (window.pollEvent(e))
+		while (g.window.pollEvent(e))
 		{
 			g.pollEvents(e);
 		}

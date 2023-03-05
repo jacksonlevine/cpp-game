@@ -690,7 +690,7 @@ namespace jl {
 		void handleEvents(objs::Player* pla)
 		{
 			float movement = 1.2;
-			if (window.hasFocus())
+			if (window.hasFocus()) 
 			{
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::K))
 				{

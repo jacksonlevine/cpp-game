@@ -140,8 +140,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="mimosdono\perlin.cpp" />
+    <ClCompile Include="Chest.cpp" />
+    <ClCompile Include="DroppedItem.cpp" />
+    <ClCompile Include="Inventory.cpp" />
+    <ClCompile Include="JacksMath.cpp" />
+    <ClCompile Include="mimosdono\Perlin.cpp" />
+    <ClCompile Include="Particle.cpp" />
+    <ClCompile Include="PixelBricks.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Rock.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="FixedObject.cpp" />
+    <ClCompile Include="Tree.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mimosdono\Game.h" />

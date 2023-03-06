@@ -1,10 +1,11 @@
 #pragma once
 #include "mimosdono/World.h"
 #include <iostream>
-
 namespace jl {
 	class Game {
 	public:
+		int gameWidth;
+		int gameHeight;
 		sf::RenderWindow window;
 		sf::Font font;
 		perlin p;

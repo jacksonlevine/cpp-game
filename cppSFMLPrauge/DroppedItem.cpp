@@ -1,5 +1,4 @@
 #include "mimosdono/JacksObjects.h"
-
 namespace objs
 {
 	DroppedItem::DroppedItem(float ax, float ay, int i)

@@ -26,4 +26,3 @@ namespace objs
 		strength -= 1;
 	}
 }
-	

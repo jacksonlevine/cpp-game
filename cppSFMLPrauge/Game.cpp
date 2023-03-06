@@ -2,12 +2,13 @@
 #include "mimosdono/World.h"
 #include "mimosdono/Game.h"
 #include <iostream>
-
 namespace jl
 {
 	Game::Game()
 	{
-		window.create(sf::VideoMode(1920, 1024), "Window");
+		gameWidth = 1280;
+		gameHeight = 720;
+		window.create(sf::VideoMode(gameWidth, gameHeight), "MimosDono Dev 12.2.0");
 		camX = 0;
 		camY = 0;
 		ws = 1000;
@@ -17,14 +18,12 @@ namespace jl
 		clickTimer = 0;
 		clickInterval = 10;
 		selectedInv = 0;
-		width;
-		height;
-		minimapX = 113;
-		minimapY = 47;
 		minimapWidth = 20;
-		invY = (minimapY * ts) + (minimapWidth * ts) + 10;
 		invTiles = 5;
 		invTileSpacing = (int)((float)(minimapWidth * ts) / invTiles) + (int)((float)ts / invTiles);
+		minimapX = (gameWidth/ts)-(minimapWidth);
+		minimapY = (gameHeight/ts)-(minimapWidth)-(invTileSpacing/ts);
+		invY = (minimapY * ts) + (minimapWidth * ts) + 10;
 		test = false;
 		clickOnMinimap = false;
 		clickPositionSet = false;
@@ -186,7 +185,7 @@ namespace jl
 
 	void Game::renderUI()
 	{
-		text.setString("MimosDono v12.2.2dev");
+		text.setString("MimosDono v12.2.0dev");
 		text.setPosition(sf::Vector2f(0, 0));
 		window.draw(text);
 		for (int i = 0; i < invTiles; i++)

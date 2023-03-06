@@ -158,7 +158,7 @@
   <ItemGroup>
     <ClInclude Include="mimosdono\Game.h" />
     <ClInclude Include="mimosdono\JacksObjects.h" />
-    <ClInclude Include="mimosdono\perlin.h" />
+    <ClInclude Include="mimosdono\Perlin.h" />
     <ClInclude Include="mimosdono\World.h" />
   </ItemGroup>
   <ItemGroup>

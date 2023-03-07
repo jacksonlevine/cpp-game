@@ -1,11 +1,16 @@
 #pragma once
-#include "mimosdono/World.h"
+#include "World.h"
 #include <iostream>
+#include "GUIController.h"
 namespace jl {
 	class Game {
 	public:
+		static gui::GUIController guic;
+		bool isGUIOpen;
 		int gameWidth;
 		int gameHeight;
+		int guiInterval;
+		int guiTimer;
 		sf::RenderWindow window;
 		sf::Font font;
 		perlin p;

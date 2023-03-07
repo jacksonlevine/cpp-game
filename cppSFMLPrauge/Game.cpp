@@ -4,10 +4,14 @@
 #include <iostream>
 namespace jl
 {
+	gui::GUIController Game::guic = gui::GUIController();
 	Game::Game()
 	{
+		isGUIOpen = false;
 		gameWidth = 1280;
 		gameHeight = 720;
+		guiInterval = 30;
+		guiTimer = 0;
 		window.create(sf::VideoMode(gameWidth, gameHeight), "MimosDono Dev 12.2.0");
 		camX = 0;
 		camY = 0;
@@ -678,46 +682,60 @@ namespace jl
 		float movement = 1.2;
 		if (window.hasFocus())
 		{
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::K))
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
 			{
-				testNum += 1;
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::C))
-			{
-				setClickPos();
-				objs::Chest ch;
-				ch.x = (int)(click.x / ts + camX) + 10;
-				ch.y = (int)(click.y / ts + camY) + 18;
-				std::string keySpot2 = "" + std::to_string(ch.x) + ',' + std::to_string(ch.y);
-				fomap[keySpot2] = ch;
-
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-			{
-				camX -= movement;
-				pla->move(-movement, 0, &pmap);
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-			{
-				camX += movement;
-				pla->move(movement, 0, &pmap);
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-			{
-				camY += movement;
-				pla->move(0, movement, &pmap);
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-			{
-				camY -= movement;
-				pla->move(0, -movement, &pmap);
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-			{
-				if (pla->jump == false)
-				{
-					pla->jump = true;
+				if (guiTimer > guiInterval) {
+					guiTimer = 0;
+					isGUIOpen = !isGUIOpen;
 				}
+				else {
+					guiTimer += 1;
+				}
+			}
+			if (!isGUIOpen)
+			{
+
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::K))
+					{
+						testNum += 1;
+					}
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::C))
+					{
+						setClickPos();
+						objs::Chest ch;
+						ch.x = (int)(click.x / ts + camX) + 10;
+						ch.y = (int)(click.y / ts + camY) + 18;
+						std::string keySpot2 = "" + std::to_string(ch.x) + ',' + std::to_string(ch.y);
+						fomap[keySpot2] = ch;
+
+					}
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+					{
+						camX -= movement;
+						pla->move(-movement, 0, &pmap);
+					}
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+					{
+						camX += movement;
+						pla->move(movement, 0, &pmap);
+					}
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+					{
+						camY += movement;
+						pla->move(0, movement, &pmap);
+					}
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+					{
+						camY -= movement;
+						pla->move(0, -movement, &pmap);
+					}
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+					{
+						if (pla->jump == false)
+						{
+							pla->jump = true;
+						}
+					}
 			}
 		}
 	}

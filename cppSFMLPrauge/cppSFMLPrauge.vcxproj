@@ -142,8 +142,10 @@
   <ItemGroup>
     <ClCompile Include="Chest.cpp" />
     <ClCompile Include="DroppedItem.cpp" />
+    <ClCompile Include="GUIController.cpp" />
     <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="JacksMath.cpp" />
+    <ClCompile Include="MimosDonoDefaultGUI.cpp" />
     <ClCompile Include="mimosdono\Perlin.cpp" />
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="PixelBricks.cpp" />
@@ -157,7 +159,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mimosdono\Game.h" />
+    <ClInclude Include="mimosdono\GUIController.h" />
+    <ClInclude Include="mimosdono\GUIObjects.h" />
     <ClInclude Include="mimosdono\JacksObjects.h" />
+    <ClInclude Include="mimosdono\MimosDonoDefaultGUI.h" />
     <ClInclude Include="mimosdono\Perlin.h" />
     <ClInclude Include="mimosdono\World.h" />
   </ItemGroup>

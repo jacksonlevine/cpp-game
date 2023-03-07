@@ -143,6 +143,7 @@
     <ClCompile Include="Chest.cpp" />
     <ClCompile Include="DroppedItem.cpp" />
     <ClCompile Include="GUIController.cpp" />
+    <ClCompile Include="GUIObjects.cpp" />
     <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="JacksMath.cpp" />
     <ClCompile Include="MimosDonoDefaultGUI.cpp" />

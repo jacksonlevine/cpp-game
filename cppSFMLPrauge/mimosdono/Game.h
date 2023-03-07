@@ -6,6 +6,7 @@ namespace jl {
 	class Game {
 	public:
 		static gui::GUIController guic;
+		std::string currentgui;
 		bool isGUIOpen;
 		int gameWidth;
 		int gameHeight;

@@ -1,12 +1,15 @@
 #pragma once
 #include "mimosdono/World.h"
 #include "mimosdono/Game.h"
+#include "mimosdono/MimosDonoDefaultGUI.h"
 #include <iostream>
 namespace jl
 {
 	gui::GUIController Game::guic = gui::GUIController();
 	Game::Game()
 	{
+		guic.setViews(gui::MimosDonoDefaultGUI::getViews());
+		currentgui = "pause";
 		isGUIOpen = false;
 		gameWidth = 1280;
 		gameHeight = 720;
@@ -192,6 +195,28 @@ namespace jl
 		text.setString("MimosDono v12.2.0dev");
 		text.setPosition(sf::Vector2f(0, 0));
 		window.draw(text);
+		if (isGUIOpen)
+		{
+			sf::RectangleShape re;
+			for (gui::GUIContainer cont : guic.getViewFromName(currentgui).containers)
+			{
+				//Draw the container
+				re.setFillColor(sf::Color(0, 0, 0));
+				re.setSize(sf::Vector2f(cont.width, cont.height));
+				re.setPosition(sf::Vector2f(cont.x, cont.y));
+				window.draw(re);
+				//Then draw each object
+				re.setFillColor(sf::Color(255, 255, 255));
+				int index = 0;
+				for (gui::GUIObject obj : cont.objects)
+				{
+					re.setSize(sf::Vector2f(obj.width, obj.height));
+					re.setPosition(sf::Vector2f(cont.x + (cont.width/2)-(obj.width/2), cont.y + ((cont.height/cont.objects.size())*index)));
+					window.draw(re);
+					index++;
+				}
+			}
+		}
 		for (int i = 0; i < invTiles; i++)
 		{
 			int invX = (minimapX * ts) + (i * invTileSpacing);

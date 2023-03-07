@@ -8,8 +8,9 @@ namespace gui
 	class GUIObject
 	{
 	public:
-		int relX;
-		int relY;
+		int width;
+		int height;
+		GUIObject(int wi, int he);
 	};
 
 	class GUIContainer

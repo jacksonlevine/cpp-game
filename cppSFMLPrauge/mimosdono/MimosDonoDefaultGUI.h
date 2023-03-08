@@ -8,6 +8,6 @@ namespace gui
 	class MimosDonoDefaultGUI
 	{
 	public:
-		static std::unordered_map<std::string, GUIView> getViews();
+		static std::unordered_map<std::string, GUIView> getViews(int screenwidth, int screenheight);
 	};
 }

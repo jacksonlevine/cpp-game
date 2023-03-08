@@ -6,5 +6,12 @@ namespace gui
 	{
 		width = wi;
 		height = he;
+		text = "";
+	}
+	GUIObject::GUIObject(int wi, int he, std::string te)
+	{
+		width = wi;
+		height = he;
+		text = te;
 	}
 }

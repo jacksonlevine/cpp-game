@@ -14,6 +14,11 @@ namespace objs
 		elevation = 0;
 		gravityForce = 0;
 		jumpForce = 20;
+		left = false;
+		right = false;
+		up = false;
+		down = false;
+		movementSpeed = 1.2;
 	};
 	Player::Player(std::string pname, int px, int py)
 	{
@@ -27,6 +32,11 @@ namespace objs
 		elevation = 0;
 		gravityForce = 0;
 		jumpForce = 20;
+		left = false;
+		right = false;
+		up = false;
+		down = false;
+		movementSpeed = 1.2;
 	};
 	Player::Player(std::string pname, int px, int py, int wid, int hei)
 	{
@@ -40,6 +50,11 @@ namespace objs
 		elevation = 0;
 		gravityForce = 0;
 		jumpForce = 20;
+		left = false;
+		right = false;
+		up = false;
+		down = false;
+		movementSpeed = 1.2;
 	};
 	std::string Player::posKey()
 	{

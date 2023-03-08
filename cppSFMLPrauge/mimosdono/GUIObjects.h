@@ -10,7 +10,9 @@ namespace gui
 	public:
 		int width;
 		int height;
+		std::string text;
 		GUIObject(int wi, int he);
+		GUIObject(int wi, int he, std::string te);
 	};
 
 	class GUIContainer

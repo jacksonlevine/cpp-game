@@ -2,33 +2,39 @@
 
 namespace gui
 {
-	GUIView mdPauseMenu();
+	GUIView mdPauseMenu(int scw, int sch);
 
-	std::unordered_map<std::string, GUIView> MimosDonoDefaultGUI::getViews()
+	std::unordered_map<std::string, GUIView> MimosDonoDefaultGUI::getViews(int screenwidth, int screenheight)
 	{
 		std::unordered_map<std::string, GUIView> mdgui;
 
 		//Create GUI Views and add them to map
 		//Views must take in a model at some point
-		GUIView pause = mdPauseMenu();
+		GUIView pause = mdPauseMenu(screenwidth, screenheight);
 		mdgui.insert_or_assign("pause", pause);
 
 		return mdgui;
 	}
 
-	GUIView mdPauseMenu()
+	GUIView mdPauseMenu(int scw, int sch)
 	{
 		GUIView pause;
 		GUIContainer container;
-		for (int i = 0; i < 4; i++)
+		std::string buttons[4] =
 		{
-			GUIObject obj(100, 50);
+			"Settings",
+			"Quit Game"
+		};
+
+		for (int i = 0; i < 2; i++)
+		{
+			GUIObject obj(150, 50, buttons[i]);
 			container.objects.push_back(obj);
 		}
-		container.x = 200;
-		container.y = 50;
-		container.width = 100;
-		container.height = 500;
+		container.width = 200;
+		container.height = 250;
+		container.x = (scw/2)-(container.width/2);
+		container.y = (sch / 2) - (container.height / 2);
 		pause.containers.push_back(container);
 		return pause;
 	}

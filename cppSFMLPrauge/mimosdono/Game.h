@@ -8,10 +8,9 @@ namespace jl {
 		static gui::GUIController guic;
 		std::string currentgui;
 		bool isGUIOpen;
+		bool guiKeyJustTriggered;
 		int gameWidth;
 		int gameHeight;
-		int guiInterval;
-		int guiTimer;
 		sf::RenderWindow window;
 		sf::Font font;
 		perlin p;
@@ -71,6 +70,6 @@ namespace jl {
 		void addFixedObjectPixelsToBuffer(std::unordered_map<std::string, objs::ObjectBrick>& opixmap, int floorY, int floorX, perlin& p);
 		void updateDropsAndAddToScreenBuffer(std::unordered_map<std::string, objs::PlayerPixel>& screenumap);
 		void renderMinimap(int widt, int x, int y, objs::Player* pla);
-		void handleEvents(objs::Player* pla);
+		void handleEvents();
 	};
 }

@@ -8,13 +8,12 @@ namespace jl
 	gui::GUIController Game::guic = gui::GUIController();
 	Game::Game()
 	{
-		guic.setViews(gui::MimosDonoDefaultGUI::getViews());
 		currentgui = "pause";
 		isGUIOpen = false;
+		guiKeyJustTriggered = false;
 		gameWidth = 1280;
 		gameHeight = 720;
-		guiInterval = 30;
-		guiTimer = 0;
+		guic.setViews(gui::MimosDonoDefaultGUI::getViews(gameWidth, gameHeight));
 		window.create(sf::VideoMode(gameWidth, gameHeight), "MimosDono Dev 12.2.0");
 		camX = 0;
 		camY = 0;
@@ -37,7 +36,7 @@ namespace jl
 		perlinZEffect = 0;
 		perlinZEffect2 = 0;
 		testNum = -20;
-		oboverscan = 20;
+		oboverscan = 24;
 		typeID =
 		{
 			{
@@ -73,6 +72,77 @@ namespace jl
 		text.setStyle(sf::Text::Regular);
 	};
 	void Game::pollEvents(sf::Event e) {
+		if (e.type == sf::Event::KeyPressed) 
+		{
+			if (e.key.code == sf::Keyboard::Escape)
+			{
+				isGUIOpen = !isGUIOpen;
+			}
+			if (!isGUIOpen)
+			{
+				float movement = 1.2;
+				//DEBUG SETTINGS
+				if (e.key.code == sf::Keyboard::K)
+				{
+					testNum += 1;
+				}
+				if (e.key.code == sf::Keyboard::C)
+				{
+					setClickPos();
+					objs::Chest ch;
+					ch.x = (int)(click.x / ts + camX) + 10;
+					ch.y = (int)(click.y / ts + camY) + 18;
+					std::string keySpot2 = "" + std::to_string(ch.x) + ',' + std::to_string(ch.y);
+					fomap[keySpot2] = ch;
+				}
+				//END DEBUG
+				if (e.key.code == sf::Keyboard::Left || e.key.code == sf::Keyboard::A)
+				{
+					play.left = true;
+				}
+				if (e.key.code == sf::Keyboard::Right || e.key.code == sf::Keyboard::D)
+				{
+					play.right = true;
+				}
+				if (e.key.code == sf::Keyboard::Down || e.key.code == sf::Keyboard::S)
+				{
+					play.down = true;
+				}
+				if (e.key.code == sf::Keyboard::Up || e.key.code == sf::Keyboard::W)
+				{
+					play.up = true;
+				}
+				if (e.key.code == sf::Keyboard::Space)
+				{
+					if (play.jump == false)
+					{
+						play.jump = true;
+					}
+				}
+			}
+		}
+		if (e.type == sf::Event::KeyReleased)
+		{
+			if (e.key.code == sf::Keyboard::Left || e.key.code == sf::Keyboard::A)
+			{
+				play.left = false;
+			}
+			if (e.key.code == sf::Keyboard::Right || e.key.code == sf::Keyboard::D)
+			{
+				play.right = false;
+			}
+			if (e.key.code == sf::Keyboard::Down || e.key.code == sf::Keyboard::S)
+			{
+				play.down = false;
+			}
+			if (e.key.code == sf::Keyboard::Up || e.key.code == sf::Keyboard::W)
+			{
+				play.up = false;
+			}
+		}
+
+
+
 		if (e.type == sf::Event::MouseButtonPressed) {
 			if (e.mouseButton.button == sf::Mouse::Left) {
 
@@ -146,7 +216,7 @@ namespace jl
 		renderMinimap(minimapWidth, minimapX, minimapY, &play);
 		moveGUIElements();
 		renderUI();
-		handleEvents(&play);
+		handleEvents();
 		window.display();
 	}
 
@@ -192,8 +262,10 @@ namespace jl
 
 	void Game::renderUI()
 	{
+		text.setOutlineThickness(0.0);
 		text.setString("MimosDono v12.2.0dev");
 		text.setPosition(sf::Vector2f(0, 0));
+		text.setFillColor(sf::Color(255, 255, 255));
 		window.draw(text);
 		if (isGUIOpen)
 		{
@@ -204,15 +276,29 @@ namespace jl
 				re.setFillColor(sf::Color(0, 0, 0));
 				re.setSize(sf::Vector2f(cont.width, cont.height));
 				re.setPosition(sf::Vector2f(cont.x, cont.y));
+				re.setOutlineColor(sf::Color::White);
+				re.setOutlineThickness(5.0);
 				window.draw(re);
 				//Then draw each object
-				re.setFillColor(sf::Color(255, 255, 255));
+				
 				int index = 0;
 				for (gui::GUIObject obj : cont.objects)
 				{
 					re.setSize(sf::Vector2f(obj.width, obj.height));
-					re.setPosition(sf::Vector2f(cont.x + (cont.width/2)-(obj.width/2), cont.y + ((cont.height/cont.objects.size())*index)));
+					sf::Vector2f pos(cont.x + (cont.width >> 1) - (obj.width >> 1), (((cont.height / cont.objects.size())/ cont.objects.size()) >> 1) + cont.y + ((cont.height / cont.objects.size()) * index));
+					re.setPosition(pos);
+					re.setOutlineThickness(0.0);
+					re.setFillColor((isMouseOver(&re)) ? sf::Color(255, 255, 255) : sf::Color(100, 100, 100));
 					window.draw(re);
+					if (obj.text != "")
+					{
+						sf::Vector2f textpos(pos.x + (obj.width >> 1) - ((obj.text.size() >> 1)*((int)text.getCharacterSize())), pos.y + (obj.height >> 1) - ((int)text.getCharacterSize()>>1));
+						text.setPosition(textpos);
+						text.setString(obj.text);
+						text.setOutlineThickness(0);
+						text.setFillColor((isMouseOver(&re)) ? sf::Color(0, 0, 0) : sf::Color(255, 255, 255));
+						window.draw(text);
+					}
 					index++;
 				}
 			}
@@ -245,6 +331,7 @@ namespace jl
 		int wi = play.inv.inv[i].thingWidth;
 		int he = play.inv.inv[i].thingHeight;
 		std::string thing = play.inv.inv[i].thing;
+		text.setFillColor(sf::Color::White);
 		text.setString((sf::String)std::to_string(play.inv.inv[i].count));
 		text.setPosition(sf::Vector2f(invX + ts, invY + ts + ts));
 		text.setOutlineColor(sf::Color::Black);
@@ -526,7 +613,7 @@ namespace jl
 							int difference = (((floorY)-(int)(play.y + 150)) * ob.elevation);
 							int differenceX = (((floorX)-(int)play.x) * ob.elevation);
 							int ksx = floorX + (int)((((o * 1) - 15) + (differenceX >> 8)));
-							int ksy = floorY - 20 + (int)(((f * 8) + (difference >> 4)) / 10) / 2;
+							int ksy = floorY - 19 + (int)(((f << 2) + (difference >> 4)) >> 3) / 2;
 
 							std::string thisKeySpot = "" + std::to_string(ksx) + ',' + std::to_string(ksy);
 
@@ -538,12 +625,12 @@ namespace jl
 									int n22 = std::floor(p.noise((o + floorX) * 0.1, (o + floorX) * 0.2, 11.01 + ((int)perlinZEffect2 >> 8)) * 10);
 									int n32 = std::floor(p.noise((f + floorY) * 0.1, (f + floorY) * 0.4, 11.01 + ((int)perlinZEffect2 >> 8)) * 4);
 									int n2Clamped = (std::min(std::max(n22 - n32 - 4, -8), 8));
-									thisKeySpot = "" + std::to_string((n2Clamped / 4) + ksx) + ',' + std::to_string(ksy);
+									thisKeySpot = "" + std::to_string((n2Clamped >> 2) + ksx) + ',' + std::to_string(ksy);
 									if ((float)std::rand() / RAND_MAX > 0.9999)
 									{
 										objs::Particle pa;
 										pa.x = (((int)std::round(fomap.at(keySpot).x - ((fomap.at(keySpot).width / 2) * ((float)std::rand() / RAND_MAX)) + fomap.at(keySpot).width / 4)));
-										pa.y = -15 + ((int)std::round(fomap.at(keySpot).y - ((fomap.at(keySpot).height / 1.5) * ((float)std::rand() / RAND_MAX))));
+										pa.y = -7 + ((int)std::round(fomap.at(keySpot).y - ((fomap.at(keySpot).height >> 1) * ((float)std::rand() / RAND_MAX))));
 										sf::Color c = opixref['l'];
 										pa.speedY = std::max(pa.speedY, 0.1f);
 										pa.speedX = ((float)std::rand() / RAND_MAX) - 0.5f;
@@ -578,12 +665,12 @@ namespace jl
 							}
 							int difference = (((floorY)-(int)(play.y + 150)) * ob.elevation);
 							int differenceX = (((floorX)-(int)play.x) * ob.elevation);
-							int n22 = std::floor(p.noise((o + floorX) * 0.1, (o + floorX) * 0.2, 11.01 + (perlinZEffect2 / 500)) * 10);
-							int n32 = std::floor(p.noise((f + floorY) * 0.1, (f + floorY) * 0.4, 11.01 + (perlinZEffect2 / 300)) * 4);
+							int n22 = std::floor(p.noise((o + floorX) * 0.1, (o + floorX) * 0.2, 11.01 + ((int)perlinZEffect2 >> 10)) * 10);
+							int n32 = std::floor(p.noise((f + floorY) * 0.1, (f + floorY) * 0.4, 11.01 + ((int)perlinZEffect2 >> 5)) * 4);
 							int n2Clamped = (std::min(std::max(n22 - n32 - 4, -8), 8));
 							int off = (fop->type == 0) ? 18 : 0;
 							int ksx = floorX + (int)((((o * 1) - 15) + (differenceX >> 8)));
-							int ksy = (n2Clamped / 2) + floorY - (he + 3 - off) - (int)((((f / 8) + (difference >> 4)) / 10) >> 2) + 3;
+							int ksy = (n2Clamped >> 1) + floorY - (he + 3 - off) - (int)((((f >> 4) + (difference >> 4)) >> 5) >> 2) + 3;
 							std::string thisKeySpot = "" + std::to_string(ksx) + ',' + std::to_string(ksy);
 							ob.col.b = std::min(std::max((int)ob.col.b, 25), 150);
 							ob.col.r = std::min(std::max((int)ob.col.r, 25), 150);
@@ -681,8 +768,8 @@ namespace jl
 		{
 			for (int i = x; i < x + widt; i++)
 			{
-				int localX = (int)(pla->x + ((i - x) * revScale) - ((widt * revScale) / 2));
-				int localY = (int)(pla->y + ((j - y) * revScale) - ((widt * revScale) / 2));
+				int localX = (int)(pla->x + ((i - x) * revScale) - ((widt * revScale) >> 1));
+				int localY = (int)(pla->y + ((j - y) * revScale) - ((widt * revScale) >> 1));
 				std::string keySpot = "" + std::to_string(localX) + ',' + std::to_string(localY);
 				if (worldmap.find(keySpot) != worldmap.end())
 				{
@@ -702,66 +789,27 @@ namespace jl
 			}
 		}
 	}
-	void Game::handleEvents(objs::Player* pla)
+	void Game::handleEvents()
 	{
-		float movement = 1.2;
-		if (window.hasFocus())
+		if (play.left)
 		{
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
-			{
-				if (guiTimer > guiInterval) {
-					guiTimer = 0;
-					isGUIOpen = !isGUIOpen;
-				}
-				else {
-					guiTimer += 1;
-				}
-			}
-			if (!isGUIOpen)
-			{
-
-					if (sf::Keyboard::isKeyPressed(sf::Keyboard::K))
-					{
-						testNum += 1;
-					}
-					if (sf::Keyboard::isKeyPressed(sf::Keyboard::C))
-					{
-						setClickPos();
-						objs::Chest ch;
-						ch.x = (int)(click.x / ts + camX) + 10;
-						ch.y = (int)(click.y / ts + camY) + 18;
-						std::string keySpot2 = "" + std::to_string(ch.x) + ',' + std::to_string(ch.y);
-						fomap[keySpot2] = ch;
-
-					}
-					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-					{
-						camX -= movement;
-						pla->move(-movement, 0, &pmap);
-					}
-					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-					{
-						camX += movement;
-						pla->move(movement, 0, &pmap);
-					}
-					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-					{
-						camY += movement;
-						pla->move(0, movement, &pmap);
-					}
-					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-					{
-						camY -= movement;
-						pla->move(0, -movement, &pmap);
-					}
-					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-					{
-						if (pla->jump == false)
-						{
-							pla->jump = true;
-						}
-					}
-			}
+			camX -= play.movementSpeed;
+			play.move(-play.movementSpeed, 0, &pmap);
+		}
+		if (play.right)
+		{
+			camX += play.movementSpeed;
+			play.move(play.movementSpeed, 0, &pmap);
+		}
+		if (play.down)
+		{
+			camY += play.movementSpeed;
+			play.move(0, play.movementSpeed, &pmap);
+		}
+		if (play.up)
+		{
+			camY -= play.movementSpeed;
+			play.move(0, -play.movementSpeed, &pmap);
 		}
 	}
 }

@@ -129,6 +129,11 @@ namespace objs
 			float elevation;
 			float gravityForce;
 			int jumpForce;
+			bool left;
+			bool right;
+			bool up;
+			bool down;
+			float movementSpeed;
 			Player();
 			Player(std::string pname, int px, int py);
 			Player(std::string pname, int px, int py, int wid, int hei);

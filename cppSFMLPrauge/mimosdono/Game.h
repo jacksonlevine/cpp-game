@@ -58,6 +58,7 @@ namespace jl {
 		void moveGUIElements();
 		void setClickPos();
 		bool isMouseOver(sf::RectangleShape* recto);
+		bool isMouseOver(int x, int y, int width, int height);
 		void renderUI();
 		void drawInventoryTileContent(int i, int invX);
 		void render(perlin p);

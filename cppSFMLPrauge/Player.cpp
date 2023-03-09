@@ -1,4 +1,5 @@
 #include "mimosdono/JacksObjects.h"
+#include "mimosdono/Game.h"
 
 namespace objs
 {
@@ -81,6 +82,46 @@ namespace objs
 				jump = false;
 				gravityForce = 0;
 				elevation = 0;
+			}
+		}
+	}
+}
+
+namespace jl
+{
+	void Game::addPlayerPixelsToBuffer(int floorX, int floorY, std::unordered_map<std::string, objs::PlayerPixel>& screenumap)
+	{
+		std::string keySpot = "" + std::to_string(floorX) + ',' + std::to_string(floorY);
+		if (pmap.find(keySpot) != pmap.end())
+		{
+			int yoff = 0;
+			int yshrink = 0;
+			if (worldmap.find(keySpot) != worldmap.end())
+			{
+				yoff = std::floor(worldmap.at(keySpot).elevation);
+			}
+			else
+			{
+				yshrink = 2;
+			}
+			int elevOs = std::floor((int)pmap.at(keySpot)->elevation >> 4);
+			if (pmap.at(keySpot)->jump == true)
+			{
+				pmap.at(keySpot)->stepJump();
+			}
+			for (int a = 0 + yoff + std::max(yshrink - elevOs, 0) + elevOs; a < pmap.at(keySpot)->height + yoff + elevOs; a++)
+			{
+				for (int l = 0; l < pmap.at(keySpot)->width; l++)
+				{
+					sf::Color col;
+					col.r = 255;
+					col.g = 0;
+					col.b = 0;
+					col.a = 255;
+					std::string thisKeySpot = "" + std::to_string(floorX + l) + ',' + std::to_string(floorY - a);
+					objs::PlayerPixel pp(col, (int)(pmap.at(keySpot)->x), (int)(pmap.at(keySpot)->y));
+					screenumap[thisKeySpot] = pp;
+				}
 			}
 		}
 	}

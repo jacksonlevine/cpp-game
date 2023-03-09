@@ -147,6 +147,7 @@ namespace jl
 			if (e.mouseButton.button == sf::Mouse::Left) {
 
 				setClickPos();
+
 				bool clickPosOnMinimap = (click.x / ts > minimapX && click.y / ts > minimapY && click.x / ts < minimapX + minimapWidth && click.y / ts < minimapY + minimapWidth);
 				if (clickPosOnMinimap)
 				{
@@ -254,10 +255,16 @@ namespace jl
 		{
 			return true;
 		}
-		else
+		return false;
+	}
+	bool Game::isMouseOver(int x, int y, int width, int height)
+	{
+		setClickPos();
+		if (click.x >= x && click.x <= x + width && click.y >= y && click.y <= y + height)
 		{
-			return false;
+			return true;
 		}
+		return false;
 	}
 
 	void Game::renderUI()
@@ -371,57 +378,7 @@ namespace jl
 		processMouseClickedOnObjectPixel(opixmap);
 		perlinZEffect++;
 	}
-	void Game::drawAndUpdateParticles()
-	{
-		int pCount = parts.size();
-		for (int i = 0; i < pCount; i++)
-		{
-			parts[i].update();
-			rect.setPosition(sf::Vector2f((parts[i].x - camX) * ts, (parts[i].y - camY) * ts));
-			rect.setFillColor(parts[i].col);
-			window.draw(rect);
-			if (parts[i].timer > parts[i].life)
-			{
-				parts.erase(std::remove(parts.begin(), parts.end(), parts[i]), parts.end());
-			}
-		}
-	}
-	void Game::processMouseClickedOnObjectPixel(std::unordered_map<std::string, objs::ObjectBrick>& opixmap)
-	{
-		if (mouseClicked == true)
-		{
-			setClickPos();
-			if (clickTimer <= 0.1)
-			{
-				clickTimer = clickInterval;
-				std::string keySpot = "" + std::to_string(((int)std::round(click.x) / ts) + (int)camX) + ',' + std::to_string(((int)std::round(click.y) / ts) + (int)camY);
-				if (opixmap.find(keySpot) != opixmap.end())
-				{
-					opixmap.at(keySpot).point->clickEvent();
-					for (int n = 0; n < 1; n++)
-					{
-						spawnParticleFromObjectPixel(opixmap, keySpot);
-					}
-				}
-			}
-			else
-			{
-				clickTimer -= 2;
-			}
-		}
-	}
-	void Game::spawnParticleFromObjectPixel(std::unordered_map<std::string, objs::ObjectBrick>& opixmap, std::string& keySpot)
-	{
-		objs::Particle pa;
-		pa.x = (((int)std::round(opixmap.at(keySpot).obx - ((opixmap.at(keySpot).point->width / 2) * ((float)std::rand() / RAND_MAX)) + opixmap.at(keySpot).point->width / 4))) - 3;
-		pa.y = -15 + ((int)std::round(opixmap.at(keySpot).oby - ((opixmap.at(keySpot).point->height / 1.5) * ((float)std::rand() / RAND_MAX))));
-		sf::Color c = opixmap.at(keySpot).col;
-		c.r += 50;
-		c.g += 50;
-		c.b += 50;
-		pa.col = c;
-		parts.push_back(pa);
-	}
+
 	void Game::decidePixelAndDrawIfWithinScreenBounds(int i, int j, std::unordered_map<std::string, objs::ObjectBrick>& opixmap, std::unordered_map<std::string, objs::PlayerPixel>& screenumap, perlin& p)
 	{
 		std::string keySpot = "" + std::to_string(i) + ',' + std::to_string(j);
@@ -499,268 +456,7 @@ namespace jl
 			}
 		}
 	}
-	void Game::addPlayerPixelsToBuffer(int floorX, int floorY, std::unordered_map<std::string, objs::PlayerPixel>& screenumap)
-	{
-		std::string keySpot = "" + std::to_string(floorX) + ',' + std::to_string(floorY);
-		if (pmap.find(keySpot) != pmap.end())
-		{
-			int yoff = 0;
-			int yshrink = 0;
-			if (worldmap.find(keySpot) != worldmap.end())
-			{
-				yoff = std::floor(worldmap.at(keySpot).elevation);
-			}
-			else
-			{
-				yshrink = 2;
-			}
-			int elevOs = std::floor((int)pmap.at(keySpot)->elevation >> 4);
-			if (pmap.at(keySpot)->jump == true)
-			{
-				pmap.at(keySpot)->stepJump();
-			}
-			for (int a = 0 + yoff + std::max(yshrink - elevOs, 0) + elevOs; a < pmap.at(keySpot)->height + yoff + elevOs; a++)
-			{
-				for (int l = 0; l < pmap.at(keySpot)->width; l++)
-				{
-					sf::Color col;
-					col.r = 255;
-					col.g = 0;
-					col.b = 0;
-					col.a = 255;
-					std::string thisKeySpot = "" + std::to_string(floorX + l) + ',' + std::to_string(floorY - a);
-					objs::PlayerPixel pp(col, (int)(pmap.at(keySpot)->x), (int)(pmap.at(keySpot)->y));
-					screenumap[thisKeySpot] = pp;
-				}
-			}
-		}
-	}
-	void Game::breakFixedObjectAndDropItems(std::string& keySpot)
-	{
-		int dropCount = (int)(((float)std::rand() / RAND_MAX) * 10);
-		for (int n = 0; n < dropCount; n++)
-		{
-			float xOff = (int)(((float)std::rand() / RAND_MAX) * -7 + 3.5) - 2;
-			float yOff = -12 + (int)(((float)std::rand() / RAND_MAX) * -5 + 2.5);
-			objs::DroppedItem d(fomap.at(keySpot).x + xOff, fomap.at(keySpot).y + yOff, (int)drops.size());
-			if (fomap.at(keySpot).type == 0)
-			{
-				d.thing = "tttttt";
-				d.height = 2;
-				d.width = 3;
-				d.name = "wood";
-				d.timeStarted = std::chrono::high_resolution_clock::now().time_since_epoch().count() + (std::rand() * 10000000);
-			}
-			else if (fomap.at(keySpot).type == 1)
-			{
-				d.thing = "00a0aasaasna0nna";
-				d.height = 4;
-				d.width = 4;
-				d.name = "stone";
-				d.timeStarted = std::chrono::high_resolution_clock::now().time_since_epoch().count() + (std::rand() * 10000000);
-			}
-			else
-			{
-				d.thing = "0a0ata0a0";
-				d.width = 3;
-				d.height = 3;
-				d.name = "no texture";
-				d.timeStarted = std::chrono::high_resolution_clock::now().time_since_epoch().count() + (std::rand() * 10000000);
-			}
-			drops.push_back(d);
-		}
-		for (int n = 0; n < 25; n++)
-		{
-			objs::Particle pa;
-			pa.x = (((int)std::round(fomap.at(keySpot).x - ((fomap.at(keySpot).width / 2) * ((float)std::rand() / RAND_MAX)) + fomap.at(keySpot).width / 4))) - 2;
-			pa.y = -15 + ((int)std::round(fomap.at(keySpot).y - ((fomap.at(keySpot).height / 1.5) * ((float)std::rand() / RAND_MAX))));
-			sf::Color c = opixref[fomap.at(keySpot).thing[((fomap.at(keySpot).height - 1) * fomap.at(keySpot).width) + (int)(fomap.at(keySpot).width / 2)]];
-			c.r += 50;
-			c.g += 50;
-			c.b += 50;
-			pa.col = c;
-			parts.push_back(pa);
-		}
-		fomap.erase(keySpot);
-	}
-	void Game::addFixedObjectPixelsToBuffer(std::unordered_map<std::string, objs::ObjectBrick>& opixmap, int floorY, int floorX, perlin& p)
-	{
-		std::string keySpot = "" + std::to_string(floorX) + ',' + std::to_string(floorY);
-		if (fomap.find(keySpot) != fomap.end())
-		{
-			if (fomap.at(keySpot).strength < 0)
-			{
-				breakFixedObjectAndDropItems(keySpot);
-			}
-			else
-			{
-				objs::FixedObject* fop = &fomap.at(keySpot);
-				int wi = fop->width;
-				int he = fop->height;
-				for (int f = 0; f < he; f++)
-				{
-					for (int o = 0; o < wi; o++)
-					{
-						char t = fop->thing[(f * wi) + o];
-						if (t != '0')
-						{
-							objs::ObjectBrick ob(opixref[t], fop->x, fop->y);
-							ob.elevation = he - f;
-							if (worldmap.find(keySpot) != worldmap.end())
-							{
-								ob.elevation += worldmap.at(keySpot).elevation;
-							}
-							int difference = (((floorY)-(int)(play.y + 150)) * ob.elevation);
-							int differenceX = (((floorX)-(int)play.x) * ob.elevation);
-							int ksx = floorX + (int)((((o * 1) - 15) + (differenceX >> 8)));
-							int ksy = floorY - 19 + (int)(((f << 2) + (difference >> 4)) >> 3) / 2;
 
-							std::string thisKeySpot = "" + std::to_string(ksx) + ',' + std::to_string(ksy);
-
-							ob.point = fop;
-							if (opixmap.find(thisKeySpot) == opixmap.end())
-							{
-								if (ob.col == opixref['l'])
-								{
-									int n22 = std::floor(p.noise((o + floorX) * 0.1, (o + floorX) * 0.2, 11.01 + ((int)perlinZEffect2 >> 8)) * 10);
-									int n32 = std::floor(p.noise((f + floorY) * 0.1, (f + floorY) * 0.4, 11.01 + ((int)perlinZEffect2 >> 8)) * 4);
-									int n2Clamped = (std::min(std::max(n22 - n32 - 4, -8), 8));
-									thisKeySpot = "" + std::to_string((n2Clamped >> 2) + ksx) + ',' + std::to_string(ksy);
-									if ((float)std::rand() / RAND_MAX > 0.9999)
-									{
-										objs::Particle pa;
-										pa.x = (((int)std::round(fomap.at(keySpot).x - ((fomap.at(keySpot).width / 2) * ((float)std::rand() / RAND_MAX)) + fomap.at(keySpot).width / 4)));
-										pa.y = -7 + ((int)std::round(fomap.at(keySpot).y - ((fomap.at(keySpot).height >> 1) * ((float)std::rand() / RAND_MAX))));
-										sf::Color c = opixref['l'];
-										pa.speedY = std::max(pa.speedY, 0.1f);
-										pa.speedX = ((float)std::rand() / RAND_MAX) - 0.5f;
-										pa.col = c;
-										parts.push_back(pa);
-									}
-								}
-								opixmap[thisKeySpot] = ob;
-							}
-							else
-							{
-								if (opixmap.at(thisKeySpot).oby < fop->y)
-								{
-									opixmap[thisKeySpot] = ob;
-								}
-							}
-						}
-					}
-				}
-				for (int f = 0; f < he; f++)
-				{
-					for (int o = 0; o < wi; o++)
-					{
-						char t = fop->thing[objs::clamp((f * wi) + o, 0, (wi * he) - 2)];
-						if (t != '0')
-						{
-							objs::ObjectBrick ob(opixref[t], fop->x, fop->y);
-							ob.elevation = he - f;
-							if (worldmap.find(keySpot) != worldmap.end())
-							{
-								ob.elevation += worldmap.at(keySpot).elevation;
-							}
-							int difference = (((floorY)-(int)(play.y + 150)) * ob.elevation);
-							int differenceX = (((floorX)-(int)play.x) * ob.elevation);
-							int n22 = std::floor(p.noise((o + floorX) * 0.1, (o + floorX) * 0.2, 11.01 + ((int)perlinZEffect2 >> 10)) * 10);
-							int n32 = std::floor(p.noise((f + floorY) * 0.1, (f + floorY) * 0.4, 11.01 + ((int)perlinZEffect2 >> 5)) * 4);
-							int n2Clamped = (std::min(std::max(n22 - n32 - 4, -8), 8));
-							int off = (fop->type == 0) ? 18 : 0;
-							int ksx = floorX + (int)((((o * 1) - 15) + (differenceX >> 8)));
-							int ksy = (n2Clamped >> 1) + floorY - (he + 3 - off) - (int)((((f >> 4) + (difference >> 4)) >> 5) >> 2) + 3;
-							std::string thisKeySpot = "" + std::to_string(ksx) + ',' + std::to_string(ksy);
-							ob.col.b = std::min(std::max((int)ob.col.b, 25), 150);
-							ob.col.r = std::min(std::max((int)ob.col.r, 25), 150);
-							ob.col.g = std::min(std::max((int)ob.col.g, 25), 150);
-							ob.col.a = 120;
-							ob.point = fop;
-							if (opixmap.find(thisKeySpot) == opixmap.end())
-							{
-								if (worldmap.find(thisKeySpot) != worldmap.end())
-								{
-									if (worldmap.at(thisKeySpot).isWater == true)
-									{
-										opixmap[thisKeySpot] = ob;
-									}
-								}
-							}
-							else
-							{
-								if (opixmap.at(thisKeySpot).oby < fop->y)
-								{
-									if (worldmap.at(thisKeySpot).isWater == true)
-									{
-										opixmap[thisKeySpot] = ob;
-									}
-								}
-							}
-						}
-					}
-				}
-				perlinZEffect2 += .2;
-			}
-		}
-	}
-	void Game::updateDropsAndAddToScreenBuffer(std::unordered_map<std::string, objs::PlayerPixel>& screenumap)
-	{
-		int dCount = drops.size();
-		for (int i = 0; i < dCount; i++)
-		{
-			drops[i].update();
-			int range = 20;
-			if (std::abs(drops[i].x - play.x) < range && std::abs(drops[i].y - play.y) < range)
-			{
-				drops[i].x += (play.x - drops[i].x) / 10;
-				drops[i].y += (play.y - drops[i].y) / 10;
-				if (std::abs(drops[i].x - play.x) < 1 && std::abs(drops[i].y - play.y) < 1)
-				{
-					if (typeID.find(drops[i].name) != typeID.end())
-					{
-						int found = play.inv.findItem(typeID.at(drops[i].name));
-						int fos = play.inv.firstOpenSlot();
-						if (found != -1)
-						{
-							play.inv.inv[found].count += 1;
-						}
-						else if (fos != -1)
-						{
-							play.inv.inv[fos].id = typeID.at(drops[i].name);
-							play.inv.inv[fos].count = 1;
-							play.inv.inv[fos].thing = drops[i].thing;
-							play.inv.inv[fos].thingWidth = drops[i].width;
-							play.inv.inv[fos].thingHeight = drops[i].height;
-						}
-						if (found != -1 || fos != -1)
-						{
-							drops[i].markedForDeletion = true;
-						}
-					}
-				}
-			}
-			int wi = drops[i].width;
-			int he = drops[i].height;
-			for (int h = 0; h < he; h++)
-			{
-				for (int w = 0; w < wi; w++)
-				{
-					std::string thisKeySpot = "" + std::to_string((int)(drops[i].x + w)) + ',' + std::to_string((int)((float)drops[i].y + h + ((float)drops[i].elevation)));
-					sf::Color c = opixref[drops[i].thing[objs::clamp((h * wi) + w, 0, drops[i].thing.size() - 1)]];
-					objs::PlayerPixel pi(c, drops[i].x + w, drops[i].y + h);
-					if (drops[i].thing[objs::clamp((h * wi) + w, 0, drops[i].thing.size() - 1)] != '0')
-					{
-						screenumap[thisKeySpot] = pi;
-					}
-				}
-			}
-			if (drops[i].markedForDeletion == true)
-			{
-				std::erase(drops, drops[i]);
-			}
-		}
-	}
 	void Game::renderMinimap(int widt, int x, int y, objs::Player* pla)
 	{
 		int revScale = 20;

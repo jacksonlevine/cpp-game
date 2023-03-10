@@ -5,15 +5,16 @@
 #include <iostream>
 namespace jl
 {
-	gui::GUIController Game::guic = gui::GUIController();
+	gui::GUIObject* currentMousedOver;
 	Game::Game()
 	{
+		mousedOverAGuiItem = false;
 		currentgui = "pause";
 		isGUIOpen = false;
 		guiKeyJustTriggered = false;
 		gameWidth = 1280;
 		gameHeight = 720;
-		guic.setViews(gui::MimosDonoDefaultGUI::getViews(gameWidth, gameHeight));
+		gui::GUIController::setViews(gui::MimosDonoDefaultGUI::getViews(this, gameWidth, gameHeight));
 		window.create(sf::VideoMode(gameWidth, gameHeight), "MimosDono Dev 12.2.0");
 		camX = 0;
 		camY = 0;
@@ -72,6 +73,7 @@ namespace jl
 		text.setStyle(sf::Text::Regular);
 	};
 	void Game::pollEvents(sf::Event e) {
+		renderUI();
 		if (e.type == sf::Event::KeyPressed) 
 		{
 			if (e.key.code == sf::Keyboard::Escape)
@@ -147,6 +149,10 @@ namespace jl
 			if (e.mouseButton.button == sf::Mouse::Left) {
 
 				setClickPos();
+				if (isGUIOpen && mousedOverAGuiItem)
+				{
+					currentMousedOver->execute();
+				}
 
 				bool clickPosOnMinimap = (click.x / ts > minimapX && click.y / ts > minimapY && click.x / ts < minimapX + minimapWidth && click.y / ts < minimapY + minimapWidth);
 				if (clickPosOnMinimap)
@@ -215,23 +221,23 @@ namespace jl
 		window.clear(sf::Color::Black);
 		render(p);
 		renderMinimap(minimapWidth, minimapX, minimapY, &play);
-		moveGUIElements();
 		renderUI();
+		moveGUIElements();
 		handleEvents();
 		window.display();
 	}
 
 	void Game::moveGUIElements()
 	{
-		if (clickOnMinimap == true)
+		float xPrev = click.x;
+		float yPrev = click.y;
+		setClickPos();
+		float xNow = click.x;
+		float yNow = click.y;
+		float xdiff = xNow - xPrev;
+		float ydiff = yNow - yPrev;
+		if (clickOnMinimap == true && !isGUIOpen)
 		{
-			float xPrev = click.x;
-			float yPrev = click.y;
-			setClickPos();
-			float xNow = click.x;
-			float yNow = click.y;
-			float xdiff = xNow - xPrev;
-			float ydiff = yNow - yPrev;
 			minimapX += xdiff / ts;
 			minimapY += ydiff / ts;
 		}
@@ -267,7 +273,7 @@ namespace jl
 		return false;
 	}
 
-	void Game::renderUI()
+	void Game::renderUI()    
 	{
 		text.setOutlineThickness(0.0);
 		text.setString("MimosDono v12.2.0dev");
@@ -277,7 +283,8 @@ namespace jl
 		if (isGUIOpen)
 		{
 			sf::RectangleShape re;
-			for (gui::GUIContainer cont : guic.getViewFromName(currentgui).containers)
+			bool mouseOnSomething = false;
+			for (gui::GUIContainer cont : gui::GUIController::getViewFromName(currentgui).containers)
 			{
 				//Draw the container
 				re.setFillColor(sf::Color(0, 0, 0));
@@ -294,6 +301,13 @@ namespace jl
 					re.setSize(sf::Vector2f(obj.width, obj.height));
 					sf::Vector2f pos(cont.x + (cont.width >> 1) - (obj.width >> 1), (((cont.height / cont.objects.size())/ cont.objects.size()) >> 1) + cont.y + ((cont.height / cont.objects.size()) * index));
 					re.setPosition(pos);
+
+					if (isMouseOver(&re))
+					{
+						mouseOnSomething = true;
+						currentMousedOver = &obj;
+					}
+
 					re.setOutlineThickness(0.0);
 					re.setFillColor((isMouseOver(&re)) ? sf::Color(255, 255, 255) : sf::Color(100, 100, 100));
 					window.draw(re);
@@ -309,6 +323,7 @@ namespace jl
 					index++;
 				}
 			}
+			mousedOverAGuiItem = mouseOnSomething;
 		}
 		for (int i = 0; i < invTiles; i++)
 		{

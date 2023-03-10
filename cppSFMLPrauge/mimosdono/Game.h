@@ -1,13 +1,12 @@
 #pragma once
 #include "World.h"
 #include <iostream>
-#include "GUIController.h"
 namespace jl {
 	class Game {
 	public:
-		static gui::GUIController guic;
 		std::string currentgui;
 		bool isGUIOpen;
+		bool mousedOverAGuiItem;
 		bool guiKeyJustTriggered;
 		int gameWidth;
 		int gameHeight;

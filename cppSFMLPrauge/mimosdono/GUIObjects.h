@@ -27,7 +27,7 @@ namespace gui
 	public:
 		GUIQuitButton(jl::Game* g, int wi, int he);
 		GUIQuitButton(jl::Game* g, int wi, int he, std::string te);
-		void execute();
+		virtual void execute();
 	};
 
 	class GUIContainer
@@ -38,6 +38,8 @@ namespace gui
 		int width;
 		int height;
 		std::vector<GUIObject> objects;
+		GUIContainer();
+		GUIContainer(int i, int j, int wi, int he);
 	};
 
 	class GUIView
@@ -45,6 +47,8 @@ namespace gui
 	private:
 		jl::Game* _g;
 	public:
+		GUIView();
+		GUIView(jl::Game* g);
 		jl::Game* getGameInstance();
 		std::vector<GUIContainer> containers;
 	};

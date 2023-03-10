@@ -221,8 +221,8 @@ namespace jl
 		window.clear(sf::Color::Black);
 		render(p);
 		renderMinimap(minimapWidth, minimapX, minimapY, &play);
-		renderUI();
 		moveGUIElements();
+		renderUI();
 		handleEvents();
 		window.display();
 	}
@@ -417,7 +417,7 @@ namespace jl
 				}
 				else
 				{
-					if (opixmap.at(keySpot).oby < screenumap.at(keySpot).py)
+					if (opixmap.at(keySpot).oby- (opixmap.at(keySpot).point->height-(opixmap.at(keySpot).point->type == 0 ? 7 : 0)) < screenumap.at(keySpot).py)
 					{
 						rect.setFillColor(screenumap.at(keySpot).col);
 						rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));

@@ -18,8 +18,10 @@ namespace gui
 
 	GUIView mdPauseMenu(jl::Game* g, int scw, int sch)
 	{
-		GUIView pause;
-		GUIContainer container;
+		GUIView pause(g);
+		int cw = 200; // size of the pause menu container
+		int ch = 250;
+		GUIContainer container((scw / 2) - (cw / 2), (sch / 2) - (ch / 2), cw, ch);
 
 		GUIObject obj(g, 150, 50, "Settings");
 	

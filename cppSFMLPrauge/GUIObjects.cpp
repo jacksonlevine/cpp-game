@@ -43,4 +43,26 @@ namespace gui
 	{
 		getGameInstance()->window.close();
 	}
+	GUIView::GUIView(jl::Game* g)
+	{
+		_g = g;
+	}
+	GUIView::GUIView()
+	{
+
+	}
+	GUIContainer::GUIContainer(int i, int j, int wi, int he)
+	{
+		x = i;
+		y = j;
+		width = wi;
+		height = he;
+	}
+	GUIContainer::GUIContainer()
+	{
+		height = 100;
+		width = 100;
+		x = 0;
+		y = 0;
+	}
 }

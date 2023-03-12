@@ -140,6 +140,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="3DWalls.cpp" />
     <ClCompile Include="Chest.cpp" />
     <ClCompile Include="DroppedItem.cpp" />
     <ClCompile Include="GUIController.cpp" />
@@ -159,6 +160,7 @@
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="mimosdono\3DWalls.h" />
     <ClInclude Include="mimosdono\Game.h" />
     <ClInclude Include="mimosdono\GUIController.h" />
     <ClInclude Include="mimosdono\GUIObjects.h" />

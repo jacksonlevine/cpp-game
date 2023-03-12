@@ -2,6 +2,7 @@
 #include "mimosdono/World.h"
 #include "mimosdono/Game.h"
 #include "mimosdono/MimosDonoDefaultGUI.h"
+#include "mimosdono/3DWalls.h"
 #include <iostream>
 namespace jl
 {

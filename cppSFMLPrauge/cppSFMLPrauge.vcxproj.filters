@@ -66,6 +66,9 @@
     <ClCompile Include="GUIObjects.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="3DWalls.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mimosdono\Game.h">
@@ -87,6 +90,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="mimosdono\MimosDonoDefaultGUI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mimosdono\3DWalls.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -296,26 +296,26 @@ namespace jl
 				//Then draw each object
 				
 				int index = 0;
-				for (gui::GUIObject obj : cont.objects)
+				for (std::shared_ptr<gui::GUIObject> obj : cont.objects)
 				{
-					re.setSize(sf::Vector2f(obj.width, obj.height));
-					sf::Vector2f pos(cont.x + (cont.width >> 1) - (obj.width >> 1), (((cont.height / cont.objects.size())/ cont.objects.size()) >> 1) + cont.y + ((cont.height / cont.objects.size()) * index));
+					re.setSize(sf::Vector2f(obj->width, obj->height));
+					sf::Vector2f pos(cont.x + (cont.width >> 1) - (obj->width >> 1), (((cont.height / cont.objects.size())/ cont.objects.size()) >> 1) + cont.y + ((cont.height / cont.objects.size()) * index));
 					re.setPosition(pos);
 
 					if (isMouseOver(&re))
 					{
 						mouseOnSomething = true;
-						currentMousedOver = &obj;
+						currentMousedOver = obj.get();
 					}
 
 					re.setOutlineThickness(0.0);
 					re.setFillColor((isMouseOver(&re)) ? sf::Color(255, 255, 255) : sf::Color(100, 100, 100));
 					window.draw(re);
-					if (obj.text != "")
+					if (obj->text != "")
 					{
-						sf::Vector2f textpos(pos.x + (obj.width >> 1) - ((obj.text.size() >> 1)*((int)text.getCharacterSize())), pos.y + (obj.height >> 1) - ((int)text.getCharacterSize()>>1));
+						sf::Vector2f textpos(pos.x + (obj->width >> 1) - ((obj->text.size() >> 1)*((int)text.getCharacterSize())), pos.y + (obj->height >> 1) - ((int)text.getCharacterSize()>>1));
 						text.setPosition(textpos);
-						text.setString(obj.text);
+						text.setString(obj->text);
 						text.setOutlineThickness(0);
 						text.setFillColor((isMouseOver(&re)) ? sf::Color(0, 0, 0) : sf::Color(255, 255, 255));
 						window.draw(text);

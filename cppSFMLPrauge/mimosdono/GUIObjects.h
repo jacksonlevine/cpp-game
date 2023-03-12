@@ -7,19 +7,16 @@ namespace gui
 {
 	class GUIObject
 	{
-	private:
-		jl::Game* _g;
+
 	public:
+		jl::Game* _g;
 		int width;
 		int height;
 		int x;
 		int y;
 		std::string text;
 		bool mouseOver;
-		GUIObject(jl::Game* _g, int wi, int he);
-		GUIObject(jl::Game* _g, int wi, int he, std::string te);
-		virtual void execute();
-		jl::Game* getGameInstance();
+		virtual void execute() = 0;
 	};
 
 	class GUIQuitButton : public GUIObject
@@ -30,6 +27,23 @@ namespace gui
 		virtual void execute();
 	};
 
+	class GUIRouteButton : public GUIObject
+	{
+	public:
+		std::string route;
+		GUIRouteButton(jl::Game* g, int wi, int he, std::string ro);
+		GUIRouteButton(jl::Game* g, int wi, int he, std::string te, std::string ro);
+		virtual void execute();
+	};
+
+	class GUICloseButton : public GUIObject
+	{
+	public:
+			GUICloseButton(jl::Game* g, int wi, int he);
+			GUICloseButton(jl::Game* g, int wi, int he, std::string te);
+			virtual void execute();
+	};
+
 	class GUIContainer
 	{
 	public:
@@ -37,19 +51,17 @@ namespace gui
 		int y;
 		int width;
 		int height;
-		std::vector<GUIObject> objects;
+		std::vector<std::shared_ptr<GUIObject>> objects;
 		GUIContainer();
 		GUIContainer(int i, int j, int wi, int he);
 	};
 
 	class GUIView
 	{
-	private:
-		jl::Game* _g;
 	public:
+		jl::Game* _g;
 		GUIView();
 		GUIView(jl::Game* g);
-		jl::Game* getGameInstance();
 		std::vector<GUIContainer> containers;
 	};
 }

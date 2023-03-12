@@ -3,46 +3,75 @@
 #include <iostream>
 namespace gui
 {
-	GUIObject::GUIObject(jl::Game* game, int wi, int he)
+
+	GUIQuitButton::GUIQuitButton(jl::Game* g, int wi, int he)
 	{
 		width = wi;
 		height = he;
 		text = "";
-		_g = game;
+		_g = g;
 		mouseOver = false;
 	}
-	GUIObject::GUIObject(jl::Game* game, int wi, int he, std::string te)
+	GUIQuitButton::GUIQuitButton(jl::Game* g, int wi, int he, std::string te)
 	{
 		width = wi;
 		height = he;
 		text = te;
-		_g = game;
+		_g = g;
 		mouseOver = false;
 	}
-	GUIQuitButton::GUIQuitButton(jl::Game* g, int wi, int he) : GUIObject(g, wi, he)
+	GUICloseButton::GUICloseButton(jl::Game* g, int wi, int he)
 	{
+		width = wi;
+		height = he;
+		text = "";
+		_g = g;
+		mouseOver = false;
+	}
+	GUICloseButton::GUICloseButton(jl::Game* g, int wi, int he, std::string te)
+	{
+		width = wi;
+		height = he;
+		text = te;
+		_g = g;
+		mouseOver = false;
+	}
+	GUIRouteButton::GUIRouteButton(jl::Game* g, int wi, int he, std::string ro)
+	{
+		width = wi;
+		height = he;
+		text = "";
+		_g = g;
+		mouseOver = false;
+		route = ro;
+	}
+	GUIRouteButton::GUIRouteButton(jl::Game* g, int wi, int he, std::string te, std::string ro)
+	{
+		width = wi;
+		height = he;
+		text = te;
+		_g = g;
+		mouseOver = false;
+		route = ro;
+	}
 
-	}
-	GUIQuitButton::GUIQuitButton(jl::Game* g, int wi, int he, std::string te) : GUIObject(g, wi, he, te)
-	{
 
-	}
-	void GUIObject::execute()
-	{
-		std::cout << "I am groot! GUI object";
-	}
-	jl::Game* GUIView::getGameInstance()
-	{
-		return _g;
-	}
-	jl::Game* GUIObject::getGameInstance()
-	{
-		return _g;
-	}
+
 	void GUIQuitButton::execute()
 	{
-		getGameInstance()->window.close();
+		_g->window.close();
 	}
+	void GUIRouteButton::execute()
+	{
+		_g->currentgui = route;
+	}
+	void GUICloseButton::execute()
+	{
+		_g->isGUIOpen = false;
+	}
+
+
+
 	GUIView::GUIView(jl::Game* g)
 	{
 		_g = g;

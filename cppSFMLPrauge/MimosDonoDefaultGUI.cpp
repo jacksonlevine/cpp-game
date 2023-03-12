@@ -3,6 +3,7 @@
 namespace gui
 {
 	GUIView mdPauseMenu(jl::Game* g, int scw, int sch);
+	GUIView mdSettingsMenu(jl::Game* g, int scw, int sch);
 
 	std::unordered_map<std::string, GUIView> MimosDonoDefaultGUI::getViews(jl::Game* g, int screenwidth, int screenheight)
 	{
@@ -12,29 +13,52 @@ namespace gui
 		//Views must take in a model at some point
 		GUIView pause = mdPauseMenu(g, screenwidth, screenheight);
 		mdgui.insert_or_assign("pause", pause);
+		GUIView settings = mdSettingsMenu(g, screenwidth, screenheight);
+		mdgui.insert_or_assign("settings", settings);
 
 		return mdgui;
 	}
 
 	GUIView mdPauseMenu(jl::Game* g, int scw, int sch)
 	{
-		GUIView pause(g);
+		GUIView view(g);
 		int cw = 200; // size of the pause menu container
 		int ch = 250;
 		GUIContainer container((scw / 2) - (cw / 2), (sch / 2) - (ch / 2), cw, ch);
 
-		GUIObject obj(g, 150, 50, "Settings");
-	
-		container.objects.push_back(obj);
+		GUICloseButton closeobj(g, 150, 50, "Close");
+		container.objects.push_back(std::shared_ptr<GUIObject>(new GUICloseButton(closeobj)));
+
+		GUIRouteButton obj(g, 150, 50, "Settings", "settings");
+		container.objects.push_back(std::shared_ptr<GUIObject>(new GUIRouteButton(obj)));
 
 		GUIQuitButton quitobj(g, 150, 50, "Quit Game");
-		container.objects.push_back(quitobj);
+		container.objects.push_back(std::shared_ptr<GUIObject>(new GUIQuitButton(quitobj)));
 
 		container.width = 200;
 		container.height = 250;
 		container.x = (scw/2)-(container.width/2);
 		container.y = (sch / 2) - (container.height / 2);
-		pause.containers.push_back(container);
-		return pause;
+		view.containers.push_back(container);
+		return view;
+	}
+
+	GUIView mdSettingsMenu(jl::Game* g, int scw, int sch)
+	{
+		GUIView view(g);
+		int cw = 400; // size of the settings menu container
+		int ch = 300;
+		GUIContainer container((scw / 2) - (cw / 2), (sch / 2) - (ch / 2), cw, ch);
+
+		GUIRouteButton obj(g, 150, 50, "Back", "pause");
+
+		container.objects.push_back(std::shared_ptr<GUIObject>(new GUIRouteButton(obj)));
+
+		container.width = 200;
+		container.height = 250;
+		container.x = (scw / 2) - (container.width / 2);
+		container.y = (sch / 2) - (container.height / 2);
+		view.containers.push_back(container);
+		return view;
 	}
 }

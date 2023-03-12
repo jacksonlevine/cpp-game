@@ -1,5 +1,6 @@
 #pragma once
 #include "World.h"
+#include "3DWalls.h"
 #include <iostream>
 namespace jl {
 	class Game {
@@ -15,6 +16,7 @@ namespace jl {
 		perlin p;
 		std::unordered_map<std::string, objs::FixedObject> fomap;
 		std::unordered_map<std::string, objs::ColorBrick> worldmap;
+		std::unordered_map<std::string, walls::Stick> stickmap;
 		std::unordered_map<char, sf::Color> opixref;
 		std::unordered_map<std::string, objs::Player*> pmap;
 		std::vector<objs::Particle> parts;

@@ -379,6 +379,7 @@ namespace jl
 	{
 		std::unordered_map<std::string, objs::ObjectBrick> opixmap;
 		std::unordered_map<std::string, objs::PlayerPixel> screenumap;
+		std::vector<walls::Stick> stickBuffer;
 		updateDropsAndAddToScreenBuffer(screenumap);
 		for (int j = oboverscan + height + camY + 1; j > -oboverscan + 0 + camY - 1; j--)
 		{
@@ -389,6 +390,11 @@ namespace jl
 				addPlayerPixelsToBuffer(floorX, floorY, screenumap);
 				addFixedObjectPixelsToBuffer(opixmap, floorY, floorX, p);
 				decidePixelAndDrawIfWithinScreenBounds(floorX, floorY, opixmap, screenumap, p);
+				std::string keySpot = "" + std::to_string(floorX) + ',' + std::to_string(floorY);
+				if (stickmap.find(keySpot) != stickmap.end())
+				{
+
+				}
 			}
 		}
 		drawAndUpdateParticles();

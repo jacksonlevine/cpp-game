@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-
+#include <memory>
 namespace walls
 {
 	class Point
@@ -18,7 +18,7 @@ namespace walls
 		int y;
 		Point bottom;
 		Point top;
-		Stick* otherhalf;
+		std::shared_ptr<Stick> otherhalf;
 		bool primary;
 		std::string posKey();
 	};

@@ -52,6 +52,7 @@ namespace jl {
 		std::unordered_map<std::string, int> typeID;
 		int oboverscan;
 		sf::RectangleShape rect;
+		sf::ConvexShape conv;
 		Game();
 		void pollEvents(sf::Event e);
 		void placeCurrentItem();

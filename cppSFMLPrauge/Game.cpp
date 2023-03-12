@@ -393,7 +393,30 @@ namespace jl
 				std::string keySpot = "" + std::to_string(floorX) + ',' + std::to_string(floorY);
 				if (stickmap.find(keySpot) != stickmap.end())
 				{
-
+					walls::Stick* sop = &stickmap.at(keySpot);
+					float difference = (((floorY)-(play.y + 150)) * sop->top.elevation);
+					int differenceX = (((floorX)-(int)play.x) * sop->top.elevation);
+					if (std::find(stickBuffer.begin(), stickBuffer.end(), *(sop->otherhalf)) == stickBuffer.end())
+					{
+						
+						conv.setPointCount(4);
+						conv.setPoint(0, sf::Vector2f(floorX, floorY - sop->bottom.elevation));
+						conv.setPoint(1, sf::Vector2f(floorX + differenceX, floorY + difference));
+						conv.setPoint(3, sf::Vector2f(sop->otherhalf->x - camX, sop->otherhalf->y - sop->otherhalf->bottom.elevation - camY));
+						conv.setPoint(2, sf::Vector2f(sop->otherhalf->x + differenceX - camX, sop->otherhalf->y - sop->otherhalf->top.elevation - camY));
+						window.draw(conv);
+					}
+					else if(sop->primary)
+					{
+						conv.setPointCount(4);
+						conv.setPoint(0, sf::Vector2f(floorX, floorY - sop->bottom.elevation));
+						conv.setPoint(1, sf::Vector2f(floorX + differenceX, floorY + difference));
+						conv.setPoint(3, sf::Vector2f(sop->otherhalf->x - camX, sop->otherhalf->y - sop->otherhalf->bottom.elevation - camY));
+						conv.setPoint(2, sf::Vector2f(sop->otherhalf->x + differenceX - camX, sop->otherhalf->y - sop->otherhalf->top.elevation - camY));
+						window.draw(conv);
+					}
+					
+				  
 				}
 			}
 		}

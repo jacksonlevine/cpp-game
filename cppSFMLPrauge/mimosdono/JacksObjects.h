@@ -84,6 +84,7 @@ namespace objs
 		float elevation;
 		objs::FixedObject* point;
 		ObjectBrick();
+
 		ObjectBrick(sf::Color c, int ox, int oy);
   };
 	float getRandom();

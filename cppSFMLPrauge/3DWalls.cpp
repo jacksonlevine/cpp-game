@@ -16,4 +16,16 @@ namespace walls
 	{
 		return "" + std::to_string((int)(x)) + ',' + std::to_string((int)(y));
 	}
+
+	bool Stick::operator==(const Stick& other)
+	{
+		if (other.id == this->id)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 }

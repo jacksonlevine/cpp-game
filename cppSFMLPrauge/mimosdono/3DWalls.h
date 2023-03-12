@@ -14,6 +14,7 @@ namespace walls
 	class Stick
 	{
 	public:
+		int id;
 		int x;
 		int y;
 		Point bottom;
@@ -21,6 +22,7 @@ namespace walls
 		std::shared_ptr<Stick> otherhalf;
 		bool primary;
 		std::string posKey();
+		bool operator== (const Stick& other);
 	};
 
 

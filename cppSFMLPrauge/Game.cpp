@@ -16,6 +16,7 @@ namespace jl
 		gameHeight = 720;
 		gui::GUIController::setViews(gui::MimosDonoDefaultGUI::getViews(this, gameWidth, gameHeight));
 		window.create(sf::VideoMode(gameWidth, gameHeight), "MimosDono Dev 12.2.0");
+		window.setFramerateLimit(60);
 		camX = 0;
 		camY = 0;
 		ws = 1000;

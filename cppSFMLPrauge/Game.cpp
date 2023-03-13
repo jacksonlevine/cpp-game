@@ -9,6 +9,8 @@ namespace jl
 	gui::GUIObject* currentMousedOver;
 	Game::Game()
 	{
+		buildingStickPrimary = std::shared_ptr<walls::Stick>(new walls::Stick);
+		buildingStickSecondary = std::shared_ptr<walls::Stick>(new walls::Stick);
 		mousedOverAGuiItem = false;
 		currentgui = "pause";
 		isGUIOpen = false;
@@ -27,6 +29,7 @@ namespace jl
 		clickTimer = 0;
 		clickInterval = 10;
 		selectedInv = 0;
+		elevationBuilding = 2;
 		minimapWidth = 20;
 		invTiles = 5;
 		invTileSpacing = (int)((float)(minimapWidth * ts) / invTiles) + (int)((float)ts / invTiles);
@@ -50,6 +53,9 @@ namespace jl
 			},
 			{
 				"no texture", 2
+			},
+			{
+				"wall builder", 3
 			}
 		};
 		worldmap = world::World::generateWorld(p, ws, fomap);
@@ -73,7 +79,18 @@ namespace jl
 		text.setCharacterSize(15);
 		text.setFillColor(sf::Color::White);
 		text.setStyle(sf::Text::Regular);
+
+		conv.setFillColor(sf::Color(100,100,100));
+		addTestThingsToInventory();
 	};
+	void Game::addTestThingsToInventory()
+	{
+		play.inv.inv[0].id = 3;
+		play.inv.inv[0].count = 1;
+		play.inv.inv[0].thing = "aaaaaassnaasnnaannnaannna";
+		play.inv.inv[0].thingWidth = 5;
+		play.inv.inv[0].thingHeight = 5;
+	}
 	void Game::pollEvents(sf::Event e) {
 		renderUI();
 		if (e.type == sf::Event::KeyPressed) 
@@ -186,9 +203,25 @@ namespace jl
 		if (e.type == sf::Event::MouseWheelScrolled)
 		{
 			int s = (int)e.mouseWheelScroll.delta;
-			if (selectedInv + s >= 0 && selectedInv + s <= invTiles - 1)
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
 			{
-				selectedInv += s;
+				ts += s;
+			} 
+			else
+			{
+				if (isBuildingWalls) 
+				{
+					if (elevationBuilding + s >= 0) {
+						elevationBuilding += s;
+					}
+				}
+				else
+				{
+					if (selectedInv + s >= 0 && selectedInv + s <= invTiles - 1)
+					{
+						selectedInv += s;
+					}
+				}
 			}
 		}
 	}
@@ -215,6 +248,46 @@ namespace jl
 				play.inv.inv[selectedInv].id = -1;
 				play.inv.inv[selectedInv].count = -1;
 			}
+		}
+		if (play.inv.inv[selectedInv].id == 3)
+		{
+			setClickPos();
+			buildingStickSecondary->x = (click.x / ts) + (camX);
+			buildingStickSecondary->y = (click.y / ts) + (camY);
+			buildingStickSecondary->bottom.elevation = 0;
+			buildingStickSecondary->top.elevation = elevationBuilding;
+			buildingStickSecondary->primary = false;
+			buildingStickSecondary->otherhalf = buildingStickPrimary;
+			if (isBuildingWalls)
+			{
+				std::shared_ptr<walls::Stick> stick1(new walls::Stick);
+				std::shared_ptr<walls::Stick> stick2(new walls::Stick);
+				stick1->id = walls::Stick::assignId();
+				buildingStickSecondary->id = walls::Stick::assignId();
+				stick1->bottom.elevation = 0;
+				stick1->top.elevation = buildingStickPrimary->top.elevation;
+				stick1->primary = true;
+				stick1->x = buildingStickPrimary->x;
+				stick1->y = buildingStickPrimary->y;
+				stick1->otherhalf = stick2;
+				stickmap[stick1->posKey()] = *stick1.get();
+				stick2->id = walls::Stick::assignId();
+				stick2->bottom.elevation = 0;
+				stick2->top.elevation = elevationBuilding;
+				stick2->primary = false;
+				stick2->x = buildingStickSecondary->x;
+				stick2->y = buildingStickSecondary->y;
+				stick2->otherhalf = stick1;
+				stickmap[stick2->posKey()] = *stick2.get();
+			}
+			isBuildingWalls = !isBuildingWalls;
+			buildingStickPrimary->id = walls::Stick::assignId();
+			buildingStickPrimary->x = (click.x/ts)+camX;
+			buildingStickPrimary->y = (click.y / ts) + camY;
+			buildingStickPrimary->bottom.elevation = 0;
+			buildingStickPrimary->top.elevation = elevationBuilding;
+			buildingStickPrimary->primary = true;
+			buildingStickPrimary->otherhalf = buildingStickSecondary;
 		}
 	}
 
@@ -375,11 +448,17 @@ namespace jl
 			}
 		}
 	}
+	bool compareSAC(sopAndCoord s1, sopAndCoord s2)
+	{
+		return(s1.floorY < s2.floorY);
+	}
 	void Game::render(perlin p)
 	{
 		std::unordered_map<std::string, objs::ObjectBrick> opixmap;
 		std::unordered_map<std::string, objs::PlayerPixel> screenumap;
+		std::unordered_map<std::string, walls::Stick> buildstickmap;
 		std::vector<walls::Stick> stickBuffer;
+		std::vector<sopAndCoord> sticksOnScreen;
 		updateDropsAndAddToScreenBuffer(screenumap);
 		for (int j = oboverscan + height + camY + 1; j > -oboverscan + 0 + camY - 1; j--)
 		{
@@ -390,35 +469,99 @@ namespace jl
 				addPlayerPixelsToBuffer(floorX, floorY, screenumap);
 				addFixedObjectPixelsToBuffer(opixmap, floorY, floorX, p);
 				decidePixelAndDrawIfWithinScreenBounds(floorX, floorY, opixmap, screenumap, p);
+
+			}
+		}
+		if (isBuildingWalls)
+		{
+			setClickPos();
+			buildingStickSecondary->x = (click.x / ts) + (camX);
+			buildingStickSecondary->y = (click.y / ts) + (camY);
+			buildingStickSecondary->bottom.elevation = 0;
+			buildingStickSecondary->top.elevation = elevationBuilding;
+			buildingStickSecondary->primary = false;
+			buildingStickSecondary->otherhalf = buildingStickPrimary;
+			buildstickmap[buildingStickPrimary->posKey()] = *buildingStickPrimary.get();
+			buildstickmap[buildingStickSecondary->posKey()] = *buildingStickSecondary.get();
+		}
+		for (int j = oboverscan + height + camY + 1; j > -oboverscan + 0 + camY - 1; j--)
+		{
+			for (int i = -oboverscan + 0 + camX - 1; i < width + camX + 1 + oboverscan; i++)
+			{
+				int floorX = std::floor(i);
+				int floorY = std::floor(j);
 				std::string keySpot = "" + std::to_string(floorX) + ',' + std::to_string(floorY);
+				int lastY = camY + 170;
 				if (stickmap.find(keySpot) != stickmap.end())
 				{
 					walls::Stick* sop = &stickmap.at(keySpot);
-					float difference = (((floorY)-(play.y + 150)) * sop->top.elevation);
-					int differenceX = (((floorX)-(int)play.x) * sop->top.elevation);
-					if (std::find(stickBuffer.begin(), stickBuffer.end(), *(sop->otherhalf)) == stickBuffer.end())
-					{
-						
+					sopAndCoord s;
+					s.floorX = floorX;
+					s.floorY = floorY;
+					s.sop = sop;
+					lastY = floorY;
+					sticksOnScreen.push_back(s);
+
+				}
+				if (buildstickmap.find(keySpot) != buildstickmap.end())
+				{
+					walls::Stick* sop = &buildstickmap.at(keySpot);
+					float differencey1 = (((floorY)-(play.y + 190)) * (sop->top.elevation * sop->top.elevation)) / 150;
+					float differencey2 = (((floorY)-(play.y + 190)) * (sop->otherhalf->top.elevation * sop->otherhalf->top.elevation)) / 150;
+					float differenceX = (((floorX)-(int)play.x) * sop->top.elevation);
+					float differenceX2 = (((sop->otherhalf->x) - (int)play.x) * sop->otherhalf->top.elevation);
+					conv.setFillColor(sf::Color(255, 255, 255, 50));
 						conv.setPointCount(4);
-						conv.setPoint(0, sf::Vector2f(floorX, floorY - sop->bottom.elevation));
-						conv.setPoint(1, sf::Vector2f(floorX + differenceX, floorY + difference));
-						conv.setPoint(3, sf::Vector2f(sop->otherhalf->x - camX, sop->otherhalf->y - sop->otherhalf->bottom.elevation - camY));
-						conv.setPoint(2, sf::Vector2f(sop->otherhalf->x + differenceX - camX, sop->otherhalf->y - sop->otherhalf->top.elevation - camY));
-						window.draw(conv);
-					}
-					else if(sop->primary)
+						conv.setPoint(0, sf::Vector2f((floorX - camX) * ts, (floorY - sop->bottom.elevation - camY) * ts));
+						conv.setPoint(3, sf::Vector2f((floorX - camX) * ts + differenceX, (floorY - camY + differencey1) * ts));
+						conv.setPoint(1, sf::Vector2f((sop->otherhalf->x - camX) * ts, (sop->otherhalf->y - sop->otherhalf->bottom.elevation - camY) * ts));
+						conv.setPoint(2, sf::Vector2f((sop->otherhalf->x - camX) * ts + differenceX2, (sop->otherhalf->y - camY + differencey2) * ts));
+						if (std::abs(buildstickmap.at(keySpot).x - buildstickmap.at(keySpot).otherhalf->x) + (std::abs(buildstickmap.at(keySpot).y - buildstickmap.at(keySpot).otherhalf->y)) < 50) 
+						{
+							window.draw(conv);
+						}
+						else
+						{
+							isBuildingWalls = false;
+						}
+				}
+				if (screenumap.find(keySpot) != screenumap.end())
+				{
+					if (screenumap.at(keySpot).py < lastY-20)
 					{
-						conv.setPointCount(4);
-						conv.setPoint(0, sf::Vector2f(floorX, floorY - sop->bottom.elevation));
-						conv.setPoint(1, sf::Vector2f(floorX + differenceX, floorY + difference));
-						conv.setPoint(3, sf::Vector2f(sop->otherhalf->x - camX, sop->otherhalf->y - sop->otherhalf->bottom.elevation - camY));
-						conv.setPoint(2, sf::Vector2f(sop->otherhalf->x + differenceX - camX, sop->otherhalf->y - sop->otherhalf->top.elevation - camY));
-						window.draw(conv);
+						rect.setFillColor(screenumap.at(keySpot).col);
+						rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
+						window.draw(rect);
 					}
-					
-				  
+				}
+				if (opixmap.find(keySpot) != opixmap.end())
+				{
+					if (opixmap.at(keySpot).oby < lastY-20)
+					{
+						rect.setFillColor(opixmap.at(keySpot).col);
+						rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
+						window.draw(rect);
+					}
 				}
 			}
+		}
+		std::sort(sticksOnScreen.begin(), sticksOnScreen.end(), compareSAC);
+		for (sopAndCoord s : sticksOnScreen)
+		{
+			stickBuffer.push_back(*s.sop);
+			float differencey1 = (((s.floorY)-(play.y + 190)) * (s.sop->top.elevation * s.sop->top.elevation)) / 150;
+			float differencey2 = (((s.floorY)-(play.y + 190)) * (s.sop->otherhalf->top.elevation * s.sop->otherhalf->top.elevation)) / 150;
+			float differenceX = (((s.floorX)-(int)play.x) * s.sop->top.elevation);
+			float differenceX2 = (((s.sop->otherhalf->x) - (int)play.x) * s.sop->otherhalf->top.elevation);
+
+
+			conv.setFillColor(sf::Color(100 + (std::abs(s.sop->y - s.sop->otherhalf->y) * 4), 100 + (std::abs(s.sop->y - s.sop->otherhalf->y) * 4), 100 + (std::abs(s.sop->y - s.sop->otherhalf->y) * 4)));
+			conv.setPointCount(4);
+			conv.setPoint(0, sf::Vector2f((s.floorX - camX) * ts, (s.floorY - s.sop->bottom.elevation - camY) * ts));
+			conv.setPoint(3, sf::Vector2f((s.floorX - camX) * ts + differenceX, (s.floorY - camY + differencey1) * ts));
+			conv.setPoint(1, sf::Vector2f((s.sop->otherhalf->x - camX) * ts, (s.sop->otherhalf->y - s.sop->otherhalf->bottom.elevation - camY) * ts));
+			conv.setPoint(2, sf::Vector2f((s.sop->otherhalf->x - camX) * ts + differenceX2, (s.sop->otherhalf->y - camY + differencey2) * ts));
+			window.draw(conv);
 		}
 		drawAndUpdateParticles();
 		processMouseClickedOnObjectPixel(opixmap);

@@ -14,6 +14,7 @@ namespace walls
 	class Stick
 	{
 	public:
+		static int currentId;
 		int id;
 		int x;
 		int y;
@@ -23,6 +24,7 @@ namespace walls
 		bool primary;
 		std::string posKey();
 		bool operator== (const Stick& other);
+		static int assignId();
 	};
 
 

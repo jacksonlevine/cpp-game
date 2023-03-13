@@ -9,8 +9,12 @@ namespace jl {
 		bool isGUIOpen;
 		bool mousedOverAGuiItem;
 		bool guiKeyJustTriggered;
+		bool isBuildingWalls;
+		std::shared_ptr<walls::Stick> buildingStickPrimary;
+		std::shared_ptr<walls::Stick> buildingStickSecondary;
 		int gameWidth;
 		int gameHeight;
+		void addTestThingsToInventory();
 		sf::RenderWindow window;
 		sf::Font font;
 		perlin p;
@@ -30,6 +34,7 @@ namespace jl {
 		float clickTimer;
 		int clickInterval;
 		int selectedInv;
+		int elevationBuilding;
 		int width;
 		int height;
 		float minimapX;
@@ -74,5 +79,13 @@ namespace jl {
 		void updateDropsAndAddToScreenBuffer(std::unordered_map<std::string, objs::PlayerPixel>& screenumap);
 		void renderMinimap(int widt, int x, int y, objs::Player* pla);
 		void handleEvents();
+		void generateWalls();//Test method
+	};
+	class sopAndCoord
+	{
+	public:
+		walls::Stick* sop;
+		int floorX;
+		int floorY;
 	};
 }

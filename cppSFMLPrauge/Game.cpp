@@ -503,8 +503,33 @@ namespace jl
 	{
 		return(s1.floorY < s2.floorY);
 	}
+	sf::VertexArray Game::getMyShapes()
+	{
+		sf::VertexArray quads(sf::Quads);
+
+		bool onOrOff = false;
+		std::unordered_map<std::string, objs::ObjectBrick> opixmap;
+		std::unordered_map<std::string, objs::PlayerPixel> screenumap;
+		std::unordered_map<std::string, walls::Stick> buildstickmap;
+		updateDropsAndAddToScreenBuffer(screenumap);
+
+		for (int j = oboverscan + height + camY + 1; j > -oboverscan + 0 + camY - 1; j--)
+		{
+			for (int i = -oboverscan + 0 + camX - 1; i < width + camX + 1 + oboverscan; i++)
+			{
+				int floorX = std::floor(i);
+				int floorY = std::floor(j);
+				addPlayerPixelsToBuffer(quads, floorX, floorY, screenumap);
+				addFixedObjectPixelsToBuffer(quads, opixmap, floorY, floorX, p);
+				drawSingleWallPixel(quads, i, j, onOrOff, opixmap, buildstickmap);
+				decidePixelAndDrawIfWithinScreenBounds(quads, floorX, floorY, opixmap, screenumap, p);
+			}
+		}
+		return quads;
+	}
 	void Game::render(perlin p)
 	{
+		
 		bool onOrOff = false;
 		std::unordered_map<std::string, objs::ObjectBrick> opixmap;
 		std::unordered_map<std::string, objs::PlayerPixel> screenumap;
@@ -523,24 +548,13 @@ namespace jl
 			buildstickmap[buildingStickSecondary->posKey()] = *buildingStickSecondary.get();
 		}
 
-		for (int j = oboverscan + height + camY + 1; j > -oboverscan + 0 + camY - 1; j--)
-		{
-			for (int i = -oboverscan + 0 + camX - 1; i < width + camX + 1 + oboverscan; i++)
-			{
-				int floorX = std::floor(i);
-				int floorY = std::floor(j);
-				addPlayerPixelsToBuffer(floorX, floorY, screenumap);
-				addFixedObjectPixelsToBuffer(opixmap, floorY, floorX, p);
-				drawSingleWallPixel(i, j, onOrOff, opixmap, buildstickmap);
-				decidePixelAndDrawIfWithinScreenBounds(floorX, floorY, opixmap, screenumap, p);
-			}
-		}
+
 		drawAndUpdateParticles();
 		processMouseClickedOnObjectPixel(opixmap);
 		perlinZEffect++;
 	}
 
-	void Game::decidePixelAndDrawIfWithinScreenBounds(int i, int j, std::unordered_map<std::string, objs::ObjectBrick>& opixmap, std::unordered_map<std::string, objs::PlayerPixel>& screenumap, perlin& p)
+	void Game::decidePixelAndDrawIfWithinScreenBounds(sf::VertexArray& qs, int i, int j, std::unordered_map<std::string, objs::ObjectBrick>& opixmap, std::unordered_map<std::string, objs::PlayerPixel>& screenumap, perlin& p)
 	{
 		std::string keySpot = "" + std::to_string(i) + ',' + std::to_string(j);
 		if (i > camX - 1 && i < width + camX + 1 && j > 0 + camY - 1 && j < height + camY + 1)

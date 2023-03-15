@@ -58,7 +58,7 @@ namespace jl
 	{
 		objs::Particle pa;
 		pa.x = (((int)std::round(opixmap.at(keySpot).obx - ((opixmap.at(keySpot).point->width / 2) * ((float)std::rand() / RAND_MAX)) + opixmap.at(keySpot).point->width / 4))) - 3;
-		pa.y = -15 + ((int)std::round(opixmap.at(keySpot).oby - ((opixmap.at(keySpot).point->height / 1.5) * ((float)std::rand() / RAND_MAX))));
+		pa.y = ((int)std::round(opixmap.at(keySpot).oby - ((opixmap.at(keySpot).point->height / 1.5) * ((float)std::rand() / RAND_MAX))));
 		sf::Color c = opixmap.at(keySpot).col;
 		c.r += 50;
 		c.g += 50;
@@ -72,7 +72,7 @@ namespace jl
 		for (int n = 0; n < dropCount; n++)
 		{
 			float xOff = (int)(((float)std::rand() / RAND_MAX) * -7 + 3.5) - 2;
-			float yOff = -12 + (int)(((float)std::rand() / RAND_MAX) * -5 + 2.5);
+			float yOff = (int)(((float)std::rand() / RAND_MAX) * -5 + 2.5);
 			objs::DroppedItem d(fomap.at(keySpot).x + xOff, fomap.at(keySpot).y + yOff, (int)drops.size());
 			if (fomap.at(keySpot).type == 0)
 			{
@@ -144,7 +144,7 @@ namespace jl
 							int difference = (((floorY)-(int)(play.y + 150)) * ob.elevation);
 							int differenceX = (((floorX)-(int)play.x) * ob.elevation);
 							int ksx = floorX + (int)((((o * 1) - 15) + (differenceX >> 8)));
-							int ksy = floorY - 19 + (int)(((f << 2) + (difference >> 4)) >> 3) / 2;
+							int ksy = floorY + (int)(((f << 2) + (difference >> 4)) >> 3) / 2;
 
 							std::string thisKeySpot = "" + std::to_string(ksx) + ',' + std::to_string(ksy);
 
@@ -201,7 +201,7 @@ namespace jl
 							int n2Clamped = (std::min(std::max(n22 - n32 - 4, -8), 8));
 							int off = (fop->type == 0) ? 18 : 0;
 							int ksx = floorX + (int)((((o * 1) - 15) + (differenceX >> 8)));
-							int ksy = (n2Clamped >> 1) + floorY - (he + 3 - off) - (int)((((f >> 4) + (difference >> 4)) >> 5) >> 2) + 3;
+							int ksy = (n2Clamped >> 1) + floorY + 19 - (he + 3 - off) - (int)((((f >> 4) + (difference >> 4)) >> 5) >> 2) + 3;
 							std::string thisKeySpot = "" + std::to_string(ksx) + ',' + std::to_string(ksy);
 							ob.col.b = std::min(std::max((int)ob.col.b, 25), 150);
 							ob.col.r = std::min(std::max((int)ob.col.r, 25), 150);

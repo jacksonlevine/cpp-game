@@ -454,6 +454,7 @@ namespace jl
 	}
 	void Game::render(perlin p)
 	{
+		bool onOrOff = false;
 		std::unordered_map<std::string, objs::ObjectBrick> opixmap;
 		std::unordered_map<std::string, objs::PlayerPixel> screenumap;
 		std::unordered_map<std::string, walls::Stick> buildstickmap;
@@ -473,6 +474,7 @@ namespace jl
 			buildstickmap[buildingStickPrimary->posKey()] = *buildingStickPrimary.get();
 			buildstickmap[buildingStickSecondary->posKey()] = *buildingStickSecondary.get();
 		}
+
 		for (int j = oboverscan + height + camY + 1; j > -oboverscan + 0 + camY - 1; j--)
 		{
 			for (int i = -oboverscan + 0 + camX - 1; i < width + camX + 1 + oboverscan; i++)
@@ -481,93 +483,7 @@ namespace jl
 				int floorY = std::floor(j);
 				addPlayerPixelsToBuffer(floorX, floorY, screenumap);
 				addFixedObjectPixelsToBuffer(opixmap, floorY, floorX, p);
-				std::string keySpot = "" + std::to_string(floorX) + ',' + std::to_string(floorY);
-				int lastY = camY + 170;
-				if (stickmap.find(keySpot) != stickmap.end())
-				{
-					walls::Stick* sop = &stickmap.at(keySpot);
-					sopAndCoord s;
-					s.floorX = floorX;
-					s.floorY = floorY;
-					s.sop = sop;
-					lastY = floorY;
-					sticksOnScreen.push_back(s);
-
-				}
-				if (buildstickmap.find(keySpot) != buildstickmap.end())
-				{
-					walls::Stick* sop = &buildstickmap.at(keySpot);
-					float differencey1 = (((floorY)-(play.y + 190)) * (sop->top.elevation * sop->top.elevation)) / 150;
-					float differencey2 = (((floorY)-(play.y + 190)) * (sop->otherhalf->top.elevation * sop->otherhalf->top.elevation)) / 150;
-					float differenceX = (((floorX)-(int)play.x) * sop->top.elevation);
-					float differenceX2 = (((sop->otherhalf->x) - (int)play.x) * sop->otherhalf->top.elevation);
-					for (float l = 0; l <= 1; l += .05)
-					{
-						int yHere = (int)std::lerp(sop->y, sop->otherhalf->y, l);
-						int xHere = (int)std::lerp(floorX,sop->otherhalf->x, l);
-						int wallHeightHere = (yHere - (int)std::lerp(sop->y + differencey1, sop->otherhalf->y + differencey2, l)) * 2;
-						float xDifferenceHere = std::lerp(differenceX, differenceX2, l) / 50;
-						for (int z = 0; z < wallHeightHere; z++)
-						{
-
-							std::string keySpot2 = "" + std::to_string((int)((float)xHere + (xDifferenceHere * (float)z))) + ',' + std::to_string(yHere - z);
-							objs::ObjectBrick ob;
-							ob.col = (sf::Color(100 + (std::abs(sop->y - sop->otherhalf->y) * 4), 140 + (std::abs(sop->y - sop->otherhalf->y) * 4), 100 + (std::abs(sop->y - sop->otherhalf->y) * 4)));
-							ob.obx = xHere;
-							ob.oby = yHere;
-							ob.elevation = z;
-							opixmap[keySpot2] = ob;
-						}
-
-					}
-						if (std::abs(buildstickmap.at(keySpot).x - buildstickmap.at(keySpot).otherhalf->x) + (std::abs(buildstickmap.at(keySpot).y - buildstickmap.at(keySpot).otherhalf->y)) < 50) 
-						{
-							window.draw(conv);
-						}
-						else
-						{
-							isBuildingWalls = false;
-						}
-				}
-			}
-		}
-		std::sort(sticksOnScreen.begin(), sticksOnScreen.end(), compareSAC);
-		for (sopAndCoord s : sticksOnScreen)
-		{
-			stickBuffer.push_back(*s.sop);
-			float differencey1 = (((s.floorY)-(play.y + 190)) * (s.sop->top.elevation * s.sop->top.elevation)) / 150;
-			float differencey2 = (((s.floorY)-(play.y + 190)) * (s.sop->otherhalf->top.elevation * s.sop->otherhalf->top.elevation)) / 150;
-			float differenceX = (((s.floorX)-(int)play.x) * s.sop->top.elevation);
-			float differenceX2 = (((s.sop->otherhalf->x) - (int)play.x) * s.sop->otherhalf->top.elevation);
-			for (float l = 0; l <= 1; l += .005)
-			{
-				int yHere = (int)std::lerp(s.sop->y, s.sop->otherhalf->y, l);
-				int xHere = (int)std::lerp(s.floorX, s.sop->otherhalf->x, l);
-				int wallHeightHere = (yHere - (int)std::lerp(s.sop->y + differencey1, s.sop->otherhalf->y + differencey2, l))*2;
-				float xDifferenceHere = std::lerp(differenceX, differenceX2, l)/80;
-				for (int z = 0; z < wallHeightHere; z++)
-				{
-
-					std::string keySpot2 = "" + std::to_string((int)((float)xHere+(xDifferenceHere*(float)z))) + ',' + std::to_string(yHere-z);
-					std::string keySpot22 = "" + std::to_string((int)((float)xHere + 1 + (xDifferenceHere * (float)z))) + ',' + std::to_string(yHere - z);
-					objs::ObjectBrick ob;
-					ob.col = (sf::Color(100 + z + (std::abs(s.sop->y - s.sop->otherhalf->y) * 4), 100 + z + (std::abs(s.sop->y - s.sop->otherhalf->y) * 4), 100 + z + (std::abs(s.sop->y - s.sop->otherhalf->y) * 4)));
-					ob.obx = xHere;
-					ob.oby = yHere;
-					ob.elevation = z;
-					opixmap[keySpot2] = ob;
-					opixmap[keySpot22] = ob;
-				}
-				
-			}
-		}
-		for (int j = oboverscan + height + camY + 1; j > -oboverscan + 0 + camY - 1; j--)
-		{
-			for (int i = -oboverscan + 0 + camX - 1; i < width + camX + 1 + oboverscan; i++)
-			{
-				int floorX = std::floor(i);
-				int floorY = std::floor(j);
-
+				drawSingleWallPixel(i, j, onOrOff, opixmap, buildstickmap);
 				decidePixelAndDrawIfWithinScreenBounds(floorX, floorY, opixmap, screenumap, p);
 
 			}

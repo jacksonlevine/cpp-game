@@ -458,8 +458,6 @@ namespace jl
 		std::unordered_map<std::string, objs::ObjectBrick> opixmap;
 		std::unordered_map<std::string, objs::PlayerPixel> screenumap;
 		std::unordered_map<std::string, walls::Stick> buildstickmap;
-		std::vector<walls::Stick> stickBuffer;
-		std::vector<sopAndCoord> sticksOnScreen;
 		updateDropsAndAddToScreenBuffer(screenumap);
 		
 		if (isBuildingWalls)
@@ -485,7 +483,6 @@ namespace jl
 				addFixedObjectPixelsToBuffer(opixmap, floorY, floorX, p);
 				drawSingleWallPixel(i, j, onOrOff, opixmap, buildstickmap);
 				decidePixelAndDrawIfWithinScreenBounds(floorX, floorY, opixmap, screenumap, p);
-
 			}
 		}
 		drawAndUpdateParticles();

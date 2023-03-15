@@ -187,7 +187,7 @@ namespace jl
 					if (opixmap.find(keySpot2) == opixmap.end())
 					{
 						opixmap[keySpot2] = ob;
-						if (std::abs(xDifferenceHere) > 2)
+						if (std::abs(xDifferenceHere) >= 2)
 						{
 							if (opixmap.find(keySpot22) == opixmap.end())
 							{

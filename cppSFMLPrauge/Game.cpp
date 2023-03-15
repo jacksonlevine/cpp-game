@@ -460,18 +460,7 @@ namespace jl
 		std::vector<walls::Stick> stickBuffer;
 		std::vector<sopAndCoord> sticksOnScreen;
 		updateDropsAndAddToScreenBuffer(screenumap);
-		for (int j = oboverscan + height + camY + 1; j > -oboverscan + 0 + camY - 1; j--)
-		{
-			for (int i = -oboverscan + 0 + camX - 1; i < width + camX + 1 + oboverscan; i++)
-			{
-				int floorX = std::floor(i);
-				int floorY = std::floor(j);
-				addPlayerPixelsToBuffer(floorX, floorY, screenumap);
-				addFixedObjectPixelsToBuffer(opixmap, floorY, floorX, p);
-				decidePixelAndDrawIfWithinScreenBounds(floorX, floorY, opixmap, screenumap, p);
-
-			}
-		}
+		
 		if (isBuildingWalls)
 		{
 			setClickPos();
@@ -490,6 +479,8 @@ namespace jl
 			{
 				int floorX = std::floor(i);
 				int floorY = std::floor(j);
+				addPlayerPixelsToBuffer(floorX, floorY, screenumap);
+				addFixedObjectPixelsToBuffer(opixmap, floorY, floorX, p);
 				std::string keySpot = "" + std::to_string(floorX) + ',' + std::to_string(floorY);
 				int lastY = camY + 170;
 				if (stickmap.find(keySpot) != stickmap.end())
@@ -510,12 +501,25 @@ namespace jl
 					float differencey2 = (((floorY)-(play.y + 190)) * (sop->otherhalf->top.elevation * sop->otherhalf->top.elevation)) / 150;
 					float differenceX = (((floorX)-(int)play.x) * sop->top.elevation);
 					float differenceX2 = (((sop->otherhalf->x) - (int)play.x) * sop->otherhalf->top.elevation);
-					conv.setFillColor(sf::Color(255, 255, 255, 50));
-						conv.setPointCount(4);
-						conv.setPoint(0, sf::Vector2f((floorX - camX) * ts, (floorY - sop->bottom.elevation - camY) * ts));
-						conv.setPoint(3, sf::Vector2f((floorX - camX) * ts + differenceX, (floorY - camY + differencey1) * ts));
-						conv.setPoint(1, sf::Vector2f((sop->otherhalf->x - camX) * ts, (sop->otherhalf->y - sop->otherhalf->bottom.elevation - camY) * ts));
-						conv.setPoint(2, sf::Vector2f((sop->otherhalf->x - camX) * ts + differenceX2, (sop->otherhalf->y - camY + differencey2) * ts));
+					for (float l = 0; l <= 1; l += .05)
+					{
+						int yHere = (int)std::lerp(sop->y, sop->otherhalf->y, l);
+						int xHere = (int)std::lerp(floorX,sop->otherhalf->x, l);
+						int wallHeightHere = (yHere - (int)std::lerp(sop->y + differencey1, sop->otherhalf->y + differencey2, l)) * 2;
+						float xDifferenceHere = std::lerp(differenceX, differenceX2, l) / 50;
+						for (int z = 0; z < wallHeightHere; z++)
+						{
+
+							std::string keySpot2 = "" + std::to_string((int)((float)xHere + (xDifferenceHere * (float)z))) + ',' + std::to_string(yHere - z);
+							objs::ObjectBrick ob;
+							ob.col = (sf::Color(100 + (std::abs(sop->y - sop->otherhalf->y) * 4), 140 + (std::abs(sop->y - sop->otherhalf->y) * 4), 100 + (std::abs(sop->y - sop->otherhalf->y) * 4)));
+							ob.obx = xHere;
+							ob.oby = yHere;
+							ob.elevation = z;
+							opixmap[keySpot2] = ob;
+						}
+
+					}
 						if (std::abs(buildstickmap.at(keySpot).x - buildstickmap.at(keySpot).otherhalf->x) + (std::abs(buildstickmap.at(keySpot).y - buildstickmap.at(keySpot).otherhalf->y)) < 50) 
 						{
 							window.draw(conv);
@@ -524,24 +528,6 @@ namespace jl
 						{
 							isBuildingWalls = false;
 						}
-				}
-				if (screenumap.find(keySpot) != screenumap.end())
-				{
-					if (screenumap.at(keySpot).py < lastY-20)
-					{
-						rect.setFillColor(screenumap.at(keySpot).col);
-						rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
-						window.draw(rect);
-					}
-				}
-				if (opixmap.find(keySpot) != opixmap.end())
-				{
-					if (opixmap.at(keySpot).oby < lastY-20)
-					{
-						rect.setFillColor(opixmap.at(keySpot).col);
-						rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
-						window.draw(rect);
-					}
 				}
 			}
 		}
@@ -553,15 +539,38 @@ namespace jl
 			float differencey2 = (((s.floorY)-(play.y + 190)) * (s.sop->otherhalf->top.elevation * s.sop->otherhalf->top.elevation)) / 150;
 			float differenceX = (((s.floorX)-(int)play.x) * s.sop->top.elevation);
 			float differenceX2 = (((s.sop->otherhalf->x) - (int)play.x) * s.sop->otherhalf->top.elevation);
+			for (float l = 0; l <= 1; l += .005)
+			{
+				int yHere = (int)std::lerp(s.sop->y, s.sop->otherhalf->y, l);
+				int xHere = (int)std::lerp(s.floorX, s.sop->otherhalf->x, l);
+				int wallHeightHere = (yHere - (int)std::lerp(s.sop->y + differencey1, s.sop->otherhalf->y + differencey2, l))*2;
+				float xDifferenceHere = std::lerp(differenceX, differenceX2, l)/80;
+				for (int z = 0; z < wallHeightHere; z++)
+				{
 
+					std::string keySpot2 = "" + std::to_string((int)((float)xHere+(xDifferenceHere*(float)z))) + ',' + std::to_string(yHere-z);
+					std::string keySpot22 = "" + std::to_string((int)((float)xHere + 1 + (xDifferenceHere * (float)z))) + ',' + std::to_string(yHere - z);
+					objs::ObjectBrick ob;
+					ob.col = (sf::Color(100 + z + (std::abs(s.sop->y - s.sop->otherhalf->y) * 4), 100 + z + (std::abs(s.sop->y - s.sop->otherhalf->y) * 4), 100 + z + (std::abs(s.sop->y - s.sop->otherhalf->y) * 4)));
+					ob.obx = xHere;
+					ob.oby = yHere;
+					ob.elevation = z;
+					opixmap[keySpot2] = ob;
+					opixmap[keySpot22] = ob;
+				}
+				
+			}
+		}
+		for (int j = oboverscan + height + camY + 1; j > -oboverscan + 0 + camY - 1; j--)
+		{
+			for (int i = -oboverscan + 0 + camX - 1; i < width + camX + 1 + oboverscan; i++)
+			{
+				int floorX = std::floor(i);
+				int floorY = std::floor(j);
 
-			conv.setFillColor(sf::Color(100 + (std::abs(s.sop->y - s.sop->otherhalf->y) * 4), 100 + (std::abs(s.sop->y - s.sop->otherhalf->y) * 4), 100 + (std::abs(s.sop->y - s.sop->otherhalf->y) * 4)));
-			conv.setPointCount(4);
-			conv.setPoint(0, sf::Vector2f((s.floorX - camX) * ts, (s.floorY - s.sop->bottom.elevation - camY) * ts));
-			conv.setPoint(3, sf::Vector2f((s.floorX - camX) * ts + differenceX, (s.floorY - camY + differencey1) * ts));
-			conv.setPoint(1, sf::Vector2f((s.sop->otherhalf->x - camX) * ts, (s.sop->otherhalf->y - s.sop->otherhalf->bottom.elevation - camY) * ts));
-			conv.setPoint(2, sf::Vector2f((s.sop->otherhalf->x - camX) * ts + differenceX2, (s.sop->otherhalf->y - camY + differencey2) * ts));
-			window.draw(conv);
+				decidePixelAndDrawIfWithinScreenBounds(floorX, floorY, opixmap, screenumap, p);
+
+			}
 		}
 		drawAndUpdateParticles();
 		processMouseClickedOnObjectPixel(opixmap);
@@ -591,7 +600,7 @@ namespace jl
 				}
 				else
 				{
-					if (opixmap.at(keySpot).oby- (opixmap.at(keySpot).point->height-(opixmap.at(keySpot).point->type == 0 ? 7 : 0)) < screenumap.at(keySpot).py)
+					if (opixmap.at(keySpot).oby <= screenumap.at(keySpot).py)
 					{
 						rect.setFillColor(screenumap.at(keySpot).col);
 						rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));

@@ -26,7 +26,7 @@ namespace jl
 		camX = 0;
 		camY = 0;
 		ws = 1000;
-		ts = 10;
+		ts = 7;
 		sf::Vector2f click;
 		mouseClicked = false;
 		clickTimer = 0;
@@ -95,7 +95,7 @@ namespace jl
 		play.inv.inv[0].thingHeight = 5;
 	}
 	void Game::pollEvents(sf::Event e) {
-		renderUI();
+		//renderUI();
 		if (e.type == sf::Event::KeyPressed) 
 		{
 			if (e.key.code == sf::Keyboard::Escape)
@@ -346,9 +346,9 @@ namespace jl
 	{
 		window.clear(sf::Color::Black);
 		render(p);
-		renderMinimap(minimapWidth, minimapX, minimapY, &play);
+		//renderMinimap(minimapWidth, minimapX, minimapY, &play);
 		moveGUIElements();
-		renderUI();
+		//renderUI();
 		handleEvents();
 		window.display();
 	}
@@ -503,33 +503,11 @@ namespace jl
 	{
 		return(s1.floorY < s2.floorY);
 	}
-	sf::VertexArray Game::getMyShapes()
-	{
-		sf::VertexArray quads(sf::Quads);
 
-		bool onOrOff = false;
-		std::unordered_map<std::string, objs::ObjectBrick> opixmap;
-		std::unordered_map<std::string, objs::PlayerPixel> screenumap;
-		std::unordered_map<std::string, walls::Stick> buildstickmap;
-		updateDropsAndAddToScreenBuffer(screenumap);
-
-		for (int j = oboverscan + height + camY + 1; j > -oboverscan + 0 + camY - 1; j--)
-		{
-			for (int i = -oboverscan + 0 + camX - 1; i < width + camX + 1 + oboverscan; i++)
-			{
-				int floorX = std::floor(i);
-				int floorY = std::floor(j);
-				addPlayerPixelsToBuffer(quads, floorX, floorY, screenumap);
-				addFixedObjectPixelsToBuffer(quads, opixmap, floorY, floorX, p);
-				drawSingleWallPixel(quads, i, j, onOrOff, opixmap, buildstickmap);
-				decidePixelAndDrawIfWithinScreenBounds(quads, floorX, floorY, opixmap, screenumap, p);
-			}
-		}
-		return quads;
-	}
 	void Game::render(perlin p)
 	{
-		
+		sf::VertexArray quads(sf::Quads, 160000);
+
 		bool onOrOff = false;
 		std::unordered_map<std::string, objs::ObjectBrick> opixmap;
 		std::unordered_map<std::string, objs::PlayerPixel> screenumap;
@@ -548,10 +526,36 @@ namespace jl
 			buildstickmap[buildingStickSecondary->posKey()] = *buildingStickSecondary.get();
 		}
 
-
+		for (int j = oboverscan + height + camY + 1; j > -oboverscan + 0 + camY - 1; j--)
+		{
+			for (int i = -oboverscan + 0 + camX - 1; i < width + camX + 1 + oboverscan; i++)
+			{
+				int floorX = std::floor(i);
+				int floorY = std::floor(j);
+				addPlayerPixelsToBuffer(quads, floorX, floorY, screenumap);
+				addFixedObjectPixelsToBuffer(quads, opixmap, floorY, floorX, p);
+				drawSingleWallPixel(quads, i, j, onOrOff, opixmap, buildstickmap);
+				decidePixelAndDrawIfWithinScreenBounds(quads, floorX, floorY, opixmap, screenumap, p);
+			}
+		}
+		window.draw(quads);
 		drawAndUpdateParticles();
 		processMouseClickedOnObjectPixel(opixmap);
 		perlinZEffect++;
+	}
+
+	void Game::bufferthis(sf::RectangleShape& rec, sf::VertexArray& qs)
+	{
+		sf::Vertex v1(rec.getPosition());
+		sf::Vertex v2(rec.getPosition() + sf::Vector2f(0,ts));
+		sf::Vertex v3(rec.getPosition() + sf::Vector2f(ts, ts));
+		sf::Vertex v4(rec.getPosition() + sf::Vector2f(ts, 0));
+		//setting color
+		v1.color = v2.color = v3.color = v4.color = rec.getFillColor();
+		qs.append(v1);
+		qs.append(v2);
+		qs.append(v3);
+		qs.append(v4);
 	}
 
 	void Game::decidePixelAndDrawIfWithinScreenBounds(sf::VertexArray& qs, int i, int j, std::unordered_map<std::string, objs::ObjectBrick>& opixmap, std::unordered_map<std::string, objs::PlayerPixel>& screenumap, perlin& p)
@@ -564,7 +568,7 @@ namespace jl
 			{
 				rect.setFillColor(opixmap.at(keySpot).col);
 				rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
-				window.draw(rect);
+				bufferthis(rect, qs);
 				isObjectPix = true;
 			}
 			if (screenumap.find(keySpot) != screenumap.end())
@@ -573,7 +577,7 @@ namespace jl
 				{
 					rect.setFillColor(screenumap.at(keySpot).col);
 					rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
-					window.draw(rect);
+					bufferthis(rect, qs);
 				}
 				else
 				{
@@ -581,13 +585,13 @@ namespace jl
 					{
 						rect.setFillColor(screenumap.at(keySpot).col);
 						rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
-						window.draw(rect);
+						bufferthis(rect, qs);
 					}
 					else
 					{
 						rect.setFillColor(opixmap.at(keySpot).col);
 						rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
-						window.draw(rect);
+						bufferthis(rect, qs);
 					}
 				}
 			}
@@ -597,7 +601,7 @@ namespace jl
 				{
 					rect.setFillColor(worldmap.at(keySpot).col);
 					rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
-					window.draw(rect);
+					bufferthis(rect, qs);
 				}
 				else
 				{
@@ -612,7 +616,7 @@ namespace jl
 					col.a = 120;
 					rect.setFillColor(col);
 					rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
-					window.draw(rect);
+					bufferthis(rect, qs);
 				}
 			}
 			else if (isObjectPix == false)
@@ -627,7 +631,7 @@ namespace jl
 				col.a = 120;
 				rect.setFillColor(col);
 				rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
-				window.draw(rect);
+				bufferthis(rect, qs);
 			}
 		}
 	}

@@ -115,7 +115,7 @@ namespace jl
 		}
 		fomap.erase(keySpot);
 	}
-	void Game::addFixedObjectPixelsToBuffer(std::unordered_map<std::string, objs::ObjectBrick>& opixmap, int floorY, int floorX, perlin& p)
+	void Game::addFixedObjectPixelsToBuffer(sf::VertexArray& qs, std::unordered_map<std::string, objs::ObjectBrick>& opixmap, int floorY, int floorX, perlin& p)
 	{
 		std::string keySpot = "" + std::to_string(floorX) + ',' + std::to_string(floorY);
 		if (fomap.find(keySpot) != fomap.end())
@@ -148,7 +148,7 @@ namespace jl
 							int ksy = -objs::FixedObject::reflectionOffset + floorY + (int)(((f << 2) + (difference >> 4)) >> 3) / 2;
 
 							std::string thisKeySpot = "" + std::to_string(ksx) + ',' + std::to_string(ksy);
-
+							ob.oby = fop->y - objs::FixedObject::reflectionOffset;
 							ob.point = fop;
 							if (opixmap.find(thisKeySpot) == opixmap.end())
 							{
@@ -209,6 +209,7 @@ namespace jl
 							ob.col.g = std::min(std::max((int)ob.col.g, 25), 150);
 							ob.col.a = 120;
 							ob.point = fop;
+							ob.oby = fop->y - objs::FixedObject::reflectionOffset;
 							if (opixmap.find(thisKeySpot) == opixmap.end())
 							{
 								if (worldmap.find(thisKeySpot) != worldmap.end())

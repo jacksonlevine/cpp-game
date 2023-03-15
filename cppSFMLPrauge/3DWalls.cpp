@@ -40,7 +40,7 @@ namespace walls
 
 namespace jl
 {
-	void Game::drawSingleWallPixel(int i, int j, bool onOrOff, std::unordered_map<std::string, objs::ObjectBrick>& opixmap, std::unordered_map<std::string, walls::Stick>& buildstickmap)
+	void Game::drawSingleWallPixel(sf::VertexArray& qs, int i, int j, bool onOrOff, std::unordered_map<std::string, objs::ObjectBrick>& opixmap, std::unordered_map<std::string, walls::Stick>& buildstickmap)
 	{
 		int floorX = std::floor(i);
 		int floorY = std::floor(j);
@@ -130,7 +130,7 @@ namespace jl
 								}
 								else
 								{
-									if (opixmap.at(keySpot22).oby - objs::FixedObject::reflectionOffset < ob.oby)
+									if (opixmap.at(keySpot22).oby < ob.oby)
 									{
 										opixmap[keySpot22] = ob;
 										opixmap[keySpot23] = ob;
@@ -140,7 +140,7 @@ namespace jl
 						}
 						else
 						{
-							if (opixmap.at(keySpot2).oby - objs::FixedObject::reflectionOffset < ob.oby)
+							if (opixmap.at(keySpot2).oby < ob.oby)
 							{
 								opixmap[keySpot2] = ob;
 								opixmap[keySpot23] = ob;
@@ -190,7 +190,7 @@ namespace jl
 								}
 								else
 								{
-									if (opixmap.at(keySpot22).oby - objs::FixedObject::reflectionOffset < ob.oby)
+									if (opixmap.at(keySpot22).oby < ob.oby)
 									{
 										opixmap[keySpot22] = ob;
 
@@ -200,7 +200,7 @@ namespace jl
 						}
 						else
 						{
-							if (opixmap.at(keySpot2).oby - objs::FixedObject::reflectionOffset < ob.oby)
+							if (opixmap.at(keySpot2).oby  < ob.oby)
 							{
 								opixmap[keySpot2] = ob;
 
@@ -211,12 +211,9 @@ namespace jl
 				}
 
 	
-			if (std::abs(buildstickmap.at(keySpot).x - buildstickmap.at(keySpot).otherhalves[0]->x) + (std::abs(buildstickmap.at(keySpot).y - buildstickmap.at(keySpot).otherhalves[0]->y)) < 50)
+			if (std::abs(buildstickmap.at(keySpot).x - buildstickmap.at(keySpot).otherhalves[0]->x) + (std::abs(buildstickmap.at(keySpot).y - buildstickmap.at(keySpot).otherhalves[0]->y)) > 75)
 			{
-				window.draw(conv);
-			}
-			else
-			{
+
 				isBuildingWalls = false;
 			}
 		}

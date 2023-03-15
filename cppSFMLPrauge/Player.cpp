@@ -89,7 +89,7 @@ namespace objs
 
 namespace jl
 {
-	void Game::addPlayerPixelsToBuffer(sf::VertexArray& qs, int floorX, int floorY, std::unordered_map<std::string, objs::PlayerPixel>& screenumap)
+	void Game::addPlayerPixelsToBuffer(int floorX, int floorY, std::unordered_map<std::string, objs::PlayerPixel>& screenumap)
 	{
 		std::string keySpot = "" + std::to_string(floorX) + ',' + std::to_string(floorY);
 		if (pmap.find(keySpot) != pmap.end())

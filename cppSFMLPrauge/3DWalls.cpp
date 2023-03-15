@@ -40,7 +40,7 @@ namespace walls
 
 namespace jl
 {
-	void Game::drawSingleWallPixel(sf::VertexArray& qs, int i, int j, bool onOrOff, std::unordered_map<std::string, objs::ObjectBrick>& opixmap, std::unordered_map<std::string, walls::Stick>& buildstickmap)
+	void Game::drawSingleWallPixel(int i, int j, bool onOrOff, std::unordered_map<std::string, objs::ObjectBrick>& opixmap, std::unordered_map<std::string, walls::Stick>& buildstickmap)
 	{
 		int floorX = std::floor(i);
 		int floorY = std::floor(j);

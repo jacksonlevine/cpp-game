@@ -532,9 +532,9 @@ namespace jl
 			{
 				int floorX = std::floor(i);
 				int floorY = std::floor(j);
-				addPlayerPixelsToBuffer(quads, floorX, floorY, screenumap);
-				addFixedObjectPixelsToBuffer(quads, opixmap, floorY, floorX, p);
-				drawSingleWallPixel(quads, i, j, onOrOff, opixmap, buildstickmap);
+				addPlayerPixelsToBuffer(floorX, floorY, screenumap);
+				addFixedObjectPixelsToBuffer(opixmap, floorY, floorX, p);
+				drawSingleWallPixel(i, j, onOrOff, opixmap, buildstickmap);
 				decidePixelAndDrawIfWithinScreenBounds(quads, floorX, floorY, opixmap, screenumap, p);
 			}
 		}

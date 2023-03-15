@@ -115,7 +115,7 @@ namespace jl
 		}
 		fomap.erase(keySpot);
 	}
-	void Game::addFixedObjectPixelsToBuffer(sf::VertexArray& qs, std::unordered_map<std::string, objs::ObjectBrick>& opixmap, int floorY, int floorX, perlin& p)
+	void Game::addFixedObjectPixelsToBuffer(std::unordered_map<std::string, objs::ObjectBrick>& opixmap, int floorY, int floorX, perlin& p)
 	{
 		std::string keySpot = "" + std::to_string(floorX) + ',' + std::to_string(floorY);
 		if (fomap.find(keySpot) != fomap.end())

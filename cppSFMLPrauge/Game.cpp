@@ -11,6 +11,8 @@ namespace jl
 	{
 		buildingStickPrimary = std::shared_ptr<walls::Stick>(new walls::Stick);
 		buildingStickSecondary = std::shared_ptr<walls::Stick>(new walls::Stick);
+		buildingStickPrimary->otherhalves.push_back(buildingStickSecondary);
+		buildingStickSecondary->otherhalves.push_back(buildingStickPrimary);
 		mousedOverAGuiItem = false;
 		currentgui = "pause";
 		isGUIOpen = false;
@@ -257,11 +259,15 @@ namespace jl
 			buildingStickSecondary->bottom.elevation = 0;
 			buildingStickSecondary->top.elevation = elevationBuilding;
 			buildingStickSecondary->primary = false;
-			buildingStickSecondary->otherhalf = buildingStickPrimary;
+			buildingStickSecondary->otherhalves.push_back(buildingStickPrimary);
 			if (isBuildingWalls)
 			{
 				std::shared_ptr<walls::Stick> stick1(new walls::Stick);
 				std::shared_ptr<walls::Stick> stick2(new walls::Stick);
+				stick2->x = buildingStickSecondary->x;
+				stick2->y = buildingStickSecondary->y;
+				bool secondDeleted = (stickmap.find(stick2->posKey()) != stickmap.end());
+
 				stick1->id = walls::Stick::assignId();
 				buildingStickSecondary->id = walls::Stick::assignId();
 				stick1->bottom.elevation = 0;
@@ -269,16 +275,60 @@ namespace jl
 				stick1->primary = true;
 				stick1->x = buildingStickPrimary->x;
 				stick1->y = buildingStickPrimary->y;
-				stick1->otherhalf = stick2;
-				stickmap[stick1->posKey()] = *stick1.get();
+				if (!secondDeleted)
+				{
+					stick1->otherhalves.push_back(stick2);
+				}
+				bool firstDeleted = false;
+				if (stickmap.find(stick1->posKey()) != stickmap.end())
+				{
+					firstDeleted = true;
+					if (!secondDeleted)
+					{
+						stickmap[stick1->posKey()].otherhalves.push_back(stick2);
+					}
+					else
+					{
+						auto p2 = std::make_shared<walls::Stick>(stickmap[stick2->posKey()]);
+						stickmap[stick1->posKey()].otherhalves.push_back(p2);
+					}
+
+				}
+				else
+				{
+					stickmap[stick1->posKey()] = *stick1.get();
+				}
 				stick2->id = walls::Stick::assignId();
 				stick2->bottom.elevation = 0;
 				stick2->top.elevation = elevationBuilding;
 				stick2->primary = false;
-				stick2->x = buildingStickSecondary->x;
-				stick2->y = buildingStickSecondary->y;
-				stick2->otherhalf = stick1;
-				stickmap[stick2->posKey()] = *stick2.get();
+
+				if (!firstDeleted)
+				{
+					stick2->otherhalves.push_back(stick1);
+				}
+				else
+				{
+					auto p2 = std::make_shared<walls::Stick>(stickmap[stick1->posKey()]);
+					stick2->otherhalves.push_back(p2);
+				}
+				if (stickmap.find(stick2->posKey()) != stickmap.end())
+				{
+					if (!firstDeleted)
+					{
+						stickmap[stick2->posKey()].otherhalves.push_back(stick1);
+					}
+					else
+					{
+						auto p2 = std::make_shared<walls::Stick>(stickmap[stick1->posKey()]);
+						stickmap[stick2->posKey()].otherhalves.push_back(p2);
+					}
+
+				}
+				else
+				{
+					stickmap[stick2->posKey()] = *stick2.get();
+				}
 			}
 			isBuildingWalls = !isBuildingWalls;
 			buildingStickPrimary->id = walls::Stick::assignId();
@@ -287,7 +337,7 @@ namespace jl
 			buildingStickPrimary->bottom.elevation = 0;
 			buildingStickPrimary->top.elevation = elevationBuilding;
 			buildingStickPrimary->primary = true;
-			buildingStickPrimary->otherhalf = buildingStickSecondary;
+			buildingStickPrimary->otherhalves.push_back(buildingStickSecondary);
 		}
 	}
 
@@ -468,7 +518,6 @@ namespace jl
 			buildingStickSecondary->bottom.elevation = 0;
 			buildingStickSecondary->top.elevation = elevationBuilding;
 			buildingStickSecondary->primary = false;
-			buildingStickSecondary->otherhalf = buildingStickPrimary;
 			buildstickmap[buildingStickPrimary->posKey()] = *buildingStickPrimary.get();
 			buildstickmap[buildingStickSecondary->posKey()] = *buildingStickSecondary.get();
 		}

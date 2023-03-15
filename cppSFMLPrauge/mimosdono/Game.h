@@ -79,7 +79,6 @@ namespace jl {
 		void updateDropsAndAddToScreenBuffer(std::unordered_map<std::string, objs::PlayerPixel>& screenumap);
 		void renderMinimap(int widt, int x, int y, objs::Player* pla);
 		void handleEvents();
-		void generateWalls();//Test method
 		void drawSingleWallPixel(int i, int j, bool onOrOff, std::unordered_map<std::string, objs::ObjectBrick>& opixmap, std::unordered_map<std::string, walls::Stick>& buildstickmap);
 	};
 	class sopAndCoord

@@ -181,56 +181,6 @@ namespace jl
 						}
 					}
 				}
-				for (int f = 0; f < he; f++)
-				{
-					for (int o = 0; o < wi; o++)
-					{
-						char t = fop->thing[objs::clamp((f * wi) + o, 0, (wi * he) - 2)];
-						if (t != '0')
-						{
-							objs::ObjectBrick ob(opixref[t], fop->x, fop->y);
-							ob.elevation = he - f;
-							if (worldmap.find(keySpot) != worldmap.end())
-							{
-								ob.elevation += worldmap.at(keySpot).elevation;
-							}
-							int difference = (((floorY)-(int)(play.y + 150)) * ob.elevation);
-							int differenceX = (((floorX)-(int)play.x) * ob.elevation);
-							int n22 = std::floor(p.noise((o + floorX) * 0.1, (o + floorX) * 0.2, 11.01 + ((int)perlinZEffect2 >> 10)) * 10);
-							int n32 = std::floor(p.noise((f + floorY) * 0.1, (f + floorY) * 0.4, 11.01 + ((int)perlinZEffect2 >> 5)) * 4);
-							int n2Clamped = (std::min(std::max(n22 - n32 - 4, -8), 8));
-							int off = (fop->type == 0) ? 18 : 0;
-							int ksx = floorX + (int)((((o * 1) - 15) + (differenceX >> 8)));
-							int ksy = (n2Clamped >> 1) + floorY + 19 - (he + 3 - off) - (int)((((f >> 4) + (difference >> 4)) >> 5) >> 2) + 3;
-							std::string thisKeySpot = "" + std::to_string(ksx) + ',' + std::to_string(ksy);
-							ob.col.b = std::min(std::max((int)ob.col.b, 25), 150);
-							ob.col.r = std::min(std::max((int)ob.col.r, 25), 150);
-							ob.col.g = std::min(std::max((int)ob.col.g, 25), 150);
-							ob.col.a = 120;
-							ob.point = fop;
-							if (opixmap.find(thisKeySpot) == opixmap.end())
-							{
-								if (worldmap.find(thisKeySpot) != worldmap.end())
-								{
-									if (worldmap.at(thisKeySpot).isWater == true)
-									{
-										opixmap[thisKeySpot] = ob;
-									}
-								}
-							}
-							else
-							{
-								if (opixmap.at(thisKeySpot).oby < fop->y)
-								{
-									if (worldmap.at(thisKeySpot).isWater == true)
-									{
-										opixmap[thisKeySpot] = ob;
-									}
-								}
-							}
-						}
-					}
-				}
 				perlinZEffect2 += .2;
 			}
 		}

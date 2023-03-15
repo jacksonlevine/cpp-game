@@ -4,6 +4,7 @@
 #include "mimosdono/MimosDonoDefaultGUI.h"
 #include "mimosdono/3DWalls.h"
 #include <iostream>
+#include <pgobootrun.h>
 namespace jl
 {
 	gui::GUIObject* currentMousedOver;
@@ -25,7 +26,7 @@ namespace jl
 		camX = 0;
 		camY = 0;
 		ws = 1000;
-		ts = 14;
+		ts = 10;
 		sf::Vector2f click;
 		mouseClicked = false;
 		clickTimer = 0;
@@ -44,7 +45,7 @@ namespace jl
 		perlinZEffect = 0;
 		perlinZEffect2 = 0;
 		testNum = -20;
-		oboverscan = 24;
+		oboverscan = 22;
 		typeID =
 		{
 			{
@@ -68,7 +69,7 @@ namespace jl
 		invItemRect = sf::RectangleShape(sf::Vector2f(7, 7));
 		invRect.setFillColor(sf::Color(0, 0, 0));
 		invItemRect.setFillColor(sf::Color(255, 255, 255));
-		rect = sf::RectangleShape(sf::Vector2f(ts, ts));
+		rect = sf::RectangleShape(sf::Vector2f(ts*2, ts*2));
 		size = window.getSize();
 		width = size.x / ts;
 		height = size.y / ts;
@@ -103,7 +104,7 @@ namespace jl
 			}
 			if (!isGUIOpen)
 			{
-				float movement = 1.2;
+				float movement = 260.2;
 				//DEBUG SETTINGS
 				if (e.key.code == sf::Keyboard::K)
 				{

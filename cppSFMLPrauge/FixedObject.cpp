@@ -3,6 +3,7 @@
 
 namespace objs
 {
+	int FixedObject::reflectionOffset = 20;
 	FixedObject::FixedObject()
 	{
 		width = 0;
@@ -58,7 +59,7 @@ namespace jl
 	{
 		objs::Particle pa;
 		pa.x = (((int)std::round(opixmap.at(keySpot).obx - ((opixmap.at(keySpot).point->width / 2) * ((float)std::rand() / RAND_MAX)) + opixmap.at(keySpot).point->width / 4))) - 3;
-		pa.y = ((int)std::round(opixmap.at(keySpot).oby - ((opixmap.at(keySpot).point->height / 1.5) * ((float)std::rand() / RAND_MAX))));
+		pa.y = -objs::FixedObject::reflectionOffset + ((int)std::round(opixmap.at(keySpot).oby - ((opixmap.at(keySpot).point->height / 1.5) * ((float)std::rand() / RAND_MAX))));
 		sf::Color c = opixmap.at(keySpot).col;
 		c.r += 50;
 		c.g += 50;
@@ -72,7 +73,7 @@ namespace jl
 		for (int n = 0; n < dropCount; n++)
 		{
 			float xOff = (int)(((float)std::rand() / RAND_MAX) * -7 + 3.5) - 2;
-			float yOff = (int)(((float)std::rand() / RAND_MAX) * -5 + 2.5);
+			float yOff = (int)(((float)std::rand() / RAND_MAX) * -5 + 2.5) - objs::FixedObject::reflectionOffset;
 			objs::DroppedItem d(fomap.at(keySpot).x + xOff, fomap.at(keySpot).y + yOff, (int)drops.size());
 			if (fomap.at(keySpot).type == 0)
 			{
@@ -104,7 +105,7 @@ namespace jl
 		{
 			objs::Particle pa;
 			pa.x = (((int)std::round(fomap.at(keySpot).x - ((fomap.at(keySpot).width / 2) * ((float)std::rand() / RAND_MAX)) + fomap.at(keySpot).width / 4))) - 2;
-			pa.y = -15 + ((int)std::round(fomap.at(keySpot).y - ((fomap.at(keySpot).height / 1.5) * ((float)std::rand() / RAND_MAX))));
+			pa.y = ((int)std::round(fomap.at(keySpot).y - ((fomap.at(keySpot).height / 1.5) * ((float)std::rand() / RAND_MAX)))) - objs::FixedObject::reflectionOffset;
 			sf::Color c = opixref[fomap.at(keySpot).thing[((fomap.at(keySpot).height - 1) * fomap.at(keySpot).width) + (int)(fomap.at(keySpot).width / 2)]];
 			c.r += 50;
 			c.g += 50;
@@ -144,7 +145,7 @@ namespace jl
 							int difference = (((floorY)-(int)(play.y + 150)) * ob.elevation);
 							int differenceX = (((floorX)-(int)play.x) * ob.elevation);
 							int ksx = floorX + (int)((((o * 1) - 15) + (differenceX >> 8)));
-							int ksy = floorY + (int)(((f << 2) + (difference >> 4)) >> 3) / 2;
+							int ksy = -objs::FixedObject::reflectionOffset + floorY + (int)(((f << 2) + (difference >> 4)) >> 3) / 2;
 
 							std::string thisKeySpot = "" + std::to_string(ksx) + ',' + std::to_string(ksy);
 
@@ -176,6 +177,56 @@ namespace jl
 								if (opixmap.at(thisKeySpot).oby < fop->y)
 								{
 									opixmap[thisKeySpot] = ob;
+								}
+							}
+						}
+					}
+				}
+				for (int f = 0; f < he; f++)
+				{
+					for (int o = 0; o < wi; o++)
+					{
+						char t = fop->thing[objs::clamp((f * wi) + o, 0, (wi * he) - 2)];
+						if (t != '0')
+						{
+							objs::ObjectBrick ob(opixref[t], fop->x, fop->y);
+							ob.elevation = he - f;
+							if (worldmap.find(keySpot) != worldmap.end())
+							{
+								ob.elevation += worldmap.at(keySpot).elevation;
+							}
+							int difference = (((floorY)-(int)(play.y + 150)) * ob.elevation);
+							int differenceX = (((floorX)-(int)play.x) * ob.elevation);
+							int n22 = std::floor(p.noise((o + floorX) * 0.1, (o + floorX) * 0.2, 11.01 + ((int)perlinZEffect2 >> 10)) * 10);
+							int n32 = std::floor(p.noise((f + floorY) * 0.1, (f + floorY) * 0.4, 11.01 + ((int)perlinZEffect2 >> 5)) * 4);
+							int n2Clamped = (std::min(std::max(n22 - n32 - 4, -8), 8));
+							int off = (fop->type == 0) ? 18 : 0;
+							int ksx = floorX + (int)((((o * 1) - 15) + (differenceX >> 8)));
+							int ksy = -objs::FixedObject::reflectionOffset + (n2Clamped >> 1) + floorY + 19 - (he + 3 - off) - (int)((((f >> 4) + (difference >> 4)) >> 5) >> 2) + 3;
+							std::string thisKeySpot = "" + std::to_string(ksx) + ',' + std::to_string(ksy);
+							ob.col.b = std::min(std::max((int)ob.col.b, 25), 150);
+							ob.col.r = std::min(std::max((int)ob.col.r, 25), 150);
+							ob.col.g = std::min(std::max((int)ob.col.g, 25), 150);
+							ob.col.a = 120;
+							ob.point = fop;
+							if (opixmap.find(thisKeySpot) == opixmap.end())
+							{
+								if (worldmap.find(thisKeySpot) != worldmap.end())
+								{
+									if (worldmap.at(thisKeySpot).isWater == true)
+									{
+										opixmap[thisKeySpot] = ob;
+									}
+								}
+							}
+							else
+							{
+								if (opixmap.at(thisKeySpot).oby < fop->y)
+								{
+									if (worldmap.at(thisKeySpot).isWater == true)
+									{
+										opixmap[thisKeySpot] = ob;
+									}
 								}
 							}
 						}

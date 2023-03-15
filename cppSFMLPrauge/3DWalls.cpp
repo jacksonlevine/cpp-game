@@ -116,7 +116,7 @@ namespace jl
 						}
 						ob.col = (sf::Color(50 + (z * 4) + (std::abs(s.sop->y - otherhalf->y) * 2) + brickbetween + bricklighting, 50 + (z * 4) + (std::abs(s.sop->y - otherhalf->y) * 2) + brickbetween + bricklighting, 50 + (z * 4) + (std::abs(s.sop->y - otherhalf->y) * 2) + brickbetween + bricklighting));
 						ob.obx = xHere;
-						ob.oby = yHere;
+						ob.oby = yHere ;
 						ob.elevation = z;
 						if (opixmap.find(keySpot2) == opixmap.end())
 						{
@@ -126,22 +126,24 @@ namespace jl
 								if (opixmap.find(keySpot22) == opixmap.end())
 								{
 									opixmap[keySpot22] = ob;
+									opixmap[keySpot23] = ob;
 								}
 								else
 								{
-									if (opixmap.at(keySpot22).oby < ob.oby)
+									if (opixmap.at(keySpot22).oby - objs::FixedObject::reflectionOffset < ob.oby)
 									{
 										opixmap[keySpot22] = ob;
+										opixmap[keySpot23] = ob;
 									}
 								}
 							}
 						}
 						else
 						{
-							if (opixmap.at(keySpot2).oby < ob.oby)
+							if (opixmap.at(keySpot2).oby - objs::FixedObject::reflectionOffset < ob.oby)
 							{
 								opixmap[keySpot2] = ob;
-
+								opixmap[keySpot23] = ob;
 							}
 						}
 
@@ -174,19 +176,34 @@ namespace jl
 						objs::ObjectBrick ob;
 						ob.col = (sf::Color(100 + (std::abs(sop->y - otherhalf->y) * 4), 140 + (std::abs(sop->y - otherhalf->y) * 4), 100 + (std::abs(sop->y - otherhalf->y) * 4)));
 						ob.obx = xHere;
-						ob.oby = yHere;
+						ob.oby = yHere ;
 						ob.elevation = z;
 						if (opixmap.find(keySpot2) == opixmap.end())
 						{
 							opixmap[keySpot2] = ob;
-							opixmap[keySpot22] = ob;
+							if (std::abs(xDifferenceHere) >= 2)
+							{
+								if (opixmap.find(keySpot22) == opixmap.end())
+								{
+									opixmap[keySpot22] = ob;
+
+								}
+								else
+								{
+									if (opixmap.at(keySpot22).oby - objs::FixedObject::reflectionOffset < ob.oby)
+									{
+										opixmap[keySpot22] = ob;
+
+									}
+								}
+							}
 						}
 						else
 						{
-							if (opixmap.at(keySpot2).oby < ob.oby)
+							if (opixmap.at(keySpot2).oby - objs::FixedObject::reflectionOffset < ob.oby)
 							{
 								opixmap[keySpot2] = ob;
-								opixmap[keySpot22] = ob;
+
 							}
 						}
 					}

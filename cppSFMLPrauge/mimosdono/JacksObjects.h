@@ -17,6 +17,7 @@ namespace objs
 	class FixedObject
 	{
 	public:
+		static int reflectionOffset;
 		int width;
 		int height;
 		int type;

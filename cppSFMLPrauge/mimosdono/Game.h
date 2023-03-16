@@ -10,6 +10,7 @@ namespace jl {
 		bool mousedOverAGuiItem;
 		bool guiKeyJustTriggered;
 		bool isBuildingWalls;
+		bool isMinimapExpanded;
 		std::shared_ptr<walls::Stick> buildingStickPrimary;
 		std::shared_ptr<walls::Stick> buildingStickSecondary;
 		int gameWidth;

@@ -17,6 +17,7 @@ namespace jl
 		mousedOverAGuiItem = false;
 		currentgui = "pause";
 		isGUIOpen = false;
+		isMinimapExpanded = false;
 		guiKeyJustTriggered = false;
 		gameWidth = 1280;
 		gameHeight = 720;
@@ -26,7 +27,7 @@ namespace jl
 		camX = 0;
 		camY = 0;
 		ws = 1000;
-		ts = 7;
+		ts = 11;
 		sf::Vector2f click;
 		mouseClicked = false;
 		clickTimer = 0;
@@ -179,6 +180,7 @@ namespace jl
 				bool clickPosOnMinimap = (click.x / ts > minimapX && click.y / ts > minimapY && click.x / ts < minimapX + minimapWidth && click.y / ts < minimapY + minimapWidth);
 				if (clickPosOnMinimap)
 				{
+					isMinimapExpanded = !isMinimapExpanded;
 					clickOnMinimap = true;
 				}
 				else
@@ -190,7 +192,8 @@ namespace jl
 			if (e.mouseButton.button == sf::Mouse::Right)
 			{
 				setClickPos();
-				placeCurrentItem();
+
+					placeCurrentItem();
 			}
 		}
 		if (e.type == sf::Event::MouseButtonReleased)
@@ -214,7 +217,7 @@ namespace jl
 			{
 				if (isBuildingWalls) 
 				{
-					if (elevationBuilding + s >= 0) {
+					if (elevationBuilding + s >= 0 && elevationBuilding + s < 4) {
 						elevationBuilding += s;
 					}
 				}
@@ -346,9 +349,9 @@ namespace jl
 	{
 		window.clear(sf::Color::Black);
 		render(p);
-		//renderMinimap(minimapWidth, minimapX, minimapY, &play);
+		renderMinimap((isMinimapExpanded) ? minimapWidth : 5, (isMinimapExpanded) ? minimapX : minimapX + 15, (isMinimapExpanded) ? minimapY : minimapY + 15, &play);
 		moveGUIElements();
-		//renderUI();
+		renderUI();
 		handleEvents();
 		window.display();
 	}
@@ -506,7 +509,7 @@ namespace jl
 
 	void Game::render(perlin p)
 	{
-		sf::VertexArray quads(sf::Quads, 160000);
+		sf::VertexArray quads(sf::Quads, 8000);
 
 		bool onOrOff = false;
 		std::unordered_map<std::string, objs::ObjectBrick> opixmap;
@@ -547,9 +550,9 @@ namespace jl
 	void Game::bufferthis(sf::RectangleShape& rec, sf::VertexArray& qs)
 	{
 		sf::Vertex v1(rec.getPosition());
-		sf::Vertex v2(rec.getPosition() + sf::Vector2f(0,ts));
-		sf::Vertex v3(rec.getPosition() + sf::Vector2f(ts, ts));
-		sf::Vertex v4(rec.getPosition() + sf::Vector2f(ts, 0));
+		sf::Vertex v2(rec.getPosition() + sf::Vector2f(0,ts<<1));
+		sf::Vertex v3(rec.getPosition() + sf::Vector2f(ts<<1, ts<<1));
+		sf::Vertex v4(rec.getPosition() + sf::Vector2f(ts<<1, 0));
 		//setting color
 		v1.color = v2.color = v3.color = v4.color = rec.getFillColor();
 		qs.append(v1);

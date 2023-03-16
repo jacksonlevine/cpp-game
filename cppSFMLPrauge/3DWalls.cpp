@@ -63,16 +63,15 @@ namespace jl
 				float differencey2 = (((s.floorY) - (play.y + 190)) * (otherhalf->top.elevation * otherhalf->top.elevation)) / 150;
 				float differenceX = (((s.floorX) - (int)play.x) * s.sop->top.elevation);
 				float differenceX2 = (((otherhalf->x) - (int)play.x) * otherhalf->top.elevation);
-				for (float l = 0; l <= 1; l += .005)
+				for (float l = 0; l <= 1; l += .01)
 				{
 					int yHere = (int)std::lerp(s.sop->y, otherhalf->y, l);
 					int xHere = (int)std::lerp(s.floorX, otherhalf->x, l);
-					int wallHeightHere = (yHere - (int)std::lerp(s.sop->y + differencey1, otherhalf->y + differencey2, l)) * 2;
-					float xDifferenceHere = std::lerp(differenceX, differenceX2, l) / 150;
-					float yDifferenceHere = std::lerp(differencey1, differencey2, l);
+					int wallHeightHere = 4+(yHere - (int)std::lerp(s.sop->y + differencey1, otherhalf->y + differencey2, l));
+					float xDifferenceHere = std::lerp(differenceX, differenceX2, l) / 500;
+					float yDifferenceHere = std::lerp(differencey1, differencey2, l)/100;
 					for (int z = 0; z < wallHeightHere; z++)
 					{
-
 						std::string keySpot2 = "" + std::to_string((int)((float)xHere + (xDifferenceHere * (float)z))) + ',' + std::to_string(yHere - z);
 						std::string keySpot22 = "" + std::to_string((int)((float)xHere + 1 + (xDifferenceHere * (float)z))) + ',' + std::to_string(yHere - z);
 						std::string keySpot23 = "" + std::to_string((int)((float)xHere - 1 + (xDifferenceHere * (float)z))) + ',' + std::to_string(yHere - z);
@@ -112,16 +111,16 @@ namespace jl
 								onOrOff = !onOrOff;
 							}
 
-							brickbetween = -50;
+							brickbetween = -20;
 						}
-						ob.col = (sf::Color(50 + (z * 4) + (std::abs(s.sop->y - otherhalf->y) * 2) + brickbetween + bricklighting, 50 + (z * 4) + (std::abs(s.sop->y - otherhalf->y) * 2) + brickbetween + bricklighting, 50 + (z * 4) + (std::abs(s.sop->y - otherhalf->y) * 2) + brickbetween + bricklighting));
+						ob.col = (sf::Color(35 + (z * 4) + (std::abs(s.sop->y - otherhalf->y) * 2) + brickbetween + bricklighting, 35 + (z * 4) + (std::abs(s.sop->y - otherhalf->y) * 2) + brickbetween + bricklighting, 35 + (z * 4) + (std::abs(s.sop->y - otherhalf->y) * 2) + brickbetween + bricklighting));
 						ob.obx = xHere;
 						ob.oby = yHere ;
 						ob.elevation = z;
 						if (opixmap.find(keySpot2) == opixmap.end())
 						{
 							opixmap[keySpot2] = ob;
-							if (std::abs(xDifferenceHere) >= 2)
+							if (std::abs(xDifferenceHere) >= .7)
 							{
 								if (opixmap.find(keySpot22) == opixmap.end())
 								{
@@ -166,8 +165,8 @@ namespace jl
 				{
 					int yHere = (int)std::lerp(sop->y, otherhalf->y, l);
 					int xHere = (int)std::lerp(floorX, otherhalf->x, l);
-					int wallHeightHere = (yHere - (int)std::lerp(sop->y + differencey1, otherhalf->y + differencey2, l)) * 2;
-					float xDifferenceHere = std::lerp(differenceX, differenceX2, l) / 150;
+					int wallHeightHere = 4+(yHere - (int)std::lerp(sop->y + differencey1, otherhalf->y + differencey2, l));
+					float xDifferenceHere = std::lerp(differenceX, differenceX2, l) / 256;
 					for (int z = 0; z < wallHeightHere; z++)
 					{
 
@@ -211,7 +210,7 @@ namespace jl
 				}
 
 	
-			if (std::abs(buildstickmap.at(keySpot).x - buildstickmap.at(keySpot).otherhalves[0]->x) + (std::abs(buildstickmap.at(keySpot).y - buildstickmap.at(keySpot).otherhalves[0]->y)) > 75)
+			if (std::abs(buildstickmap.at(keySpot).x - buildstickmap.at(keySpot).otherhalves[0]->x) + (std::abs(buildstickmap.at(keySpot).y - buildstickmap.at(keySpot).otherhalves[0]->y)) > 50)
 			{
 
 				isBuildingWalls = false;

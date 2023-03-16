@@ -4,11 +4,12 @@ namespace objs
 {
 	InventorySlot::InventorySlot()
 	{
-		thingWidth = 3;
-		thingHeight = 3;
+		thingWidth = 0;
+		thingHeight = 0;
 		id = -1;
 		count = -1;
-		thing = "0a0ata0a0";
+		thing = "";
+		name = "empty";
 	};
 	Inventory::Inventory()
 	{
@@ -39,5 +40,16 @@ namespace objs
 			}
 		}
 		return -1;
+	}
+	std::vector<std::string> Inventory::getInfo()
+	{
+		std::vector<std::string> i;
+		//thing, name, count
+		for (InventorySlot slot : inv)
+		{
+			i.push_back(slot.thing);
+			i.push_back(slot.name);
+			i.push_back(std::to_string(slot.count));
+		}
 	}
 }

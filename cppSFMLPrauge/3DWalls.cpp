@@ -69,8 +69,8 @@ namespace jl
 					int xHere = (int)std::lerp(s.floorX, otherhalf->x, l);
 					int wallHeightHere = 4+(yHere - (int)std::lerp(s.sop->y + differencey1, otherhalf->y + differencey2, l));
 					float xDifferenceHere = std::lerp(differenceX, differenceX2, l) / 500;
-					float yDifferenceHere = std::lerp(differencey1, differencey2, l)/100;
-					for (int z = 0; z < wallHeightHere; z++)
+					float yDifferenceHere = std::lerp(differencey1, differencey2, l) / 100;
+					for (int z = 0; z < wallHeightHere; ++z)
 					{
 						std::string keySpot2 = "" + std::to_string((int)((float)xHere + (xDifferenceHere * (float)z))) + ',' + std::to_string(yHere - z);
 						std::string keySpot22 = "" + std::to_string((int)((float)xHere + 1 + (xDifferenceHere * (float)z))) + ',' + std::to_string(yHere - z);
@@ -83,7 +83,6 @@ namespace jl
 						{
 							brickinterval = 1;
 						}
-
 						bool isBetween = false;
 						if (z % brickinterval != 0)
 						{
@@ -101,16 +100,13 @@ namespace jl
 									isBetween = true;
 								}
 							}
-
 						}
-
 						if (z % brickinterval == 0 || isBetween)
 						{
 							if (z % brickinterval == 0)
 							{
 								onOrOff = !onOrOff;
 							}
-
 							brickbetween = -20;
 						}
 						ob.col = (sf::Color(35 + (z * 4) + (std::abs(s.sop->y - otherhalf->y) * 2) + brickbetween + bricklighting, 35 + (z * 4) + (std::abs(s.sop->y - otherhalf->y) * 2) + brickbetween + bricklighting, 35 + (z * 4) + (std::abs(s.sop->y - otherhalf->y) * 2) + brickbetween + bricklighting));
@@ -145,12 +141,9 @@ namespace jl
 								opixmap[keySpot23] = ob;
 							}
 						}
-
 					}
-
 				}
 			}
-
 		}
 		if (buildstickmap.find(keySpot) != buildstickmap.end())
 		{
@@ -185,14 +178,12 @@ namespace jl
 								if (opixmap.find(keySpot22) == opixmap.end())
 								{
 									opixmap[keySpot22] = ob;
-
 								}
 								else
 								{
 									if (opixmap.at(keySpot22).oby < ob.oby)
 									{
 										opixmap[keySpot22] = ob;
-
 									}
 								}
 							}
@@ -202,11 +193,9 @@ namespace jl
 							if (opixmap.at(keySpot2).oby  < ob.oby)
 							{
 								opixmap[keySpot2] = ob;
-
 							}
 						}
 					}
-
 				}
 
 	

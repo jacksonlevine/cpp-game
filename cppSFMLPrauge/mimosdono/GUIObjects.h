@@ -60,6 +60,7 @@ namespace gui
 	{
 	public:
 		jl::Game* _g;
+		//std::optional<BASE CLASS INTERFACE!!!&> Model;
 		GUIView();
 		GUIView(jl::Game* g);
 		std::vector<GUIContainer> containers;

@@ -10,6 +10,7 @@ namespace jl
 	gui::GUIObject* currentMousedOver;
 	Game::Game()
 	{
+		isFullscreen = false;
 		buildingStickPrimary = std::shared_ptr<walls::Stick>(new walls::Stick);
 		buildingStickSecondary = std::shared_ptr<walls::Stick>(new walls::Stick);
 		buildingStickPrimary->otherhalves.push_back(buildingStickSecondary);
@@ -17,13 +18,16 @@ namespace jl
 		mousedOverAGuiItem = false;
 		currentgui = "pause";
 		isGUIOpen = false;
+		versionString = "MimosDono Dev 12.2.7";
 		isMinimapExpanded = false;
 		guiKeyJustTriggered = false;
 		gameWidth = 1280;
 		gameHeight = 720;
+		sf::ContextSettings c;
+		c.antialiasingLevel = 0;
 		gui::GUIController::setViews(gui::MimosDonoDefaultGUI::getViews(this, gameWidth, gameHeight));
-		window.create(sf::VideoMode(gameWidth, gameHeight), "MimosDono Dev 12.2.0");
-		window.setFramerateLimit(60);
+		window.create(sf::VideoMode(gameWidth, gameHeight), versionString, sf::Style::Fullscreen, c);
+		window.setVerticalSyncEnabled(true);
 		camX = 0;
 		camY = 0;
 		ws = 1000;
@@ -405,7 +409,7 @@ namespace jl
 	void Game::renderUI()    
 	{
 		text.setOutlineThickness(0.0);
-		text.setString("MimosDono v12.2.0dev");
+		text.setString(versionString);
 		text.setPosition(sf::Vector2f(0, 0));
 		text.setFillColor(sf::Color(255, 255, 255));
 		window.draw(text);
@@ -487,9 +491,9 @@ namespace jl
 		text.setPosition(sf::Vector2f(invX + ts, invY + ts + ts));
 		text.setOutlineColor(sf::Color::Black);
 		text.setOutlineThickness(2);
-		for (int h = 0; h < he; h++)
+		for (int h = 0; h < he; ++h)
 		{
-			for (int t = 0; t < wi; t++)
+			for (int t = 0; t < wi; ++t)
 			{
 				char s = thing[(h * wi) + t];
 				if (thing[s] != '0')
@@ -509,7 +513,7 @@ namespace jl
 
 	void Game::render(perlin p)
 	{
-		sf::VertexArray quads(sf::Quads, 8000);
+		sf::VertexArray quads(sf::Quads, 31000);
 
 		bool onOrOff = false;
 		std::unordered_map<std::string, objs::ObjectBrick> opixmap;
@@ -529,9 +533,9 @@ namespace jl
 			buildstickmap[buildingStickSecondary->posKey()] = *buildingStickSecondary.get();
 		}
 
-		for (int j = oboverscan + height + camY + 1; j > -oboverscan + 0 + camY - 1; j--)
+		for (int j = oboverscan + height + camY + 1; j > -oboverscan + 0 + camY - 1; --j)
 		{
-			for (int i = -oboverscan + 0 + camX - 1; i < width + camX + 1 + oboverscan; i++)
+			for (int i = -oboverscan + 0 + camX - 1; i < width + camX + 1 + oboverscan; ++i)
 			{
 				int floorX = std::floor(i);
 				int floorY = std::floor(j);

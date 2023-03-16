@@ -105,11 +105,17 @@ namespace objs
 		int id;
 		int count;
 		std::string thing;
+		std::string name;
 		int thingWidth;
 		int thingHeight;
 		InventorySlot();
 	};
-	class Inventory
+	class IModel
+	{
+	public:
+		virtual std::vector<std::string> getInfo() = 0;
+	};
+	class Inventory : public IModel
 	{
 	public:
 		static const int size = 35;
@@ -117,6 +123,7 @@ namespace objs
 		Inventory();
 		int findItem(int id);
 		int firstOpenSlot();
+		virtual std::vector<std::string> getInfo();
 	};
 	class Player
 	{

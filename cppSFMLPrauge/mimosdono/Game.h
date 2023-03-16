@@ -7,6 +7,8 @@ namespace jl {
 	public:
 		std::string currentgui;
 		bool isGUIOpen;
+		bool isFullscreen;
+		std::string versionString;
 		bool mousedOverAGuiItem;
 		bool guiKeyJustTriggered;
 		bool isBuildingWalls;

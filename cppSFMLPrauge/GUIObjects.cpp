@@ -95,3 +95,8 @@ namespace gui
 		y = 0;
 	}
 }
+
+namespace objs
+{
+
+}

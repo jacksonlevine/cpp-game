@@ -59,7 +59,7 @@ namespace jl
 	{
 		objs::Particle pa;
 		pa.x = (((int)std::round(opixmap.at(keySpot).obx - ((opixmap.at(keySpot).point->width / 2) * ((float)std::rand() / RAND_MAX)) + opixmap.at(keySpot).point->width / 4))) - 3;
-		pa.y = -objs::FixedObject::reflectionOffset + ((int)std::round(opixmap.at(keySpot).oby - ((opixmap.at(keySpot).point->height / 1.5) * ((float)std::rand() / RAND_MAX))));
+		pa.y =  ((int)std::round(opixmap.at(keySpot).oby - ((opixmap.at(keySpot).point->height / 1.5) * ((float)std::rand() / RAND_MAX))));
 		sf::Color c = opixmap.at(keySpot).col;
 		c.r += 50;
 		c.g += 50;

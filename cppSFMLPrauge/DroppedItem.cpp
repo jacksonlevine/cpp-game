@@ -79,6 +79,7 @@ namespace jl
 						{
 							play.inv.inv[fos].id = typeID.at(drops[i].name);
 							play.inv.inv[fos].count = 1;
+							play.inv.inv[fos].name = drops[i].name;
 							play.inv.inv[fos].thing = drops[i].thing;
 							play.inv.inv[fos].thingWidth = drops[i].width;
 							play.inv.inv[fos].thingHeight = drops[i].height;

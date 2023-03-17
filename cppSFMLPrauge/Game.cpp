@@ -618,9 +618,9 @@ namespace jl
 					float waterLight = std::max(worldmap.at(keySpot).elevation, 0.0f) * 10;
 					sf::Color col;
 					col.r = (1 * n2Clamped + 1 + (waterLight * 5));
-					col.g = (50 + n2Clamped + (waterLight * 5) + (15 * n2Clamped));
-					col.b = (75 + (n2Clamped * 2) + (15 * n2Clamped) + (waterLight * 5));
-					col.a = 120;
+					col.g = (15 + n2Clamped + (waterLight * 5) + (15 * n2Clamped));
+					col.b = (14 + (n2Clamped * 2) + (15 * n2Clamped) + (waterLight * 5));
+					col.a = 105;
 					rect.setFillColor(col);
 					rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
 					bufferthis(rect, qs);

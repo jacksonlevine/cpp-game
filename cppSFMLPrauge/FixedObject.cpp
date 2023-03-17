@@ -204,10 +204,10 @@ namespace jl
 							int ksx = floorX + (int)((((o * 1) - 15) + (differenceX >> 8)));
 							int ksy = -objs::FixedObject::reflectionOffset + (n2Clamped >> 1) + floorY + 19 - (he + 3 - off) - (int)((((f >> 4) + (difference >> 4)) >> 5) >> 2) + 3;
 							std::string thisKeySpot = "" + std::to_string(ksx) + ',' + std::to_string(ksy);
-							ob.col.b = std::min(std::max((int)ob.col.b, 25), 150);
-							ob.col.r = std::min(std::max((int)ob.col.r, 25), 150);
-							ob.col.g = std::min(std::max((int)ob.col.g, 25), 150);
-							ob.col.a = 120;
+							ob.col.b = std::min(std::max((int)ob.col.b, 25), 75);
+							ob.col.r = std::min(std::max((int)ob.col.r, 25), 75);
+							ob.col.g = std::min(std::max((int)ob.col.g, 25), 75);
+							ob.col.a = 30;
 							ob.point = fop;
 							ob.oby = fop->y - objs::FixedObject::reflectionOffset;
 							if (opixmap.find(thisKeySpot) == opixmap.end())

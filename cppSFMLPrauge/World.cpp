@@ -40,9 +40,9 @@ namespace world
 					if (ln < 2)
 					{
 						brick.isWater = false;
-						float red = std::min(25 + 5 * (nClamped * 3), 204.5);
-						float green = std::min(25 + 10 * (nClamped * 3), 204.5);
-						float blue = (2 * (nClamped * 3));
+						float red = std::min(8 * (nClamped * 3), 205.6);
+						float green = std::min(8  * (nClamped * 3),205.6);
+						float blue = (8 * (nClamped ));
 						float a = (255);
 						float elev = nClamped;
 						insertIntoWorld(floorX, floorY, red, green, blue, a, elev, &wmap, brick);

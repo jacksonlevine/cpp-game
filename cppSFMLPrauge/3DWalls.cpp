@@ -159,10 +159,9 @@ namespace jl
 					int yHere = (int)std::lerp(sop->y, otherhalf->y, l);
 					int xHere = (int)std::lerp(floorX, otherhalf->x, l);
 					int wallHeightHere = 4+(yHere - (int)std::lerp(sop->y + differencey1, otherhalf->y + differencey2, l));
-					float xDifferenceHere = std::lerp(differenceX, differenceX2, l) / 256;
+					float xDifferenceHere = std::lerp(differenceX, differenceX2, l) / 500;
 					for (int z = 0; z < wallHeightHere; z++)
 					{
-
 						std::string keySpot2 = "" + std::to_string((int)((float)xHere + (xDifferenceHere * (float)z))) + ',' + std::to_string(yHere - z);
 						std::string keySpot22 = "" + std::to_string((int)((float)xHere + 1 + (xDifferenceHere * (float)z))) + ',' + std::to_string(yHere - z);
 						objs::ObjectBrick ob;
@@ -201,7 +200,6 @@ namespace jl
 	
 			if (std::abs(buildstickmap.at(keySpot).x - buildstickmap.at(keySpot).otherhalves[0]->x) + (std::abs(buildstickmap.at(keySpot).y - buildstickmap.at(keySpot).otherhalves[0]->y)) > 50)
 			{
-
 				isBuildingWalls = false;
 			}
 		}

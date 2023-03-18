@@ -99,13 +99,24 @@ namespace jl
 		play.inv.inv[0].thingWidth = 5;
 		play.inv.inv[0].thingHeight = 5;
 	}
+	void Game::switchOrToggleGui(std::string newView)
+	{
+		if (isGUIOpen && currentgui != newView) { currentgui = newView; }
+		else { currentgui = newView; isGUIOpen = !isGUIOpen; }
+	}
+
 	void Game::pollEvents(sf::Event e) {
 		//renderUI();
 		if (e.type == sf::Event::KeyPressed) 
 		{
+			if (e.key.code == sf::Keyboard::E)
+			{
+				switchOrToggleGui("inventory");
+
+			}
 			if (e.key.code == sf::Keyboard::Escape)
 			{
-				isGUIOpen = !isGUIOpen;
+				switchOrToggleGui("pause");
 			}
 			if (!isGUIOpen)
 			{
@@ -429,26 +440,24 @@ namespace jl
 
 
 				//Then draw each object
-				
+				int arbitraryPadding = 10;
 				int index = 0;
 
-				int currentX;
-				int currentY;
+				int currentX = arbitraryPadding;
+				int currentY = arbitraryPadding;
 				for (std::shared_ptr<gui::GUIObject> obj : cont.objects)
 				{
 					re.setSize(sf::Vector2f(obj->width, obj->height));
-					int arbitraryPadding = 10;
+
 					//we're going relative to the cont.y, so that is our 0 here
-					currentY += arbitraryPadding + obj->height + arbitraryPadding;
-					int maximumY = cont.height;
-					if (currentY > maximumY) { currentY = 0; currentX += arbitraryPadding + obj->width + arbitraryPadding; }
+
+					int maximumY = cont.height-arbitraryPadding;
+					//y increasing equates to DOWN
+					if (currentY+obj->height > maximumY) { currentY = arbitraryPadding; currentX += obj->width + arbitraryPadding; }
 
 
-						//y increasing equates to DOWN
-
-
-					sf::Vector2f pos(arbitraryPadding + cont.x + currentX,
-						arbitraryPadding + cont.y + currentY);
+					sf::Vector2f pos(cont.x + currentX,
+						cont.y + currentY);
 					re.setPosition(pos);
 
 					if (isMouseOver(&re))
@@ -460,6 +469,10 @@ namespace jl
 					re.setOutlineThickness(0.0);
 					re.setFillColor((isMouseOver(&re)) ? sf::Color(255, 255, 255) : sf::Color(100, 100, 100));
 					window.draw(re);
+					if (obj->needsSpecialRendering)
+					{
+						obj->render(pos.x, pos.y);
+					}
 					if (obj->text != "")
 					{
 						sf::Vector2f textpos(pos.x + (obj->width >> 1) - ((obj->text.size() >> 1)*((int)text.getCharacterSize())), pos.y + (obj->height >> 1) - ((int)text.getCharacterSize()>>1));
@@ -469,6 +482,7 @@ namespace jl
 						text.setFillColor((isMouseOver(&re)) ? sf::Color(0, 0, 0) : sf::Color(255, 255, 255));
 						window.draw(text);
 					}
+					currentY += obj->height + arbitraryPadding;
 					++index;
 				}
 			}
@@ -493,18 +507,18 @@ namespace jl
 			window.draw(invRect);
 			if (!slotIsEmpty)
 			{
-				drawInventoryTileContent(i, invX);
+				drawInventoryTileContent(i, invX, invY);
 			}
 		}
 	}
-	void Game::drawInventoryTileContent(int i, int invX)
+	void Game::drawInventoryTileContent(int i, int x, int y)
 	{
 		int wi = play.inv.inv[i].thingWidth;
 		int he = play.inv.inv[i].thingHeight;
 		std::string thing = play.inv.inv[i].thing;
 		text.setFillColor(sf::Color::White);
 		text.setString((sf::String)std::to_string(play.inv.inv[i].count));
-		text.setPosition(sf::Vector2f(invX + ts, invY + ts + ts));
+		text.setPosition(sf::Vector2f(x + ts, y + ts + ts));
 		text.setOutlineColor(sf::Color::Black);
 		text.setOutlineThickness(2);
 		for (int h = 0; h < he; ++h)
@@ -515,7 +529,7 @@ namespace jl
 				if (thing[s] != '0')
 				{
 					invItemRect.setFillColor(opixref[s]);
-					invItemRect.setPosition(sf::Vector2f((invX + ((1.5 / wi) * ts)) + (t * invItemRect.getSize().x), (invY + ((1.5 / he) * ts)) + (h * invItemRect.getSize().y)));
+					invItemRect.setPosition(sf::Vector2f((x + ((1.5 / wi) * ts)) + (t * invItemRect.getSize().x), (y + ((1.5 / he) * ts)) + (h * invItemRect.getSize().y)));
 					window.draw(invItemRect);
 					window.draw(text);
 				}

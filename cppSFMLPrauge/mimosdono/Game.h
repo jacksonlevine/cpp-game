@@ -9,6 +9,7 @@ namespace jl {
 		bool isGUIOpen;
 		bool isFullscreen;
 		std::string versionString;
+		void switchOrToggleGui(std::string newView);
 		bool mousedOverAGuiItem;
 		bool guiKeyJustTriggered;
 		bool isBuildingWalls;
@@ -70,7 +71,7 @@ namespace jl {
 		bool isMouseOver(sf::RectangleShape* recto);
 		bool isMouseOver(int x, int y, int width, int height);
 		void renderUI();
-		void drawInventoryTileContent(int i, int invX);
+		void drawInventoryTileContent(int i, int x, int y);
 		void render(perlin p);
 		void drawAndUpdateParticles();
 		void processMouseClickedOnObjectPixel(std::unordered_map<std::string, objs::ObjectBrick>& opixmap);

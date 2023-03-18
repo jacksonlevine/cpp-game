@@ -11,6 +11,7 @@ namespace gui
 		text = "";
 		_g = g;
 		mouseOver = false;
+		needsSpecialRendering = false;
 	}
 	GUIQuitButton::GUIQuitButton(jl::Game* g, int wi, int he, std::string te)
 	{
@@ -19,6 +20,7 @@ namespace gui
 		text = te;
 		_g = g;
 		mouseOver = false;
+		needsSpecialRendering = false;
 	}
 	GUICloseButton::GUICloseButton(jl::Game* g, int wi, int he)
 	{
@@ -27,6 +29,7 @@ namespace gui
 		text = "";
 		_g = g;
 		mouseOver = false;
+		needsSpecialRendering = false;
 	}
 	GUICloseButton::GUICloseButton(jl::Game* g, int wi, int he, std::string te)
 	{
@@ -35,6 +38,7 @@ namespace gui
 		text = te;
 		_g = g;
 		mouseOver = false;
+		needsSpecialRendering = false;
 	}
 	GUIRouteButton::GUIRouteButton(jl::Game* g, int wi, int he, std::string ro)
 	{
@@ -43,6 +47,7 @@ namespace gui
 		text = "";
 		_g = g;
 		mouseOver = false;
+		needsSpecialRendering = false;
 		route = ro;
 	}
 	GUIRouteButton::GUIRouteButton(jl::Game* g, int wi, int he, std::string te, std::string ro)
@@ -52,9 +57,19 @@ namespace gui
 		text = te;
 		_g = g;
 		mouseOver = false;
+		needsSpecialRendering = false;
 		route = ro;
 	}
-
+	GUIInventorySlot::GUIInventorySlot(jl::Game* g, int wi, int he, int ind)
+	{
+		width = wi;
+		height = he;
+		text = "";
+		_g = g;
+		needsSpecialRendering = true;
+		mouseOver = false;
+		myIndex = ind;
+	}
 
 
 	void GUIQuitButton::execute()
@@ -68,6 +83,15 @@ namespace gui
 	void GUICloseButton::execute()
 	{
 		_g->isGUIOpen = false;
+	}
+	void GUIInventorySlot::execute()
+	{
+		std::cout << "I am an inventory slot.";
+	}
+
+	void GUIInventorySlot::render(int x, int y)
+	{
+		_g->drawInventoryTileContent(myIndex, x, y);
 	}
 
 
@@ -94,9 +118,4 @@ namespace gui
 		x = 0;
 		y = 0;
 	}
-}
-
-namespace objs
-{
-
 }

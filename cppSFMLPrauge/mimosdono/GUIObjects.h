@@ -12,11 +12,12 @@ namespace gui
 		jl::Game* _g;
 		int width;
 		int height;
-		int x;
-		int y;
+
 		std::string text;
 		bool mouseOver;
+		bool needsSpecialRendering;
 		virtual void execute() = 0;
+		virtual void render(int x, int y) {};
 	};
 
 	class GUIQuitButton : public GUIObject
@@ -42,6 +43,15 @@ namespace gui
 			GUICloseButton(jl::Game* g, int wi, int he);
 			GUICloseButton(jl::Game* g, int wi, int he, std::string te);
 			virtual void execute();
+	};
+
+	class GUIInventorySlot : public GUIObject
+	{
+	public:
+		int myIndex;
+		GUIInventorySlot(jl::Game* g, int wi, int h, int ind);
+		virtual void execute();
+		virtual void render(int x, int y);
 	};
 
 	class GUIContainer

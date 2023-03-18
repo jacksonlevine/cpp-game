@@ -19,7 +19,7 @@ namespace objs
 		right = false;
 		up = false;
 		down = false;
-		movementSpeed = .8;
+		movementSpeed = 1;
 	};
 	Player::Player(std::string pname, int px, int py)
 	{
@@ -37,7 +37,7 @@ namespace objs
 		right = false;
 		up = false;
 		down = false;
-		movementSpeed = .8;
+		movementSpeed = 1;
 	};
 	Player::Player(std::string pname, int px, int py, int wid, int hei)
 	{
@@ -55,7 +55,7 @@ namespace objs
 		right = false;
 		up = false;
 		down = false;
-		movementSpeed = .8;
+		movementSpeed = 1;
 	};
 	std::string Player::posKey()
 	{
@@ -98,7 +98,7 @@ namespace jl
 			int yshrink = 0;
 			if (worldmap.find(keySpot) != worldmap.end())
 			{
-				yoff = std::floor(worldmap.at(keySpot).elevation)*2;
+				yoff = std::floor(worldmap.at(keySpot).elevation);
 			}
 			else
 			{

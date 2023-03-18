@@ -4,6 +4,7 @@ namespace gui
 {
 	GUIView mdPauseMenu(jl::Game* g, int scw, int sch);
 	GUIView mdSettingsMenu(jl::Game* g, int scw, int sch);
+	GUIView mdInventoryView(jl::Game* g, int scw, int sch);
 
 	std::unordered_map<std::string, GUIView> MimosDonoDefaultGUI::getViews(jl::Game* g, int screenwidth, int screenheight)
 	{
@@ -56,10 +57,6 @@ namespace gui
 
 		container.objects.push_back(std::shared_ptr<GUIObject>(new GUIRouteButton(obj)));
 
-		container.width = 200;
-		container.height = 250;
-		container.x = (scw / 2) - (container.width / 2);
-		container.y = (sch / 2) - (container.height / 2);
 		view.containers.push_back(container);
 		return view;
 	}
@@ -68,11 +65,13 @@ namespace gui
 	{
 		GUIView view(g);
 		int cw = 700; // size of the inventory container
-		int ch = 300;
+		int ch = 310;
 		GUIContainer container((scw / 2) - (cw / 2), (sch / 2) - (ch / 2), cw, ch);
+		int index = 0;
 		for (objs::InventorySlot slot : g->play.inv.inv)
 		{
-
+			container.objects.push_back(std::shared_ptr<GUIObject>(new GUIInventorySlot(g, 50, 50, index)));
+			++index;
 		}
 		view.containers.push_back(container);
 		return view;

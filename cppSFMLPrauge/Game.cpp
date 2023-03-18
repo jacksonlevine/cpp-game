@@ -426,13 +426,29 @@ namespace jl
 				re.setOutlineColor(sf::Color::White);
 				re.setOutlineThickness(5.0);
 				window.draw(re);
+
+
 				//Then draw each object
 				
 				int index = 0;
+
+				int currentX;
+				int currentY;
 				for (std::shared_ptr<gui::GUIObject> obj : cont.objects)
 				{
 					re.setSize(sf::Vector2f(obj->width, obj->height));
-					sf::Vector2f pos(cont.x + (cont.width >> 1) - (obj->width >> 1), (((cont.height / cont.objects.size())/ cont.objects.size()) >> 1) + cont.y + ((cont.height / cont.objects.size()) * index));
+					int arbitraryPadding = 10;
+					//we're going relative to the cont.y, so that is our 0 here
+					currentY += arbitraryPadding + obj->height + arbitraryPadding;
+					int maximumY = cont.height;
+					if (currentY > maximumY) { currentY = 0; currentX += arbitraryPadding + obj->width + arbitraryPadding; }
+
+
+						//y increasing equates to DOWN
+
+
+					sf::Vector2f pos(arbitraryPadding + cont.x + currentX,
+						arbitraryPadding + cont.y + currentY);
 					re.setPosition(pos);
 
 					if (isMouseOver(&re))
@@ -453,7 +469,7 @@ namespace jl
 						text.setFillColor((isMouseOver(&re)) ? sf::Color(0, 0, 0) : sf::Color(255, 255, 255));
 						window.draw(text);
 					}
-					index++;
+					++index;
 				}
 			}
 			mousedOverAGuiItem = mouseOnSomething;

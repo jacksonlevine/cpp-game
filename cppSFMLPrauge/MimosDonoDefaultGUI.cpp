@@ -15,6 +15,8 @@ namespace gui
 		mdgui.insert_or_assign("pause", pause);
 		GUIView settings = mdSettingsMenu(g, screenwidth, screenheight);
 		mdgui.insert_or_assign("settings", settings);
+		GUIView inventory = mdInventoryView(g, screenwidth, screenheight);
+		mdgui.insert_or_assign("inventory", inventory);
 
 		return mdgui;
 	}
@@ -58,6 +60,20 @@ namespace gui
 		container.height = 250;
 		container.x = (scw / 2) - (container.width / 2);
 		container.y = (sch / 2) - (container.height / 2);
+		view.containers.push_back(container);
+		return view;
+	}
+
+	GUIView mdInventoryView(jl::Game* g, int scw, int sch)
+	{
+		GUIView view(g);
+		int cw = 700; // size of the inventory container
+		int ch = 300;
+		GUIContainer container((scw / 2) - (cw / 2), (sch / 2) - (ch / 2), cw, ch);
+		for (objs::InventorySlot slot : g->play.inv.inv)
+		{
+
+		}
 		view.containers.push_back(container);
 		return view;
 	}

@@ -129,6 +129,11 @@ namespace jl
 				objs::FixedObject* fop = &fomap.at(keySpot);
 				int wi = fop->width;
 				int he = fop->height;
+				int offsetForElevation = 0;
+				if (worldmap.find(keySpot) != worldmap.end())
+				{
+					offsetForElevation = (int)worldmap.at(keySpot).elevation;
+				}
 				for (int f = 0; f < he; f++)
 				{
 					for (int o = 0; o < wi; o++)
@@ -145,7 +150,8 @@ namespace jl
 							int difference = (((floorY)-(int)(play.y + 150)) * ob.elevation);
 							int differenceX = (((floorX)-(int)play.x) * ob.elevation);
 							int ksx = floorX + (int)((((o * 1) - 15) + (differenceX >> 8)));
-							int ksy = -objs::FixedObject::reflectionOffset + floorY + (int)(((f << 2) + (difference >> 4)) >> 3) / 2;
+							
+							int ksy = -offsetForElevation -objs::FixedObject::reflectionOffset + floorY + (int)(((f << 2) + (difference >> 4)) >> 3) / 2;
 
 							std::string thisKeySpot = "" + std::to_string(ksx) + ',' + std::to_string(ksy);
 							ob.oby = fop->y - objs::FixedObject::reflectionOffset;

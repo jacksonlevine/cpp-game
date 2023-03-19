@@ -54,6 +54,14 @@ namespace gui
 		virtual void render(int x, int y);
 	};
 
+	class GUIPlayerViewer : public GUIObject
+	{
+	public:
+		GUIPlayerViewer(jl::Game* g, int wi, int h);
+		virtual void execute();
+		virtual void render(int x, int y);
+	};
+
 	class GUIContainer
 	{
 	public:

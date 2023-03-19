@@ -73,6 +73,7 @@ namespace gui
 			container.objects.push_back(std::shared_ptr<GUIObject>(new GUIInventorySlot(g, 50, 50, index)));
 			++index;
 		}
+		container.objects.push_back(std::shared_ptr<GUIObject>(new GUIPlayerViewer(g, 200, 275)));
 		view.containers.push_back(container);
 		return view;
 	}

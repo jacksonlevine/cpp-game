@@ -71,6 +71,16 @@ namespace gui
 		myIndex = ind;
 	}
 
+	GUIPlayerViewer::GUIPlayerViewer(jl::Game* g, int wi, int he)
+	{
+		width = wi;
+		height = he;
+		text = "";
+		_g = g;
+		needsSpecialRendering = true;
+		mouseOver = false;
+	}
+
 
 	void GUIQuitButton::execute()
 	{
@@ -88,13 +98,20 @@ namespace gui
 	{
 		std::cout << "I am an inventory slot.";
 	}
+	void GUIPlayerViewer::execute()
+	{
+		std::cout << "I am a player viewer.";
+	}
 
 	void GUIInventorySlot::render(int x, int y)
 	{
 		_g->drawInventoryTileContent(myIndex, x, y);
 	}
 
-
+	void GUIPlayerViewer::render(int x, int y)
+	{
+		//render player  here;
+	}
 
 	GUIView::GUIView(jl::Game* g)
 	{

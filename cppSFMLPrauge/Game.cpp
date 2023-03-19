@@ -445,6 +445,7 @@ namespace jl
 
 				int currentX = arbitraryPadding;
 				int currentY = arbitraryPadding;
+				int prevObjWidth;
 				for (std::shared_ptr<gui::GUIObject> obj : cont.objects)
 				{
 					re.setSize(sf::Vector2f(obj->width, obj->height));
@@ -453,7 +454,7 @@ namespace jl
 
 					int maximumY = cont.height-arbitraryPadding;
 					//y increasing equates to DOWN
-					if (currentY+obj->height > maximumY) { currentY = arbitraryPadding; currentX += obj->width + arbitraryPadding; }
+					if (currentY+obj->height > maximumY) { currentY = arbitraryPadding; currentX += prevObjWidth + arbitraryPadding; }
 
 
 					sf::Vector2f pos(cont.x + currentX,
@@ -484,6 +485,7 @@ namespace jl
 					}
 					currentY += obj->height + arbitraryPadding;
 					++index;
+					prevObjWidth = obj->width;
 				}
 			}
 			mousedOverAGuiItem = mouseOnSomething;
@@ -569,9 +571,20 @@ namespace jl
 			{
 				int floorX = std::floor(i);
 				int floorY = std::floor(j);
-				addPlayerPixelsToBuffer(floorX, floorY, screenumap);
-				addFixedObjectPixelsToBuffer(opixmap, floorY, floorX, p);
-				drawSingleWallPixel(i, j, onOrOff, opixmap, buildstickmap);
+				std::string keySpot = "" + std::to_string(floorX) + ',' + std::to_string(floorY);
+				if (pmap.find(keySpot) != pmap.end())
+				{
+					addPlayerPixelsToBuffer(floorX, floorY, screenumap);
+				}
+				if (fomap.find(keySpot) != fomap.end())
+				{
+					addFixedObjectPixelsToBuffer(opixmap, floorY, floorX, p);
+				}
+				if (stickmap.find(keySpot) != stickmap.end() ||
+					buildstickmap.find(keySpot) != buildstickmap.end())
+				{
+					drawSingleWallPixel(i, j, onOrOff, opixmap, buildstickmap);
+				}
 				decidePixelAndDrawIfWithinScreenBounds(quads, floorX, floorY, opixmap, screenumap, p);
 			}
 		}

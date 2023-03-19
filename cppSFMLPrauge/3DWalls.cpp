@@ -56,6 +56,11 @@ namespace jl
 			s.floorY = floorY;
 			s.sop = sop;
 			lastY = floorY;
+			int offsetForElevation = 0;
+			if (worldmap.find(keySpot) != worldmap.end())
+			{
+				offsetForElevation = (int)worldmap.at(keySpot).elevation;
+			}
 			for (std::shared_ptr<walls::Stick>& otherhalf : sop->otherhalves)
 			{
 				//stickBuffer.push_back(*s.sop);
@@ -72,9 +77,9 @@ namespace jl
 					float yDifferenceHere = std::lerp(differencey1, differencey2, l) / 100;
 					for (int z = 0; z < wallHeightHere; ++z)
 					{
-						std::string keySpot2 = "" + std::to_string((int)((float)xHere + (xDifferenceHere * (float)z))) + ',' + std::to_string(yHere - z);
-						std::string keySpot22 = "" + std::to_string((int)((float)xHere + 1 + (xDifferenceHere * (float)z))) + ',' + std::to_string(yHere - z);
-						std::string keySpot23 = "" + std::to_string((int)((float)xHere - 1 + (xDifferenceHere * (float)z))) + ',' + std::to_string(yHere - z);
+						std::string keySpot2 = "" + std::to_string((int)((float)xHere + (xDifferenceHere * (float)z))) + ',' + std::to_string(yHere - z - offsetForElevation);
+						std::string keySpot22 = "" + std::to_string((int)((float)xHere + 1 + (xDifferenceHere * (float)z))) + ',' + std::to_string(yHere - z - offsetForElevation);
+						std::string keySpot23 = "" + std::to_string((int)((float)xHere - 1 + (xDifferenceHere * (float)z))) + ',' + std::to_string(yHere - z - offsetForElevation);
 						objs::ObjectBrick ob;
 						int brickbetween = 0;
 						int brickinterval = 4;
@@ -147,6 +152,11 @@ namespace jl
 		}
 		if (buildstickmap.find(keySpot) != buildstickmap.end())
 		{
+			int offsetForElevation = 0;
+			if (worldmap.find(keySpot) != worldmap.end())
+			{
+				offsetForElevation = (int)worldmap.at(keySpot).elevation;
+			}
 			walls::Stick* sop = &buildstickmap.at(keySpot);
 			std::shared_ptr<walls::Stick>& otherhalf = sop->otherhalves[0];
 
@@ -162,8 +172,8 @@ namespace jl
 					float xDifferenceHere = std::lerp(differenceX, differenceX2, l) / 500;
 					for (int z = 0; z < wallHeightHere; z++)
 					{
-						std::string keySpot2 = "" + std::to_string((int)((float)xHere + (xDifferenceHere * (float)z))) + ',' + std::to_string(yHere - z);
-						std::string keySpot22 = "" + std::to_string((int)((float)xHere + 1 + (xDifferenceHere * (float)z))) + ',' + std::to_string(yHere - z);
+						std::string keySpot2 = "" + std::to_string((int)((float)xHere + (xDifferenceHere * (float)z))) + ',' + std::to_string(yHere - z - offsetForElevation);
+						std::string keySpot22 = "" + std::to_string((int)((float)xHere + 1 + (xDifferenceHere * (float)z))) + ',' + std::to_string(yHere - z - offsetForElevation);
 						objs::ObjectBrick ob;
 						ob.col = (sf::Color(100 + (std::abs(sop->y - otherhalf->y) * 4), 140 + (std::abs(sop->y - otherhalf->y) * 4), 100 + (std::abs(sop->y - otherhalf->y) * 4)));
 						ob.obx = xHere;

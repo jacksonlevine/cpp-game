@@ -9,7 +9,7 @@ namespace objs
 		id = -1;
 		count = -1;
 		thing = "";
-		name = "empty";
+		name = "";
 	};
 	Inventory::Inventory()
 	{

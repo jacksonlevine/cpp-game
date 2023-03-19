@@ -10,6 +10,7 @@ namespace jl
 	gui::GUIObject* currentMousedOver;
 	Game::Game()
 	{
+		mouseSlot = objs::InventorySlot();
 		isFullscreen = false;
 		buildingStickPrimary = std::shared_ptr<walls::Stick>(new walls::Stick);
 		buildingStickSecondary = std::shared_ptr<walls::Stick>(new walls::Stick);
@@ -18,15 +19,15 @@ namespace jl
 		mousedOverAGuiItem = false;
 		currentgui = "pause";
 		isGUIOpen = false;
-		versionString = "MimosDono Dev 12.2.7";
-		isMinimapExpanded = false;
+		versionString = "MimosDono Dev 12.2.8";
+		isMinimapExpanded = true;
 		guiKeyJustTriggered = false;
 		gameWidth = 1280;
 		gameHeight = 720;
 		sf::ContextSettings c;
 		c.antialiasingLevel = 0;
-		gui::GUIController::setViews(gui::MimosDonoDefaultGUI::getViews(this, gameWidth, gameHeight));
-		window.create(sf::VideoMode(gameWidth, gameHeight), versionString, sf::Style::Fullscreen, c);
+		
+		window.create(sf::VideoMode(gameWidth, gameHeight), versionString, sf::Style::None, c);
 		window.setVerticalSyncEnabled(true);
 		camX = 0;
 		camY = 0;
@@ -90,6 +91,7 @@ namespace jl
 
 		conv.setFillColor(sf::Color(100,100,100));
 		addTestThingsToInventory();
+		gui::GUIController::setViews(gui::MimosDonoDefaultGUI::getViews(this, gameWidth, gameHeight));
 	};
 	void Game::addTestThingsToInventory()
 	{
@@ -98,6 +100,7 @@ namespace jl
 		play.inv.inv[0].thing = "aaaaaassnaasnnaannnaannna";
 		play.inv.inv[0].thingWidth = 5;
 		play.inv.inv[0].thingHeight = 5;
+		play.inv.inv[0].name = "wall builder";
 	}
 	void Game::switchOrToggleGui(std::string newView)
 	{
@@ -426,6 +429,7 @@ namespace jl
 		window.draw(text);
 		if (isGUIOpen)
 		{
+			std::vector<sf::Text> textToDrawAfterDone;
 			sf::RectangleShape re;
 			bool mouseOnSomething = false;
 			for (gui::GUIContainer cont : gui::GUIController::getViewFromName(currentgui).containers)
@@ -446,6 +450,7 @@ namespace jl
 				int currentX = arbitraryPadding;
 				int currentY = arbitraryPadding;
 				int prevObjWidth;
+
 				for (std::shared_ptr<gui::GUIObject> obj : cont.objects)
 				{
 					re.setSize(sf::Vector2f(obj->width, obj->height));
@@ -483,12 +488,31 @@ namespace jl
 						text.setFillColor((isMouseOver(&re)) ? sf::Color(0, 0, 0) : sf::Color(255, 255, 255));
 						window.draw(text);
 					}
+					if (obj->displayName && isMouseOver(&re))
+					{
+						setClickPos();
+						text.setPosition(click + sf::Vector2f(17, 0));
+						text.setString(obj->name);
+						text.setOutlineThickness(5);
+						text.setOutlineColor(sf::Color::Black);
+						text.setFillColor(sf::Color::White);
+						textToDrawAfterDone.push_back(text);
+					}
 					currentY += obj->height + arbitraryPadding;
 					++index;
 					prevObjWidth = obj->width;
 				}
 			}
 			mousedOverAGuiItem = mouseOnSomething;
+			if (mouseSlot.count != -1)
+			{
+				setClickPos();
+				drawInventoryTileContent(mouseSlot.count, mouseSlot.thing, mouseSlot.thingWidth, mouseSlot.thingHeight, click.x, click.y);
+			}
+			for (sf::Text text : textToDrawAfterDone)
+			{
+				window.draw(text);
+			}
 		}
 		for (int i = 0; i < invTiles; i++)
 		{
@@ -532,6 +556,28 @@ namespace jl
 				{
 					invItemRect.setFillColor(opixref[s]);
 					invItemRect.setPosition(sf::Vector2f((x + ((1.5 / wi) * ts)) + (t * invItemRect.getSize().x), (y + ((1.5 / he) * ts)) + (h * invItemRect.getSize().y)));
+					window.draw(invItemRect);
+					window.draw(text);
+				}
+			}
+		}
+	}
+	void Game::drawInventoryTileContent(int count, std::string thing, int width, int height, int x, int y)
+	{
+		text.setFillColor(sf::Color::White);
+		text.setString((sf::String)std::to_string(count));
+		text.setPosition(sf::Vector2f(x + ts, y + ts + ts));
+		text.setOutlineColor(sf::Color::Black);
+		text.setOutlineThickness(2);
+		for (int h = 0; h < height; ++h)
+		{
+			for (int t = 0; t < width; ++t)
+			{
+				char s = thing[(h * width) + t];
+				if (thing[s] != '0')
+				{
+					invItemRect.setFillColor(opixref[s]);
+					invItemRect.setPosition(sf::Vector2f((x + ((1.5 / width) * ts)) + (t * invItemRect.getSize().x), (y + ((1.5 / height) * ts)) + (h * invItemRect.getSize().y)));
 					window.draw(invItemRect);
 					window.draw(text);
 				}

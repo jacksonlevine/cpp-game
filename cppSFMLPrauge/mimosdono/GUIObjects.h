@@ -12,8 +12,9 @@ namespace gui
 		jl::Game* _g;
 		int width;
 		int height;
-
+		bool displayName;
 		std::string text;
+		std::string name;
 		bool mouseOver;
 		bool needsSpecialRendering;
 		virtual void execute() = 0;

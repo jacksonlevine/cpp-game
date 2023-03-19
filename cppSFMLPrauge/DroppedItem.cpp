@@ -1,5 +1,8 @@
 #include "mimosdono/JacksObjects.h"
 #include "mimosdono/Game.h"
+#include "mimosdono/GUIObjects.h"
+#include "mimosdono/GUIController.h"
+#include "mimosdono/MimosDonoDefaultGUI.h"
 namespace objs
 {
 	DroppedItem::DroppedItem(float ax, float ay, int i)
@@ -83,10 +86,13 @@ namespace jl
 							play.inv.inv[fos].thing = drops[i].thing;
 							play.inv.inv[fos].thingWidth = drops[i].width;
 							play.inv.inv[fos].thingHeight = drops[i].height;
+							
 						}
 						if (found != -1 || fos != -1)
 						{
 							drops[i].markedForDeletion = true;
+							int index = 0;
+							gui::GUIController::setViews(gui::MimosDonoDefaultGUI::getViews(this, gameWidth, gameHeight));
 						}
 					}
 				}

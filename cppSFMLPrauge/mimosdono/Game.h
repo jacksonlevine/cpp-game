@@ -14,6 +14,7 @@ namespace jl {
 		bool guiKeyJustTriggered;
 		bool isBuildingWalls;
 		bool isMinimapExpanded;
+		objs::InventorySlot mouseSlot;
 		std::shared_ptr<walls::Stick> buildingStickPrimary;
 		std::shared_ptr<walls::Stick> buildingStickSecondary;
 		int gameWidth;
@@ -72,6 +73,7 @@ namespace jl {
 		bool isMouseOver(int x, int y, int width, int height);
 		void renderUI();
 		void drawInventoryTileContent(int i, int x, int y);
+		void drawInventoryTileContent(int count, std::string thing, int width, int height, int x, int y);
 		void render(perlin p);
 		void drawAndUpdateParticles();
 		void processMouseClickedOnObjectPixel(std::unordered_map<std::string, objs::ObjectBrick>& opixmap);

@@ -25,8 +25,8 @@ namespace gui
 	GUIView mdPauseMenu(jl::Game* g, int scw, int sch)
 	{
 		GUIView view(g);
-		int cw = 200; // size of the pause menu container
-		int ch = 250;
+		int cw = 170; // size of the pause menu container
+		int ch = 190;
 		GUIContainer container((scw / 2) - (cw / 2), (sch / 2) - (ch / 2), cw, ch);
 
 		GUICloseButton closeobj(g, 150, 50, "Close");
@@ -38,10 +38,6 @@ namespace gui
 		GUIQuitButton quitobj(g, 150, 50, "Quit Game");
 		container.objects.push_back(std::shared_ptr<GUIObject>(new GUIQuitButton(quitobj)));
 
-		container.width = 200;
-		container.height = 250;
-		container.x = (scw/2)-(container.width/2);
-		container.y = (sch / 2) - (container.height / 2);
 		view.containers.push_back(container);
 		return view;
 	}
@@ -64,7 +60,7 @@ namespace gui
 	GUIView mdInventoryView(jl::Game* g, int scw, int sch)
 	{
 		GUIView view(g);
-		int cw = 700; // size of the inventory container
+		int cw = 640; // size of the inventory container
 		int ch = 310;
 		GUIContainer container((scw / 2) - (cw / 2), (sch / 2) - (ch / 2), cw, ch);
 		int index = 0;
@@ -73,7 +69,7 @@ namespace gui
 			container.objects.push_back(std::shared_ptr<GUIObject>(new GUIInventorySlot(g, 50, 50, index)));
 			++index;
 		}
-		container.objects.push_back(std::shared_ptr<GUIObject>(new GUIPlayerViewer(g, 200, 275)));
+		container.objects.push_back(std::shared_ptr<GUIObject>(new GUIPlayerViewer(g, 200, 290)));
 		view.containers.push_back(container);
 		return view;
 	}

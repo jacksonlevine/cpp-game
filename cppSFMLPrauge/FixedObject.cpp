@@ -146,7 +146,7 @@ namespace jl
 							if (worldmap.find(keySpot) != worldmap.end())
 							{
 								ob.elevation += worldmap.at(keySpot).elevation;
-							}
+							} 
 							int difference = (((floorY)-(int)(play.y + 150)) * ob.elevation);
 							int differenceX = (((floorX)-(int)play.x) * ob.elevation);
 							int ksx = floorX + (int)((((o * 1) - 15) + (differenceX >> 8)));

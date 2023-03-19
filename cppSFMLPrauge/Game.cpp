@@ -653,6 +653,19 @@ namespace jl
 		qs.append(v3);
 		qs.append(v4);
 	}
+	void Game::bufferthisbig(sf::RectangleShape& rec, sf::VertexArray& qs)
+	{
+		sf::Vertex v1(rec.getPosition() + sf::Vector2f(-ts, -ts));
+		sf::Vertex v2(rec.getPosition() + sf::Vector2f(-ts, ts<<1));
+		sf::Vertex v3(rec.getPosition() + sf::Vector2f(ts<<1, ts<<1));
+		sf::Vertex v4(rec.getPosition() + sf::Vector2f(ts<<1, -ts));
+		//setting color
+		v1.color = v2.color = v3.color = v4.color = rec.getFillColor();
+		qs.append(v1);
+		qs.append(v2);
+		qs.append(v3);
+		qs.append(v4);
+	}
 
 	void Game::decidePixelAndDrawIfWithinScreenBounds(sf::VertexArray& qs, int i, int j, std::unordered_map<std::string, objs::ObjectBrick>& opixmap, std::unordered_map<std::string, objs::PlayerPixel>& screenumap, perlin& p)
 	{
@@ -664,7 +677,14 @@ namespace jl
 			{
 				rect.setFillColor(opixmap.at(keySpot).col);
 				rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
-				bufferthis(rect, qs);
+				if (opixmap.at(keySpot).isReflection)
+				{
+					bufferthisbig(rect, qs);
+				}
+				else
+				{
+					bufferthis(rect, qs);
+				}
 				isObjectPix = true;
 			}
 			if (screenumap.find(keySpot) != screenumap.end())
@@ -683,7 +703,7 @@ namespace jl
 						rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
 						bufferthis(rect, qs);
 					}
-					else
+					else if (!opixmap.at(keySpot).isReflection)
 					{
 						rect.setFillColor(opixmap.at(keySpot).col);
 						rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
@@ -712,7 +732,7 @@ namespace jl
 					col.a = 105;
 					rect.setFillColor(col);
 					rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
-					bufferthis(rect, qs);
+					bufferthisbig(rect, qs);
 				}
 			}
 			else if (isObjectPix == false)

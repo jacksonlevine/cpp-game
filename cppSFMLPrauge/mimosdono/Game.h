@@ -87,6 +87,7 @@ namespace jl {
 		void handleEvents();
 
 		void bufferthis(sf::RectangleShape& rec, sf::VertexArray& qs);
+		void bufferthisbig(sf::RectangleShape& rec, sf::VertexArray& qs);
 		void drawSingleWallPixel( int i, int j, bool onOrOff, std::unordered_map<std::string, objs::ObjectBrick>& opixmap, std::unordered_map<std::string, walls::Stick>& buildstickmap);
 	};
 	class sopAndCoord

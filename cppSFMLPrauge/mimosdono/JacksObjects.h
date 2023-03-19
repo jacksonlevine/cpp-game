@@ -83,6 +83,7 @@ namespace objs
 		int obx;
 		int oby;
 		float elevation;
+		bool isReflection;
 		objs::FixedObject* point;
 		ObjectBrick();
 

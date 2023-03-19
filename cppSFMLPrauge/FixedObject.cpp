@@ -149,9 +149,9 @@ namespace jl
 							} 
 							int difference = (((floorY)-(int)(play.y + 150)) * ob.elevation);
 							int differenceX = (((floorX)-(int)play.x) * ob.elevation);
-							int ksx = floorX + (int)((((o * 1) - 15) + (differenceX >> 8)));
+							int ksx = floorX + (int)((((o * 1) - 15) + (differenceX >> 9)));
 							
-							int ksy = -offsetForElevation -objs::FixedObject::reflectionOffset + floorY + (int)(((f << 2) + (difference >> 4)) >> 3) / 2;
+							int ksy = -offsetForElevation -objs::FixedObject::reflectionOffset + floorY + (int)(((f ) + (difference >> 8)) >> 1) ;
 
 							std::string thisKeySpot = "" + std::to_string(ksx) + ',' + std::to_string(ksy);
 							ob.oby = fop->y - objs::FixedObject::reflectionOffset;
@@ -180,7 +180,7 @@ namespace jl
 							}
 							else
 							{
-								if (opixmap.at(thisKeySpot).oby < fop->y)
+								if (opixmap.at(thisKeySpot).oby < fop->y || opixmap.at(thisKeySpot).isReflection)
 								{
 									opixmap[thisKeySpot] = ob;
 								}
@@ -207,28 +207,19 @@ namespace jl
 							int n32 = std::floor(p.noise((f + floorY) * 0.1, (f + floorY) * 0.4, 11.01 + ((int)perlinZEffect2 >> 5)) * 4);
 							int n2Clamped = (std::min(std::max(n22 - n32 - 4, -8), 8));
 							int off = (fop->type == 0) ? 18 : 0;
-							int ksx = floorX + (int)((((o * 1) - 15) + (differenceX >> 8)));
-							int ksy = -objs::FixedObject::reflectionOffset + (n2Clamped >> 1) + floorY + 19 - (he + 3 - off) - (int)((((f >> 4) + (difference >> 4)) >> 5) >> 2) + 3;
+							int ksx = floorX + (int)((((o * 1) - 15) + (differenceX >> 9)));
+							int ksy = -objs::FixedObject::reflectionOffset + (n2Clamped >> 1) + floorY + 19 - (he + 3 - off) - (int)((((f >> 4) + (difference >> 8)) >> 5) >> 2) + 3;
 							std::string thisKeySpot = "" + std::to_string(ksx) + ',' + std::to_string(ksy);
 							ob.col.b = std::min(std::max((int)ob.col.b, 25), 75);
 							ob.col.r = std::min(std::max((int)ob.col.r, 25), 75);
 							ob.col.g = std::min(std::max((int)ob.col.g, 25), 75);
 							ob.col.a = 30;
 							ob.point = fop;
+							ob.isReflection = true;
 							ob.oby = fop->y - objs::FixedObject::reflectionOffset;
 							if (opixmap.find(thisKeySpot) == opixmap.end())
 							{
 								if (worldmap.find(thisKeySpot) != worldmap.end())
-								{
-									if (worldmap.at(thisKeySpot).isWater == true)
-									{
-										opixmap[thisKeySpot] = ob;
-									}
-								}
-							}
-							else
-							{
-								if (opixmap.at(thisKeySpot).oby < fop->y)
 								{
 									if (worldmap.at(thisKeySpot).isWater == true)
 									{

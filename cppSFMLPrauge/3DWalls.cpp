@@ -130,7 +130,7 @@ namespace jl
 								}
 								else
 								{
-									if (opixmap.at(keySpot22).oby < ob.oby)
+									if (opixmap.at(keySpot22).oby < ob.oby || opixmap.at(keySpot22).isReflection)
 									{
 										opixmap[keySpot22] = ob;
 										opixmap[keySpot23] = ob;
@@ -140,7 +140,7 @@ namespace jl
 						}
 						else
 						{
-							if (opixmap.at(keySpot2).oby < ob.oby)
+							if (opixmap.at(keySpot2).oby < ob.oby || opixmap.at(keySpot2).isReflection)
 							{
 								opixmap[keySpot2] = ob;
 								opixmap[keySpot23] = ob;
@@ -190,7 +190,7 @@ namespace jl
 								}
 								else
 								{
-									if (opixmap.at(keySpot22).oby < ob.oby)
+									if (opixmap.at(keySpot22).oby < ob.oby || opixmap.at(keySpot22).isReflection)
 									{
 										opixmap[keySpot22] = ob;
 									}
@@ -199,7 +199,7 @@ namespace jl
 						}
 						else
 						{
-							if (opixmap.at(keySpot2).oby  < ob.oby)
+							if (opixmap.at(keySpot2).oby  < ob.oby || opixmap.at(keySpot2).isReflection)
 							{
 								opixmap[keySpot2] = ob;
 							}

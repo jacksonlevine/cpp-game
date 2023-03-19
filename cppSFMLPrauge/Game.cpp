@@ -643,9 +643,9 @@ namespace jl
 	void Game::bufferthis(sf::RectangleShape& rec, sf::VertexArray& qs)
 	{
 		sf::Vertex v1(rec.getPosition());
-		sf::Vertex v2(rec.getPosition() + sf::Vector2f(0,ts<<1));
-		sf::Vertex v3(rec.getPosition() + sf::Vector2f(ts<<1, ts<<1));
-		sf::Vertex v4(rec.getPosition() + sf::Vector2f(ts<<1, 0));
+		sf::Vertex v2(rec.getPosition() + sf::Vector2f(0,ts));
+		sf::Vertex v3(rec.getPosition() + sf::Vector2f(ts, ts));
+		sf::Vertex v4(rec.getPosition() + sf::Vector2f(ts, 0));
 		//setting color
 		v1.color = v2.color = v3.color = v4.color = rec.getFillColor();
 		qs.append(v1);

@@ -15,6 +15,7 @@ namespace objs
 		oby = 0;
 		elevation = 0;
 		point = 0;
+		isReflection = false;
 	};
 	ObjectBrick::ObjectBrick(sf::Color c, int ox, int oy)
 	{
@@ -23,6 +24,7 @@ namespace objs
 		col = c;
 		elevation = 0;
 		point = 0;
+		isReflection = false;
 	};
 	PlayerPixel::PlayerPixel()
 	{

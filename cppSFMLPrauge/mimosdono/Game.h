@@ -2,6 +2,7 @@
 #include "World.h"
 #include "3DWalls.h"
 #include <iostream>
+#include <memory>
 namespace jl {
 	class Game {
 	public:
@@ -9,6 +10,7 @@ namespace jl {
 		bool isGUIOpen;
 		bool isFullscreen;
 		std::string versionString;
+
 		void switchOrToggleGui(std::string newView);
 		bool mousedOverAGuiItem;
 		bool guiKeyJustTriggered;
@@ -63,6 +65,7 @@ namespace jl {
 		int oboverscan;
 		sf::RectangleShape rect;
 		sf::ConvexShape conv;
+		std::unordered_map<std::string, std::shared_ptr<walls::WallPixel>> wallPixels;
 		Game();
 		void pollEvents(sf::Event e);
 		void placeCurrentItem();

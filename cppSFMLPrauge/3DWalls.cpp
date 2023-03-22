@@ -36,6 +36,14 @@ namespace walls
 	{
 		return currentId++;
 	}
+
+	WallPixel::WallPixel(int y, sf::Color col, std::optional<std::weak_ptr<WallPixel>> behind)
+	{
+		wallY = y;
+		myColor = col;
+		pixelBehindMe = behind;
+	}
+
 }
 
 namespace jl
@@ -49,8 +57,10 @@ namespace jl
 		int lastY = camY + 170;
 		if (stickmap.find(keySpot) != stickmap.end())
 		{
+			if(stickmap.at(keySpot).mapped == false)
+			{ 
 			walls::Stick* sop = &stickmap.at(keySpot);
-
+			sop->mapped = true;
 			sopAndCoord s;
 			s.floorX = floorX;
 			s.floorY = floorY;
@@ -64,8 +74,8 @@ namespace jl
 			for (std::shared_ptr<walls::Stick>& otherhalf : sop->otherhalves)
 			{
 				//stickBuffer.push_back(*s.sop);
-				float differencey1 = -10;
-				float differencey2 = -10;
+				float differencey1 = -10 - elevationBuilding * 16;
+				float differencey2 = -10 - elevationBuilding * 16;
 				float differenceX = 0;
 				float differenceX2 = 0;
 				for (float l = 0; l <= 1; l += .01)
@@ -78,9 +88,8 @@ namespace jl
 					for (int z = 0; z < wallHeightHere; ++z)
 					{
 						std::string keySpot2 = "" + std::to_string((int)((float)xHere + (xDifferenceHere * (float)z))) + ',' + std::to_string(yHere - z - offsetForElevation);
-						std::string keySpot22 = "" + std::to_string((int)((float)xHere + 1 + (xDifferenceHere * (float)z))) + ',' + std::to_string(yHere - z - offsetForElevation);
-						std::string keySpot23 = "" + std::to_string((int)((float)xHere - 1 + (xDifferenceHere * (float)z))) + ',' + std::to_string(yHere - z - offsetForElevation);
-						objs::ObjectBrick ob;
+
+
 						int brickbetween = 0;
 						int brickinterval = 4;
 						int bricklighting = (z % brickinterval) * 10;
@@ -114,42 +123,39 @@ namespace jl
 							}
 							brickbetween = -20;
 						}
-						ob.col = (sf::Color(35 + (z * 4) + (std::abs(s.sop->y - otherhalf->y) * 2) + brickbetween + bricklighting, 35 + (z * 4) + (std::abs(s.sop->y - otherhalf->y) * 2) + brickbetween + bricklighting, 35 + (z * 4) + (std::abs(s.sop->y - otherhalf->y) * 2) + brickbetween + bricklighting));
-						ob.obx = xHere;
-						ob.oby = yHere ;
-						ob.elevation = z;
-						if (opixmap.find(keySpot2) == opixmap.end())
+						sf::Color col = (sf::Color(35 + (std::min(z, 10) * 4) + (std::abs(s.sop->y - otherhalf->y) * 2) + brickbetween + bricklighting, 35 + (std::min(z, 10) * 4) + (std::abs(s.sop->y - otherhalf->y) * 2) + brickbetween + bricklighting, 35 + (std::min(z, 10) * 4) + (std::abs(s.sop->y - otherhalf->y) * 2) + brickbetween + bricklighting));
+
+						if (wallPixels.find(keySpot2) == wallPixels.end())
 						{
-							opixmap[keySpot2] = ob;
-							if (std::abs(xDifferenceHere) >= .7)
-							{
-								if (opixmap.find(keySpot22) == opixmap.end())
-								{
-									opixmap[keySpot22] = ob;
-									opixmap[keySpot23] = ob;
-								}
-								else
-								{
-									if (opixmap.at(keySpot22).oby < ob.oby || opixmap.at(keySpot22).isReflection)
-									{
-										opixmap[keySpot22] = ob;
-										opixmap[keySpot23] = ob;
-									}
-								}
-							}
+							std::shared_ptr<walls::WallPixel> me(new walls::WallPixel(yHere, col, std::nullopt));
+							wallPixels[keySpot2] = me;
+							sop->myPixels.push_back(me);
 						}
 						else
 						{
-							if (opixmap.at(keySpot2).oby < ob.oby || opixmap.at(keySpot2).isReflection)
+							if (wallPixels.at(keySpot2)->wallY < yHere)
 							{
-								opixmap[keySpot2] = ob;
-								opixmap[keySpot23] = ob;
+								std::weak_ptr other = wallPixels.at(keySpot2);
+								std::shared_ptr<walls::WallPixel> me(new walls::WallPixel(yHere, col, other));
+								sop->myPixels.push_back(me);
+								wallPixels[keySpot2] = me;
+							}
+							else
+							{
+								std::shared_ptr<walls::WallPixel> me(new walls::WallPixel(yHere, col, std::nullopt));
+								sop->myPixels.push_back(me);
+								std::weak_ptr meWeak = me;
+								wallPixels.at(keySpot2)->pixelBehindMe = meWeak; // Will need to be changed to sequentially insert itself at the back instead of replacing behind-pixels
 							}
 						}
 					}
 				}
 			}
+
+			}
+
 		}
+		// KEEP THIS DOWN HERE THE SAME
 		if (buildstickmap.find(keySpot) != buildstickmap.end())
 		{
 			int offsetForElevation = 0;
@@ -160,10 +166,10 @@ namespace jl
 			walls::Stick* sop = &buildstickmap.at(keySpot);
 			std::shared_ptr<walls::Stick>& otherhalf = sop->otherhalves[0];
 
-					float differencey1 = (((floorY)-(play.y + 190)) * (sop->top.elevation * sop->top.elevation)) / 150;
-				float differencey2 = (((floorY)-(play.y + 190)) * (otherhalf->top.elevation * otherhalf->top.elevation)) / 150;
-				float differenceX = (((floorX)-(int)play.x) * sop->top.elevation);
-				float differenceX2 = (((otherhalf->x) - (int)play.x) * otherhalf->top.elevation);
+			float differencey1 = -10-elevationBuilding*16;
+			float differencey2 = -10-elevationBuilding*16;
+			float differenceX = 0;
+			float differenceX2 = 0;
 				for (float l = 0; l <= 1; l += .005)
 				{
 					int yHere = (int)std::lerp(sop->y, otherhalf->y, l);
@@ -182,20 +188,6 @@ namespace jl
 						if (opixmap.find(keySpot2) == opixmap.end())
 						{
 							opixmap[keySpot2] = ob;
-							if (std::abs(xDifferenceHere) >= 2)
-							{
-								if (opixmap.find(keySpot22) == opixmap.end())
-								{
-									opixmap[keySpot22] = ob;
-								}
-								else
-								{
-									if (opixmap.at(keySpot22).oby < ob.oby || opixmap.at(keySpot22).isReflection)
-									{
-										opixmap[keySpot22] = ob;
-									}
-								}
-							}
 						}
 						else
 						{

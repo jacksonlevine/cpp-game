@@ -297,6 +297,9 @@ namespace jl
 				stick1->primary = true;
 				stick1->x = buildingStickPrimary->x;
 				stick1->y = buildingStickPrimary->y;
+
+				stick1->mapped = false;
+				stick2->mapped = false;
 				if (!secondDeleted)
 				{
 					stick1->otherhalves.push_back(stick2);
@@ -312,6 +315,7 @@ namespace jl
 					else
 					{
 						auto p2 = std::make_shared<walls::Stick>(stickmap[stick2->posKey()]);
+						//p2->mapped = false;
 						stickmap[stick1->posKey()].otherhalves.push_back(p2);
 					}
 
@@ -672,6 +676,11 @@ namespace jl
 		std::string keySpot = "" + std::to_string(i) + ',' + std::to_string(j);
 		if (i > camX - 1 && i < width + camX + 1 && j > 0 + camY - 1 && j < height + camY + 1)
 		{
+			int offsetForElevation = 0;
+			if (worldmap.find(keySpot) != worldmap.end())
+			{
+				offsetForElevation = worldmap.at(keySpot).elevation;
+			}
 			bool isObjectPix = false;
 			if (opixmap.find(keySpot) != opixmap.end())
 			{
@@ -689,26 +698,104 @@ namespace jl
 			}
 			if (screenumap.find(keySpot) != screenumap.end())
 			{
-				if (opixmap.find(keySpot) == opixmap.end())
+				if (wallPixels.find(keySpot) == wallPixels.end())
 				{
-					rect.setFillColor(screenumap.at(keySpot).col);
-					rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
-					bufferthis(rect, qs);
-				}
-				else
-				{
-					if (opixmap.at(keySpot).oby <= screenumap.at(keySpot).py)
+					if (opixmap.find(keySpot) == opixmap.end())
 					{
 						rect.setFillColor(screenumap.at(keySpot).col);
 						rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
 						bufferthis(rect, qs);
 					}
-					else if (!opixmap.at(keySpot).isReflection)
+					else
 					{
-						rect.setFillColor(opixmap.at(keySpot).col);
-						rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
-						bufferthis(rect, qs);
+						if (opixmap.at(keySpot).oby <= screenumap.at(keySpot).py)
+						{
+							rect.setFillColor(screenumap.at(keySpot).col);
+							rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
+							bufferthis(rect, qs);
+						}
+						else if (!opixmap.at(keySpot).isReflection)
+						{
+							rect.setFillColor(opixmap.at(keySpot).col);
+							rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
+							bufferthis(rect, qs);
+						}
 					}
+				}
+				else
+				{
+					if (opixmap.find(keySpot) == opixmap.end())
+					{
+						if (wallPixels.at(keySpot)->wallY >= screenumap.at(keySpot).py)
+						{
+							rect.setFillColor(wallPixels.at(keySpot)->myColor);
+							rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
+							bufferthis(rect, qs);
+						}
+						else
+						{
+							rect.setFillColor(screenumap.at(keySpot).col);
+							rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
+							bufferthis(rect, qs);
+						}
+
+					}
+					else
+					{
+						if (opixmap.at(keySpot).oby <= screenumap.at(keySpot).py)
+						{
+							if (wallPixels.at(keySpot)->wallY <= screenumap.at(keySpot).py)
+							{
+								rect.setFillColor(screenumap.at(keySpot).col);
+								rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
+								bufferthis(rect, qs);
+							}
+							else
+							{
+								rect.setFillColor(wallPixels.at(keySpot)->myColor);
+								rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
+								bufferthis(rect, qs);
+							}
+							
+						}
+						else if (!opixmap.at(keySpot).isReflection)
+						{
+							if (wallPixels.at(keySpot)->wallY <= opixmap.at(keySpot).oby)
+							{
+								rect.setFillColor(opixmap.at(keySpot).col);
+								rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
+								bufferthis(rect, qs);
+							}
+							else
+							{
+								rect.setFillColor(wallPixels.at(keySpot)->myColor);
+								rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
+								bufferthis(rect, qs);
+							}
+							
+						}
+					}
+				}
+			}
+			else if (wallPixels.find(keySpot) != wallPixels.end() && !isObjectPix)
+			{
+				rect.setFillColor(wallPixels.at(keySpot)->myColor);
+				rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
+				bufferthis(rect, qs);
+			}
+			else if (wallPixels.find(keySpot) != wallPixels.end() && isObjectPix)
+			{
+				if (wallPixels.at(keySpot)->wallY <= opixmap.at(keySpot).oby+offsetForElevation)
+				{
+					rect.setFillColor(opixmap.at(keySpot).col);
+					rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
+					bufferthis(rect, qs);
+				}
+				else
+				{
+					rect.setFillColor(wallPixels.at(keySpot)->myColor);
+					rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
+					bufferthis(rect, qs);
 				}
 			}
 			else if (worldmap.find(keySpot) != worldmap.end() && isObjectPix == false)

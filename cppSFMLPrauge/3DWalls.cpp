@@ -64,10 +64,10 @@ namespace jl
 			for (std::shared_ptr<walls::Stick>& otherhalf : sop->otherhalves)
 			{
 				//stickBuffer.push_back(*s.sop);
-				float differencey1 = (((s.floorY) - (play.y + 190)) * (s.sop->top.elevation * s.sop->top.elevation)) / 150;
-				float differencey2 = (((s.floorY) - (play.y + 190)) * (otherhalf->top.elevation * otherhalf->top.elevation)) / 150;
-				float differenceX = (((s.floorX) - (int)play.x) * s.sop->top.elevation);
-				float differenceX2 = (((otherhalf->x) - (int)play.x) * otherhalf->top.elevation);
+				float differencey1 = -10;
+				float differencey2 = -10;
+				float differenceX = 0;
+				float differenceX2 = 0;
 				for (float l = 0; l <= 1; l += .01)
 				{
 					int yHere = (int)std::lerp(s.sop->y, otherhalf->y, l);
@@ -164,7 +164,7 @@ namespace jl
 				float differencey2 = (((floorY)-(play.y + 190)) * (otherhalf->top.elevation * otherhalf->top.elevation)) / 150;
 				float differenceX = (((floorX)-(int)play.x) * sop->top.elevation);
 				float differenceX2 = (((otherhalf->x) - (int)play.x) * otherhalf->top.elevation);
-				for (float l = 0; l <= 1; l += .01)
+				for (float l = 0; l <= 1; l += .005)
 				{
 					int yHere = (int)std::lerp(sop->y, otherhalf->y, l);
 					int xHere = (int)std::lerp(floorX, otherhalf->x, l);

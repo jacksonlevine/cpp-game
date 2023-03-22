@@ -2,6 +2,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include "SFML/Graphics.hpp"
 namespace walls
 {
 	class Point
@@ -26,6 +27,15 @@ namespace walls
 		std::string posKey();
 		bool operator== (const Stick& other);
 		static int assignId();
+	};
+
+	class WallPixel
+	{
+	public:
+		int wallY;
+		sf::Color myColor;
+		std::weak_ptr<WallPixel> pixelBehindMe;
+
 	};
 
 

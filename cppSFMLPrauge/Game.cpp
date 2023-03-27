@@ -19,7 +19,7 @@ namespace jl
 		mousedOverAGuiItem = false;
 		currentgui = "pause";
 		isGUIOpen = false;
-		versionString = "MimosDono Dev 12.2.8";
+		versionString = "MimosDono Dev 12.3.1";
 		isMinimapExpanded = true;
 		guiKeyJustTriggered = false;
 		gameWidth = 1280;
@@ -688,7 +688,7 @@ namespace jl
 				rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
 				if (opixmap.at(keySpot).isReflection)
 				{
-					bufferthisbig(rect, qs);
+					bufferthis(rect, qs);
 				}
 				else
 				{
@@ -819,7 +819,7 @@ namespace jl
 					col.a = 105;
 					rect.setFillColor(col);
 					rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
-					bufferthisbig(rect, qs);
+					bufferthis(rect, qs);
 				}
 			}
 			else if (isObjectPix == false)

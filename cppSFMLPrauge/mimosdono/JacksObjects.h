@@ -144,6 +144,8 @@ namespace objs
 			bool up;
 			bool down;
 			float movementSpeed;
+			__int8 direction;
+			const static std::string DEFAULT_SKIN[4];
 			Player();
 			Player(std::string pname, int px, int py);
 			Player(std::string pname, int px, int py, int wid, int hei);

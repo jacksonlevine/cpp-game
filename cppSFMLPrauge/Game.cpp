@@ -5,6 +5,7 @@
 #include "mimosdono/3DWalls.h"
 #include <iostream>
 #include <pgobootrun.h>
+//This is becoming a mess
 namespace jl
 {
 	gui::GUIObject* currentMousedOver;
@@ -27,7 +28,7 @@ namespace jl
 		sf::ContextSettings c;
 		c.antialiasingLevel = 0;
 		
-		window.create(sf::VideoMode(gameWidth, gameHeight), versionString, sf::Style::None, c);
+		window.create(sf::VideoMode(gameWidth, gameHeight), versionString, sf::Style::Default, c);
 		window.setVerticalSyncEnabled(true);
 		camX = 0;
 		camY = 0;
@@ -142,18 +143,22 @@ namespace jl
 				if (e.key.code == sf::Keyboard::Left || e.key.code == sf::Keyboard::A)
 				{
 					play.left = true;
+					play.direction = 1;
 				}
 				if (e.key.code == sf::Keyboard::Right || e.key.code == sf::Keyboard::D)
 				{
 					play.right = true;
+					play.direction = 0;
 				}
 				if (e.key.code == sf::Keyboard::Down || e.key.code == sf::Keyboard::S)
 				{
 					play.down = true;
+					play.direction = 3;
 				}
 				if (e.key.code == sf::Keyboard::Up || e.key.code == sf::Keyboard::W)
 				{
 					play.up = true;
+					play.direction = 2;
 				}
 				if (e.key.code == sf::Keyboard::Space)
 				{

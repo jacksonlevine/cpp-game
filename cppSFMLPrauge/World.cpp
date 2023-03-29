@@ -84,18 +84,6 @@ namespace world
 				}
 				else
 				{
-					if (std::rand() > 32750)
-					{
-						objs::FixedObject tree;
-						tree.x = floorX;
-						tree.y = floorY;
-						tree.width = 26;
-						tree.height = 25;
-						tree.thing = objs::Tree::makeTree();
-						tree.type = 0;
-						std::string keySpot3 = "" + std::to_string(floorX) + ',' + std::to_string(floorY);
-						fomap[keySpot3] = tree;
-					}
 					float red = (0);
 					float green = (0);
 					float blue = (0);
@@ -162,6 +150,21 @@ namespace world
 		ocols.b = 104;
 		ocols.a = 255;
 		opixref['h'] = ocols;
+		ocols.r = 0;
+		ocols.g = 0;
+		ocols.b = 0;
+		ocols.a = 255;
+		opixref['1'] = ocols;
+		ocols.r = 100;
+		ocols.g = 100;
+		ocols.b = 100;
+		ocols.a = 255;
+		opixref['2'] = ocols;
+		ocols.r = 250;
+		ocols.g = 250;
+		ocols.b = 250;
+		ocols.a = 255;
+		opixref['3'] = ocols;
 		return opixref;
 	}
 }

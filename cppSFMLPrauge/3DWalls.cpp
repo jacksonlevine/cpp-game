@@ -145,7 +145,7 @@ namespace jl
 								std::shared_ptr<walls::WallPixel> me(new walls::WallPixel(yHere, col, std::nullopt));
 								sop->myPixels.push_back(me);
 								std::weak_ptr meWeak = me;
-								wallPixels.at(keySpot2)->pixelBehindMe = meWeak; // Will need to be changed to sequentially insert itself at the back instead of replacing behind-pixels
+								wallPixels.at(keySpot2)->pixelBehindMe = meWeak; // Will need to be changed to sequentially insert itself at the back instead of replacing behind-pixels FUCK.
 							}
 						}
 					}

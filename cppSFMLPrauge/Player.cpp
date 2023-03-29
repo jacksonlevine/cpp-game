@@ -1,5 +1,6 @@
 #include "mimosdono/JacksObjects.h"
 #include "mimosdono/Game.h"
+#include <string>
 
 namespace objs
 {
@@ -19,6 +20,7 @@ namespace objs
 		right = false;
 		up = false;
 		down = false;
+		direction = 0;
 		movementSpeed = 1;
 	};
 	Player::Player(std::string pname, int px, int py)
@@ -28,7 +30,7 @@ namespace objs
 		y = py;
 		inv = Inventory();
 		width = 3;
-		height = 3;
+		height = 5;
 		jump = false;
 		elevation = 0;
 		gravityForce = 0;
@@ -38,6 +40,7 @@ namespace objs
 		up = false;
 		down = false;
 		movementSpeed = 1;
+		direction = 0;
 	};
 	Player::Player(std::string pname, int px, int py, int wid, int hei)
 	{
@@ -55,6 +58,7 @@ namespace objs
 		right = false;
 		up = false;
 		down = false;
+		direction = 0;
 		movementSpeed = 1;
 	};
 	std::string Player::posKey()
@@ -85,6 +89,8 @@ namespace objs
 			}
 		}
 	}
+	//right, left, up, down
+	const std::string Player::DEFAULT_SKIN[4] = { "113132331222313", "311231133222313", "313232313131313", "131232131232313" };
 }
 
 namespace jl
@@ -113,11 +119,13 @@ namespace jl
 			{
 				for (int l = 0; l < pmap.at(keySpot)->width; l++)
 				{
-					sf::Color col;
-					col.r = 255;
+					__int8 absoluteA = pmap.at(keySpot)->height - (a - (yoff + std::max(yshrink - elevOs, 0) + elevOs));
+					char skinChar = objs::Player::DEFAULT_SKIN[pmap.at(keySpot)->direction][(absoluteA * pmap.at(keySpot)->width) + l];
+					sf::Color col = opixref[skinChar];
+					/*col.r = 255;
 					col.g = 0;
 					col.b = 0;
-					col.a = 255;
+					col.a = 255;*/
 					std::string thisKeySpot = "" + std::to_string(floorX + l) + ',' + std::to_string(floorY - a);
 					objs::PlayerPixel pp(col, (int)(pmap.at(keySpot)->x), (int)(pmap.at(keySpot)->y));
 					screenumap[thisKeySpot] = pp;

@@ -105,7 +105,7 @@ namespace jl
 				{
 					std::string thisKeySpot = "" + std::to_string((int)(drops[i].x + w)) + ',' + std::to_string((int)((float)drops[i].y + h + ((float)drops[i].elevation)));
 					sf::Color c = opixref[drops[i].thing[objs::clamp((h * wi) + w, 0, drops[i].thing.size() - 1)]];
-					objs::PlayerPixel pi(c, drops[i].x + w, drops[i].y + h);
+					objs::PlayerPixel pi(c, drops[i].x + w, drops[i].y + h, false);
 					if (drops[i].thing[objs::clamp((h * wi) + w, 0, drops[i].thing.size() - 1)] != '0')
 					{
 						screenumap[thisKeySpot] = pi;

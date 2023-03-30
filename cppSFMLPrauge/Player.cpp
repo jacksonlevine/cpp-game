@@ -21,7 +21,9 @@ namespace objs
 		up = false;
 		down = false;
 		direction = 0;
-		movementSpeed = 1;
+		movementSpeed = .5;
+
+		us = true;
 	};
 	Player::Player(std::string pname, int px, int py)
 	{
@@ -39,8 +41,10 @@ namespace objs
 		right = false;
 		up = false;
 		down = false;
-		movementSpeed = 1;
+		movementSpeed = .5;
 		direction = 0;
+
+		us = true;
 	};
 	Player::Player(std::string pname, int px, int py, int wid, int hei)
 	{
@@ -59,7 +63,9 @@ namespace objs
 		up = false;
 		down = false;
 		direction = 0;
-		movementSpeed = 1;
+		movementSpeed = .5;
+
+		us = true;
 	};
 	std::string Player::posKey()
 	{
@@ -71,6 +77,24 @@ namespace objs
 		x += mx;
 		y += my;
 		pmap->insert_or_assign(posKey(), this);
+		if (!left && !right)
+		{
+			if (up) {
+				direction = 2;
+			}
+			else if (down) {
+				direction = 3;
+			}
+		}
+		else
+		{
+			if (left) {
+				direction = 1;
+			}
+			else if (right) {
+				direction = 0;
+			}
+		}
 	}
 	void Player::stepJump()
 	{
@@ -127,7 +151,9 @@ namespace jl
 					col.b = 0;
 					col.a = 255;*/
 					std::string thisKeySpot = "" + std::to_string(floorX + l) + ',' + std::to_string(floorY - a);
-					objs::PlayerPixel pp(col, (int)(pmap.at(keySpot)->x), (int)(pmap.at(keySpot)->y));
+					objs::PlayerPixel pp(col, (int)(pmap.at(keySpot)->x), (int)(pmap.at(keySpot)->y), pmap.at(keySpot)->us);
+					pp.skinX = l;
+					pp.skinY = absoluteA;
 					screenumap[thisKeySpot] = pp;
 				}
 			}

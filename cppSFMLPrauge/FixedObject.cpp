@@ -154,7 +154,7 @@ namespace jl
 							int ksy = -offsetForElevation -objs::FixedObject::reflectionOffset + floorY + (int)(((f ) + (difference >> 8)) >> 1) ;
 
 							std::string thisKeySpot = "" + std::to_string(ksx) + ',' + std::to_string(ksy);
-							ob.oby = fop->y - objs::FixedObject::reflectionOffset;
+							ob.oby = fop->y - offsetForElevation - objs::FixedObject::reflectionOffset + (fop->height/2) + play.height;
 							ob.point = fop;
 							if (opixmap.find(thisKeySpot) == opixmap.end())
 							{

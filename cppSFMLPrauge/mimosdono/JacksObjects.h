@@ -96,8 +96,11 @@ namespace objs
     sf::Color col;
     int px;
     int py;
+		bool us;
+		int skinX;
+		int skinY;
 		PlayerPixel();
-		PlayerPixel(sf::Color c, int x, int y);
+		PlayerPixel(sf::Color c, int x, int y, bool us);
   };
 
 	class InventorySlot
@@ -145,6 +148,7 @@ namespace objs
 			bool down;
 			float movementSpeed;
 			__int8 direction;
+			bool us;
 			const static std::string DEFAULT_SKIN[4];
 			Player();
 			Player(std::string pname, int px, int py);

@@ -72,6 +72,7 @@ namespace jl
 		opixref = world::World::getObjectPixReferences();
 		click = sf::Vector2f(-1, -1);
 		play = objs::Player("Player1", (window.getSize().x / ts) / 2, (window.getSize().y / ts) / 2);
+		play.us = true;
 		invRect = sf::RectangleShape(sf::Vector2f((int)invTileSpacing - 7, (int)invTileSpacing - 7));
 		invItemRect = sf::RectangleShape(sf::Vector2f(7, 7));
 		invRect.setFillColor(sf::Color(0, 0, 0));
@@ -143,22 +144,18 @@ namespace jl
 				if (e.key.code == sf::Keyboard::Left || e.key.code == sf::Keyboard::A)
 				{
 					play.left = true;
-					play.direction = 1;
 				}
 				if (e.key.code == sf::Keyboard::Right || e.key.code == sf::Keyboard::D)
 				{
 					play.right = true;
-					play.direction = 0;
 				}
 				if (e.key.code == sf::Keyboard::Down || e.key.code == sf::Keyboard::S)
 				{
 					play.down = true;
-					play.direction = 3;
 				}
 				if (e.key.code == sf::Keyboard::Up || e.key.code == sf::Keyboard::W)
 				{
 					play.up = true;
-					play.direction = 2;
 				}
 				if (e.key.code == sf::Keyboard::Space)
 				{
@@ -374,9 +371,11 @@ namespace jl
 
 	void Game::draw()
 	{
+		sf::VertexArray mm(sf::Quads, 500);
 		window.clear(sf::Color::Black);
 		render(p);
-		renderMinimap((isMinimapExpanded) ? minimapWidth : 5, (isMinimapExpanded) ? minimapX : minimapX + 15, (isMinimapExpanded) ? minimapY : minimapY + 15, &play);
+		renderMinimap((isMinimapExpanded) ? minimapWidth : 5, (isMinimapExpanded) ? minimapX : minimapX + 15, (isMinimapExpanded) ? minimapY : minimapY + 15, &play, mm);
+		window.draw(mm);
 		moveGUIElements();
 		renderUI();
 		handleEvents();
@@ -601,6 +600,7 @@ namespace jl
 	void Game::render(perlin p)
 	{
 		sf::VertexArray quads(sf::Quads, 31000);
+		sf::VertexArray us(sf::Quads, 20);
 
 		bool onOrOff = false;
 		std::unordered_map<std::string, objs::ObjectBrick> opixmap;
@@ -640,10 +640,11 @@ namespace jl
 				{
 					drawSingleWallPixel(i, j, onOrOff, opixmap, buildstickmap);
 				}
-				decidePixelAndDrawIfWithinScreenBounds(quads, floorX, floorY, opixmap, screenumap, p);
+				decidePixelAndDrawIfWithinScreenBounds(quads, floorX, floorY, opixmap, screenumap, p, us);
 			}
 		}
 		window.draw(quads);
+		window.draw(us);
 		drawAndUpdateParticles();
 		processMouseClickedOnObjectPixel(opixmap);
 		perlinZEffect++;
@@ -657,6 +658,20 @@ namespace jl
 		sf::Vertex v4(rec.getPosition() + sf::Vector2f(ts, 0));
 		//setting color
 		v1.color = v2.color = v3.color = v4.color = rec.getFillColor();
+		qs.append(v1);
+		qs.append(v2);
+		qs.append(v3);
+		qs.append(v4);
+	}
+
+	void Game::bufferraw(sf::Vector2f pos, sf::VertexArray& qs, sf::Color col)
+	{
+		sf::Vertex v1(pos);
+		sf::Vertex v2(pos + sf::Vector2f(0, ts));
+		sf::Vertex v3(pos + sf::Vector2f(ts, ts));
+		sf::Vertex v4(pos + sf::Vector2f(ts, 0));
+		//setting color
+		v1.color = v2.color = v3.color = v4.color = col;
 		qs.append(v1);
 		qs.append(v2);
 		qs.append(v3);
@@ -676,15 +691,22 @@ namespace jl
 		qs.append(v4);
 	}
 
-	void Game::decidePixelAndDrawIfWithinScreenBounds(sf::VertexArray& qs, int i, int j, std::unordered_map<std::string, objs::ObjectBrick>& opixmap, std::unordered_map<std::string, objs::PlayerPixel>& screenumap, perlin& p)
+	void Game::decidePixelAndDrawIfWithinScreenBounds(sf::VertexArray& qs, int i, int j, std::unordered_map<std::string, objs::ObjectBrick>& opixmap, std::unordered_map<std::string, objs::PlayerPixel>& screenumap, perlin& p, sf::VertexArray& us)
 	{
+
+
 		std::string keySpot = "" + std::to_string(i) + ',' + std::to_string(j);
 		if (i > camX - 1 && i < width + camX + 1 && j > 0 + camY - 1 && j < height + camY + 1)
 		{
 			int offsetForElevation = 0;
+			int myOffsetForElev = 0;
 			if (worldmap.find(keySpot) != worldmap.end())
 			{
 				offsetForElevation = worldmap.at(keySpot).elevation;
+			}
+			if (worldmap.find(play.posKey()) != worldmap.end())
+			{
+				myOffsetForElev = worldmap.at(play.posKey()).elevation;
 			}
 			bool isObjectPix = false;
 			if (opixmap.find(keySpot) != opixmap.end())
@@ -701,23 +723,43 @@ namespace jl
 				}
 				isObjectPix = true;
 			}
+			bool dontDrawBecauseOfPlayerPixel = false;
 			if (screenumap.find(keySpot) != screenumap.end())
 			{
 				if (wallPixels.find(keySpot) == wallPixels.end())
 				{
 					if (opixmap.find(keySpot) == opixmap.end())
 					{
-						rect.setFillColor(screenumap.at(keySpot).col);
-						rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
-						bufferthis(rect, qs);
-					}
-					else
-					{
-						if (opixmap.at(keySpot).oby <= screenumap.at(keySpot).py)
-						{
+
+						if (!screenumap.at(keySpot).us) {
 							rect.setFillColor(screenumap.at(keySpot).col);
 							rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
 							bufferthis(rect, qs);
+							dontDrawBecauseOfPlayerPixel = true;
+						}
+						else {
+							bufferraw(sf::Vector2f((58.18*ts) + (screenumap.at(keySpot).skinX * ts), (27.72*ts) - (std::floor((int)(play.elevation * ts) >> 4)) - (myOffsetForElev * ts) + (screenumap.at(keySpot).skinY * ts)), us, screenumap.at(keySpot).col);
+						}
+
+
+
+					}
+					else
+					{
+						if (opixmap.at(keySpot).oby-1 <= screenumap.at(keySpot).py - offsetForElevation + (play.height))
+						{
+							
+
+							if (!screenumap.at(keySpot).us) {
+								rect.setFillColor(screenumap.at(keySpot).col);
+								rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
+								bufferthis(rect, qs);
+								dontDrawBecauseOfPlayerPixel = true;
+							}
+							else {
+								bufferraw(sf::Vector2f((58.18 * ts) + (screenumap.at(keySpot).skinX * ts), (27.72 * ts) - (std::floor((int)(play.elevation * ts) >> 4)) - (myOffsetForElev * ts) + (screenumap.at(keySpot).skinY * ts)), us, screenumap.at(keySpot).col);
+							}
+
 						}
 						else if (!opixmap.at(keySpot).isReflection)
 						{
@@ -739,21 +781,37 @@ namespace jl
 						}
 						else
 						{
-							rect.setFillColor(screenumap.at(keySpot).col);
-							rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
-							bufferthis(rect, qs);
+
+							if (!screenumap.at(keySpot).us) {
+								rect.setFillColor(screenumap.at(keySpot).col);
+								rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
+								bufferthis(rect, qs);
+								dontDrawBecauseOfPlayerPixel = true;
+							}
+							else {
+								bufferraw(sf::Vector2f((58.18 * ts) + (screenumap.at(keySpot).skinX * ts), (27.72 * ts) - (std::floor((int)(play.elevation * ts) >> 4)) - (myOffsetForElev * ts) + (screenumap.at(keySpot).skinY * ts)), us, screenumap.at(keySpot).col);
+							}
+
 						}
 
 					}
 					else
 					{
-						if (opixmap.at(keySpot).oby <= screenumap.at(keySpot).py)
+						if (opixmap.at(keySpot).oby - offsetForElevation <= screenumap.at(keySpot).py + offsetForElevation)
 						{
-							if (wallPixels.at(keySpot)->wallY <= screenumap.at(keySpot).py)
+							if (wallPixels.at(keySpot)->wallY <= screenumap.at(keySpot).py + offsetForElevation)
 							{
-								rect.setFillColor(screenumap.at(keySpot).col);
-								rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
-								bufferthis(rect, qs);
+
+								if (!screenumap.at(keySpot).us) {
+									rect.setFillColor(screenumap.at(keySpot).col);
+									rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
+									bufferthis(rect, qs);
+									dontDrawBecauseOfPlayerPixel = true;
+								}
+								else {
+									bufferraw(sf::Vector2f((58.18 * ts) + (screenumap.at(keySpot).skinX * ts), (27.72 * ts) - (std::floor((int)(play.elevation * ts) >> 4)) - (myOffsetForElev * ts) + (screenumap.at(keySpot).skinY * ts)), us, screenumap.at(keySpot).col);
+								}
+
 							}
 							else
 							{
@@ -765,7 +823,7 @@ namespace jl
 						}
 						else if (!opixmap.at(keySpot).isReflection)
 						{
-							if (wallPixels.at(keySpot)->wallY <= opixmap.at(keySpot).oby)
+							if (wallPixels.at(keySpot)->wallY <= opixmap.at(keySpot).oby + offsetForElevation)
 							{
 								rect.setFillColor(opixmap.at(keySpot).col);
 								rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
@@ -782,13 +840,14 @@ namespace jl
 					}
 				}
 			}
-			else if (wallPixels.find(keySpot) != wallPixels.end() && !isObjectPix)
+			
+			if (wallPixels.find(keySpot) != wallPixels.end() && !isObjectPix && !dontDrawBecauseOfPlayerPixel)
 			{
 				rect.setFillColor(wallPixels.at(keySpot)->myColor);
 				rect.setPosition(sf::Vector2f((i - camX) * ts, (j - camY) * ts));
 				bufferthis(rect, qs);
 			}
-			else if (wallPixels.find(keySpot) != wallPixels.end() && isObjectPix)
+			else if (wallPixels.find(keySpot) != wallPixels.end() && isObjectPix && !dontDrawBecauseOfPlayerPixel)
 			{
 				if (wallPixels.at(keySpot)->wallY <= opixmap.at(keySpot).oby+offsetForElevation)
 				{
@@ -803,7 +862,7 @@ namespace jl
 					bufferthis(rect, qs);
 				}
 			}
-			else if (worldmap.find(keySpot) != worldmap.end() && isObjectPix == false)
+			else if (worldmap.find(keySpot) != worldmap.end() && isObjectPix == false && !dontDrawBecauseOfPlayerPixel)
 			{
 				if (worldmap.at(keySpot).col.a > 0)
 				{
@@ -827,7 +886,7 @@ namespace jl
 					bufferthis(rect, qs);
 				}
 			}
-			else if (isObjectPix == false)
+			else if (isObjectPix == false && !dontDrawBecauseOfPlayerPixel)
 			{
 				int n22 = std::floor(p.noise(i * 2.1, j * 0.2, 11.01 + ((int)perlinZEffect >> 8)) * 10);
 				int n32 = std::floor(p.noise(i * 5.1, j * 0.4, 11.01 + ((int)perlinZEffect >> 4)) * 4);
@@ -844,7 +903,7 @@ namespace jl
 		}
 	}
 
-	void Game::renderMinimap(int widt, int x, int y, objs::Player* pla)
+	void Game::renderMinimap(int widt, int x, int y, objs::Player* pla, sf::VertexArray& m)
 	{
 		int revScale = 20;
 		for (int j = y; j < y + widt; j++)
@@ -860,13 +919,13 @@ namespace jl
 					{
 						rect.setFillColor(worldmap.at(keySpot).col);
 						rect.setPosition(sf::Vector2f(i * ts, j * ts));
-						window.draw(rect);
+						bufferthis(rect, m);
 					}
 					else
 					{
 						rect.setFillColor(sf::Color::Blue);
 						rect.setPosition(sf::Vector2f(i * ts, j * ts));
-						window.draw(rect);
+						bufferthis(rect, m);
 					}
 				}
 			}

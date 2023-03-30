@@ -81,17 +81,18 @@ namespace jl {
 		void drawAndUpdateParticles();
 		void processMouseClickedOnObjectPixel(std::unordered_map<std::string, objs::ObjectBrick>& opixmap);
 		void spawnParticleFromObjectPixel(std::unordered_map<std::string, objs::ObjectBrick>& opixmap, std::string& keySpot);
-		void decidePixelAndDrawIfWithinScreenBounds(sf::VertexArray& qs, int i, int j, std::unordered_map<std::string, objs::ObjectBrick>& opixmap, std::unordered_map<std::string, objs::PlayerPixel>& screenumap, perlin& p);
+		void decidePixelAndDrawIfWithinScreenBounds(sf::VertexArray& qs, int i, int j, std::unordered_map<std::string, objs::ObjectBrick>& opixmap, std::unordered_map<std::string, objs::PlayerPixel>& screenumap, perlin& p, sf::VertexArray& us);
 		void addPlayerPixelsToBuffer(int floorX, int floorY, std::unordered_map<std::string, objs::PlayerPixel>& screenumap);
 		void breakFixedObjectAndDropItems(std::string& keySpot);
 		void addFixedObjectPixelsToBuffer( std::unordered_map<std::string, objs::ObjectBrick>& opixmap, int floorY, int floorX, perlin& p);
 		void updateDropsAndAddToScreenBuffer(std::unordered_map<std::string, objs::PlayerPixel>& screenumap);
-		void renderMinimap(int widt, int x, int y, objs::Player* pla);
+		void renderMinimap(int widt, int x, int y, objs::Player* pla, sf::VertexArray& mm);
 		void handleEvents();
 
 		void bufferthis(sf::RectangleShape& rec, sf::VertexArray& qs);
 		void bufferthisbig(sf::RectangleShape& rec, sf::VertexArray& qs);
 		void drawSingleWallPixel( int i, int j, bool onOrOff, std::unordered_map<std::string, objs::ObjectBrick>& opixmap, std::unordered_map<std::string, walls::Stick>& buildstickmap);
+		void bufferraw(sf::Vector2f pos, sf::VertexArray& qs, sf::Color col);
 	};
 	class sopAndCoord
 	{

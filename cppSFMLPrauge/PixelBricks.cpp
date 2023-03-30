@@ -31,10 +31,11 @@ namespace objs
 		px = 0;
 		py = 0;
 	};
-	PlayerPixel::PlayerPixel(sf::Color c, int x, int y)
+	PlayerPixel::PlayerPixel(sf::Color c, int x, int y, bool u)
 	{
 		col = c;
 		px = x;
 		py = y;
+		us = u;
 	};
 }

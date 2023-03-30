@@ -40,9 +40,9 @@ namespace world
 					if (ln < 2)
 					{
 						brick.isWater = false;
-						float red = std::min(8 * (nClamped * 3), 205.6);
+						float red = std::min(5 * (nClamped * 3), 205.6);
 						float green = std::min(8  * (nClamped * 3),205.6);
-						float blue = (8 * (nClamped ));
+						float blue = (5 * (nClamped ));
 						float a = (255);
 						float elev = nClamped;
 						insertIntoWorld(floorX, floorY, red, green, blue, a, elev, &wmap, brick);
@@ -115,14 +115,14 @@ namespace world
 		ocols.b = 12;
 		ocols.a = 255;
 		opixref['t'] = ocols;
-		ocols.r = 40;
-		ocols.g = 200;
-		ocols.b = 35;
+		ocols.r = 25;
+		ocols.g = 75;
+		ocols.b = 20;
 		ocols.a = 255;
 		opixref['l'] = ocols;
-		ocols.r = 36;
-		ocols.g = 150;
-		ocols.b = 26;
+		ocols.r = 15;
+		ocols.g = 45;
+		ocols.b = 30;
 		ocols.a = 255;
 		opixref['b'] = ocols;
 		ocols.r = 100;

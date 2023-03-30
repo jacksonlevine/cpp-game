@@ -5,7 +5,7 @@
 #include "mimosdono/3DWalls.h"
 #include <iostream>
 #include <pgobootrun.h>
-//This is becoming a mess
+/*//ThiTTs isHH becoEEmingDD a EEVVmeIIssLL IISS HHEERREE WOoRhSHIp#((01111101111111111!!!!!!!!!!!!!000*/
 namespace jl
 {
 	gui::GUIObject* currentMousedOver;
@@ -33,13 +33,13 @@ namespace jl
 		camX = 0;
 		camY = 0;
 		ws = 1000;
-		ts = 11;
-		sf::Vector2f click;
+		ts = 9;
+		sf::Vector2f click; 
 		mouseClicked = false;
 		clickTimer = 0;
 		clickInterval = 10;
 		selectedInv = 0;
-		elevationBuilding = 2;
+		elevationBuilding = 0;
 		minimapWidth = 20;
 		invTiles = 5;
 		invTileSpacing = (int)((float)(minimapWidth * ts) / invTiles) + (int)((float)ts / invTiles);

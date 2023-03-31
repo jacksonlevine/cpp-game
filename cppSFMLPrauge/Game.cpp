@@ -738,7 +738,7 @@ namespace jl
 							dontDrawBecauseOfPlayerPixel = true;
 						}
 						else {
-							bufferraw(sf::Vector2f((58.18*ts) + (screenumap.at(keySpot).skinX * ts), (27.72*ts) - (std::floor((int)(play.elevation * ts) >> 4)) - (myOffsetForElev * ts) + (screenumap.at(keySpot).skinY * ts)), us, screenumap.at(keySpot).col);
+							bufferraw(sf::Vector2f((71.11*ts) + (screenumap.at(keySpot).skinX * ts), (33.88*ts) - (std::floor((int)(play.elevation * ts) >> 4)) - (myOffsetForElev * ts) + (screenumap.at(keySpot).skinY * ts)), us, screenumap.at(keySpot).col);
 						}
 
 
@@ -757,7 +757,7 @@ namespace jl
 								dontDrawBecauseOfPlayerPixel = true;
 							}
 							else {
-								bufferraw(sf::Vector2f((58.18 * ts) + (screenumap.at(keySpot).skinX * ts), (27.72 * ts) - (std::floor((int)(play.elevation * ts) >> 4)) - (myOffsetForElev * ts) + (screenumap.at(keySpot).skinY * ts)), us, screenumap.at(keySpot).col);
+								bufferraw(sf::Vector2f((71.11 * ts) + (screenumap.at(keySpot).skinX * ts), (33.88 * ts) - (std::floor((int)(play.elevation * ts) >> 4)) - (myOffsetForElev * ts) + (screenumap.at(keySpot).skinY * ts)), us, screenumap.at(keySpot).col);
 							}
 
 						}
@@ -789,7 +789,7 @@ namespace jl
 								dontDrawBecauseOfPlayerPixel = true;
 							}
 							else {
-								bufferraw(sf::Vector2f((58.18 * ts) + (screenumap.at(keySpot).skinX * ts), (27.72 * ts) - (std::floor((int)(play.elevation * ts) >> 4)) - (myOffsetForElev * ts) + (screenumap.at(keySpot).skinY * ts)), us, screenumap.at(keySpot).col);
+								bufferraw(sf::Vector2f((71.11 * ts) + (screenumap.at(keySpot).skinX * ts), (33.88 * ts) - (std::floor((int)(play.elevation * ts) >> 4)) - (myOffsetForElev * ts) + (screenumap.at(keySpot).skinY * ts)), us, screenumap.at(keySpot).col);
 							}
 
 						}
@@ -809,7 +809,7 @@ namespace jl
 									dontDrawBecauseOfPlayerPixel = true;
 								}
 								else {
-									bufferraw(sf::Vector2f((58.18 * ts) + (screenumap.at(keySpot).skinX * ts), (27.72 * ts) - (std::floor((int)(play.elevation * ts) >> 4)) - (myOffsetForElev * ts) + (screenumap.at(keySpot).skinY * ts)), us, screenumap.at(keySpot).col);
+									bufferraw(sf::Vector2f((71.11 * ts) + (screenumap.at(keySpot).skinX * ts), (33.88 * ts) - (std::floor((int)(play.elevation * ts) >> 4)) - (myOffsetForElev * ts) + (screenumap.at(keySpot).skinY * ts)), us, screenumap.at(keySpot).col);
 								}
 
 							}
